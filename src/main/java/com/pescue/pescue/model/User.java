@@ -26,6 +26,10 @@ public class User implements UserDetails {
     @Indexed(unique = true)
     private String userEmail;
     private String userPassword;
+    private String userFirstName;
+    private String userLastName;
+    private String userAvatar;
+    private List<Role> userRoles;
 
     public String getUserID() {
         return userID;
@@ -83,10 +87,6 @@ public class User implements UserDetails {
         this.userRoles = userRoles;
     }
 
-    private String userFirstName;
-    private String userLastName;
-    private String userAvatar;
-
     public User(String userID, String userEmail, String userPassword, String userFirstName, String userLastName, String userAvatar) {
         this.userID = userID;
         this.userEmail = userEmail;
@@ -95,8 +95,6 @@ public class User implements UserDetails {
         this.userLastName = userLastName;
         this.userAvatar = userAvatar;
     }
-
-    private List<Role> userRoles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
