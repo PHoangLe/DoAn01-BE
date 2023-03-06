@@ -87,13 +87,21 @@ public class User implements UserDetails {
         this.userRoles = userRoles;
     }
 
-    public User(String userID, String userEmail, String userPassword, String userFirstName, String userLastName, String userAvatar) {
-        this.userID = userID;
+    public User(String userEmail, String userPassword, String userFirstName, String userLastName, String userAvatar) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
         this.userAvatar = userAvatar;
+    }
+
+    public User(String userEmail, String userPassword, String userFirstName, String userLastName, String userAvatar, List<Role> userRoles) {
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.userAvatar = userAvatar;
+        this.userRoles = userRoles;
     }
 
     @Override
