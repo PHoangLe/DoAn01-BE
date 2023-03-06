@@ -39,16 +39,8 @@ public class User implements UserDetails {
         this.userID = userID;
     }
 
-    public String getUserEmail() {
-        return userEmail;
-    }
-
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
-    }
-
-    public String getUserPassword() {
-        return userPassword;
     }
 
     public void setUserPassword(String userPassword) {
