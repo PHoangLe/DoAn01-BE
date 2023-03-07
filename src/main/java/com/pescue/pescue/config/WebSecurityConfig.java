@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @EnableGlobalAuthentication()
 @EnableMethodSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig{
 
     private final AuthenticationProvider authenticationProvider;
 
@@ -31,6 +31,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/user/getAllUser").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/swagger-ui/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
