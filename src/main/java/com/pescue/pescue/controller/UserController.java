@@ -15,12 +15,12 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/user")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping("/getAllUser")
-    @CrossOrigin
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public List<User> fetchAllUser() {
