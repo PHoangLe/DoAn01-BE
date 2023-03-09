@@ -2,10 +2,7 @@ package com.pescue.pescue.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -15,11 +12,13 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/userRegister")
+    @CrossOrigin
     public ResponseEntity<AuthenticationResponse> userRegister(@RequestBody UserRegisterRequest request){
         return ResponseEntity.ok(authenticationService.userRegister(request));
     }
 
     @PostMapping("/authenticate")
+    @CrossOrigin
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
