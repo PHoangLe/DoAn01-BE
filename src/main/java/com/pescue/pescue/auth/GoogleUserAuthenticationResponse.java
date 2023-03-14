@@ -1,7 +1,8 @@
 package com.pescue.pescue.auth;
 
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
+import com.pescue.pescue.model.GoogleUser;
 import com.pescue.pescue.model.Role;
-import com.pescue.pescue.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +15,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class GoogleUserAuthenticationResponse {
     private String jwtToken;
     private String errorMessage;
-    private User user;
+    private GoogleUser user;
 }

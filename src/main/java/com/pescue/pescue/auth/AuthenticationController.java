@@ -21,4 +21,10 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
+
+    @GetMapping("/authenticateGoogleUser")
+    public ResponseEntity<GoogleUserAuthenticationResponse> googleUserAuthenticate(@RequestBody GoogleUserAuthenticationRequest request){
+
+        return ResponseEntity.ok(authenticationService.googleUserAuthenticate(request));
+    }
 }
