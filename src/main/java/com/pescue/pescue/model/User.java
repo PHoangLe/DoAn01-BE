@@ -104,6 +104,14 @@ public class User implements UserDetails {
         this.userRoles = userRoles;
     }
 
+    public User(String userEmail, String userFirstName, String userLastName, String userAvatar, List<Role> userRoles) {
+        this.userEmail = userEmail;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.userAvatar = userAvatar;
+        this.userRoles = userRoles;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
