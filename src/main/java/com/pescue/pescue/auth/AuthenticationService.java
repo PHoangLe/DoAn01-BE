@@ -1,9 +1,7 @@
 package com.pescue.pescue.auth;
 
-import com.pescue.pescue.model.GoogleUser;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
-import com.pescue.pescue.repository.GoogleUserRepository;
 import com.pescue.pescue.repository.UserRepository;
 import com.pescue.pescue.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ public class AuthenticationService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final GoogleUserRepository googleUserRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
@@ -57,12 +54,11 @@ public class AuthenticationService {
                     )
             );
 
-            User user = userRepository.findUserByUserEmail(request.getUserEmail())
-                    .orElseThrow();
-            var jwtToken = jwtService.generateJwtToken(user);
+            Optional<User> user = userRepository.findUserByUserEmail(request.getUserEmail());
+            var jwtToken = jwtService.generateJwtToken(user.get());
             return AuthenticationResponse.builder()
                     .jwtToken(jwtToken)
-                    .user(user)
+                    .user(user.get())
                     .build();
         }
         catch (AuthenticationException e){
@@ -73,11 +69,11 @@ public class AuthenticationService {
     }
 
     public GoogleUserAuthenticationResponse googleUserAuthenticate(GoogleUserAuthenticationRequest request){
-        GoogleUser googleUser = googleUserRepository.findUserByUserEmail(request.userEmail);
+        Optional<User> googleUser = userRepository.findUserByUserEmail(request.userEmail);
 
-        if (googleUser == null){
-            GoogleUser googleUser1 = new GoogleUser(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
-            googleUserRepository.insert(googleUser1);
+        if (googleUser.isEmpty()){
+            User googleUser1 = new User(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
+            userRepository.insert(googleUser1);
             var jwtToken = jwtService.generateJwtToken(googleUser1);
             return GoogleUserAuthenticationResponse.builder()
                     .jwtToken(jwtToken)
@@ -85,10 +81,10 @@ public class AuthenticationService {
                     .build();
         }
 
-        var jwtToken = jwtService.generateJwtToken(googleUser);
+        var jwtToken = jwtService.generateJwtToken(googleUser.get());
         return GoogleUserAuthenticationResponse.builder()
                 .jwtToken(jwtToken)
-                .user(googleUser)
+                .user(googleUser.get())
                 .build();
     }
 }
