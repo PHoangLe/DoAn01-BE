@@ -1,5 +1,6 @@
 package com.pescue.pescue.auth;
 
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.pescue.pescue.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
