@@ -1,5 +1,8 @@
 package com.pescue.pescue.auth;
 
+import com.pescue.pescue.model.EmailDetails;
+import com.pescue.pescue.requestbody.OTPConfirmEmailRequest;
+import com.pescue.pescue.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final EmailService emailService;
 
     @PostMapping("/userRegister")
     public ResponseEntity<AuthenticationResponse> userRegister(@RequestBody UserRegisterRequest request){
@@ -26,5 +30,10 @@ public class AuthenticationController {
     public ResponseEntity<GoogleUserAuthenticationResponse> googleUserAuthenticate(@RequestBody GoogleUserAuthenticationRequest request){
 
         return ResponseEntity.ok(authenticationService.googleUserAuthenticate(request));
+    }
+
+    @PostMapping("/sendOTPConfirmEmail")
+    public String sendMail(@RequestBody OTPConfirmEmailRequest request){
+        return emailService.sendOTPConfirmEmail(request);
     }
 }

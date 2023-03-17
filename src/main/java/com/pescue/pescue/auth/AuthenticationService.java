@@ -1,5 +1,6 @@
 package com.pescue.pescue.auth;
 
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
