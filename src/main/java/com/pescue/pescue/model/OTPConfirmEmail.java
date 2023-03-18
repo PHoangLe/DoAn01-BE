@@ -18,11 +18,13 @@ public class OTPConfirmEmail {
     private String Id;
     private String receiverEmail;
     private Date date;
+    private Date expiredDate;
     private String OTP;
 
-    public OTPConfirmEmail(String receiverEmail, Date date, String OTP) {
+    public OTPConfirmEmail(String receiverEmail, Date date, Date expiredDate, String OTP) {
         this.receiverEmail = receiverEmail;
         this.date = date;
+        this.expiredDate = expiredDate;
         this.OTP = OTP;
     }
 
@@ -48,6 +50,14 @@ public class OTPConfirmEmail {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
     }
 
     public String getOTP() {

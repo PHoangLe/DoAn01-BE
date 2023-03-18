@@ -32,6 +32,7 @@ public class AuthenticationService {
                 request.getUserFirstName(),
                 request.getUserLastName(),
                 request.getUserAvatar(),
+                true,
                 List.of(Role.ROLE_USER)
         );
         try{
@@ -56,6 +57,12 @@ public class AuthenticationService {
             );
 
             Optional<User> user = userRepository.findUserByUserEmail(request.getUserEmail());
+
+            if (user.get().isLocked())
+                return AuthenticationResponse.builder()
+                        .errorMessage("Bạn vui lòng xác thực tài khoản để đăng nhập")
+                        .build();
+
             var jwtToken = jwtService.generateJwtToken(user.get());
             return AuthenticationResponse.builder()
                     .jwtToken(jwtToken)

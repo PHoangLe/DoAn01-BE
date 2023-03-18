@@ -1,8 +1,9 @@
 package com.pescue.pescue.auth;
 
-import com.pescue.pescue.model.EmailDetails;
-import com.pescue.pescue.requestbody.OTPConfirmEmailRequest;
+import com.pescue.pescue.dto.OTPConfirmEmailDTO;
+import com.pescue.pescue.dto.ValidateOTPConfirmEmailDTO;
 import com.pescue.pescue.service.EmailService;
+import com.pescue.pescue.service.OTPService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,8 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final EmailService emailService;
+
+    private final OTPService otpService;
 
     @PostMapping("/userRegister")
     public ResponseEntity<AuthenticationResponse> userRegister(@RequestBody UserRegisterRequest request){
@@ -33,7 +36,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sendOTPConfirmEmail")
-    public String sendMail(@RequestBody OTPConfirmEmailRequest request){
-        return emailService.sendOTPConfirmEmail(request);
+    public ResponseEntity<String> sendMail(@RequestBody OTPConfirmEmailDTO request){
+        return otpService.sendOTPConfirmEmail(request);
+    }
+
+    @PostMapping("/validateOTPConfirmEmail")
+    public ResponseEntity<String> validateOTPConfirmEmail(@RequestBody ValidateOTPConfirmEmailDTO request){
+        return otpService.validateOTPConfirmEmail(request);
     }
 }
