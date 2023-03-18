@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,5 +23,20 @@ public class UserService {
         user.setUserRoles(userRoles);
         userRepository.insert(user);
         return user;
+    }
+
+    public User findUserByUserEmail(String emailAddress){
+        return userRepository.findUserByUserEmail(emailAddress).get();
+    }
+
+    public boolean unlockUser(String emailAddress){
+        Optional<User> user = userRepository.findUserByUserEmail(emailAddress);
+
+        if (user.isEmpty())
+            return false;
+
+        user.get().setLocked(false);
+        userRepository.save(user.get());
+        return true;
     }
 }

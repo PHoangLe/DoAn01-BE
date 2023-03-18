@@ -22,7 +22,7 @@ import java.util.Random;
 public class OTPService {
     private static final long OTP_EXPIRATION_TIME = 1000 * 60 * 5; //5 phút
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
     @Autowired
     private OTPConfirmEmailRepository otpConfirmEmailRepository;
     @Autowired
@@ -40,9 +40,9 @@ public class OTPService {
     public ResponseEntity<String> sendOTPConfirmEmail(OTPConfirmEmailDTO request) {
         // Tìm email trong bảng user
         String emailAddress = request.getEmailAddress();
-        Optional<User> user = userRepository.findUserByUserEmail(emailAddress);
+        User user = userService.findUserByUserEmail(emailAddress);
 
-        if (user.isEmpty())
+        if (user == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Người dùng không tồn tại");
 
         // Tạo OTP
@@ -83,8 +83,13 @@ public class OTPService {
         if (recentOtpConfirmEmail.getExpiredDate().before(new Date(System.currentTimeMillis())))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP đã hết hạn");
 
-        if (request.getOtp().equals(recentOtpConfirmEmail.getOTP()))
+        if (request.getOtp().equals(recentOtpConfirmEmail.getOTP())) {
+            boolean isUnlock = userService.unlockUser(recentOtpConfirmEmail.getReceiverEmail());
+            if (!isUnlock)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Người dùng không tồn tại");
+
             return ResponseEntity.ok("Mã OTP hợp lệ");
+        }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP không trùng khớp");
 
