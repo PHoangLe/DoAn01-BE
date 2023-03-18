@@ -29,6 +29,7 @@ public class User implements UserDetails {
     private String userFirstName;
     private String userLastName;
     private String userAvatar;
+    private boolean isLocked = true;
     private List<Role> userRoles;
 
     public String getUserID() {
@@ -83,6 +84,14 @@ public class User implements UserDetails {
         return userRoles;
     }
 
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
     public void setUserRoles(List<Role> userRoles) {
         this.userRoles = userRoles;
     }
@@ -109,6 +118,16 @@ public class User implements UserDetails {
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
         this.userAvatar = userAvatar;
+        this.userRoles = userRoles;
+    }
+
+    public User(String userEmail, String userPassword, String userFirstName, String userLastName, String userAvatar,boolean isLocked, List<Role> userRoles) {
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.userAvatar = userAvatar;
+        this.isLocked = isLocked;
         this.userRoles = userRoles;
     }
 

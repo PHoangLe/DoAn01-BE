@@ -1,4 +1,4 @@
-package com.pescue.pescue.requestbody;
+package com.pescue.pescue.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OTPConfirmEmailRequest {
+public class OTPConfirmEmailDTO {
     String emailAddress;
 }
