@@ -15,24 +15,22 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final EmailService emailService;
-
     private final OTPService otpService;
 
     @PostMapping("/userRegister")
     public ResponseEntity<AuthenticationResponse> userRegister(@RequestBody UserRegisterRequest request){
-        return ResponseEntity.ok(authenticationService.userRegister(request));
+        return authenticationService.userRegister(request);
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        return authenticationService.authenticate(request);
     }
 
     @GetMapping("/authenticateGoogleUser")
     public ResponseEntity<GoogleUserAuthenticationResponse> googleUserAuthenticate(@RequestBody GoogleUserAuthenticationRequest request){
 
-        return ResponseEntity.ok(authenticationService.googleUserAuthenticate(request));
+        return authenticationService.googleUserAuthenticate(request);
     }
 
     @PostMapping("/sendOTPConfirmEmail")

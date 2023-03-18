@@ -5,7 +5,10 @@ import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
 import com.pescue.pescue.service.JwtService;
+import com.pescue.pescue.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,11 +24,11 @@ import java.util.Optional;
 public class AuthenticationService {
 
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public AuthenticationResponse userRegister(UserRegisterRequest request){
+    public ResponseEntity<AuthenticationResponse> userRegister(UserRegisterRequest request){
         User user = new User(
                 request.getUserEmail(),
                 passwordEncoder.encode(request.getUserPassword()),
@@ -36,18 +39,18 @@ public class AuthenticationService {
                 List.of(Role.ROLE_USER)
         );
         try{
-            userRepository.insert(user);
+            userService.addUser(user);
         }
         catch (Exception e){
-            return AuthenticationResponse.builder()
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
                     .errorMessage("Tài khoản email đã tồn tại")
-                    .build();
+                    .build());
         }
-        return AuthenticationResponse.builder()
-                .build();
+        return ResponseEntity.ok(AuthenticationResponse.builder()
+                .build());
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request){
+    public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request){
         try{
             Authentication authentication =  authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -56,43 +59,38 @@ public class AuthenticationService {
                     )
             );
 
-            Optional<User> user = userRepository.findUserByUserEmail(request.getUserEmail());
+            User user = userService.findUserByUserEmail(request.getUserEmail());
 
-            if (user.get().isLocked())
-                return AuthenticationResponse.builder()
+            if (user.isLocked())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
                         .errorMessage("Bạn vui lòng xác thực tài khoản để đăng nhập")
-                        .build();
+                        .build());
 
-            var jwtToken = jwtService.generateJwtToken(user.get());
-            return AuthenticationResponse.builder()
+            var jwtToken = jwtService.generateJwtToken(user);
+            return ResponseEntity.ok(AuthenticationResponse.builder()
                     .jwtToken(jwtToken)
-                    .user(user.get())
-                    .build();
+                    .user(user)
+                    .build());
         }
         catch (AuthenticationException e){
-            return AuthenticationResponse.builder()
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
                     .errorMessage("Tài khoản hoăc mật khẩu không hợp lệ")
-                    .build();
+                    .build());
         }
     }
 
-    public GoogleUserAuthenticationResponse googleUserAuthenticate(GoogleUserAuthenticationRequest request){
-        Optional<User> googleUser = userRepository.findUserByUserEmail(request.userEmail);
+    public ResponseEntity<GoogleUserAuthenticationResponse> googleUserAuthenticate(GoogleUserAuthenticationRequest request){
+        User googleUser = userService.findUserByUserEmail(request.userEmail);
 
-        if (googleUser.isEmpty()){
-            User googleUser1 = new User(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
-            userRepository.insert(googleUser1);
-            var jwtToken = jwtService.generateJwtToken(googleUser1);
-            return GoogleUserAuthenticationResponse.builder()
-                    .jwtToken(jwtToken)
-                    .user(googleUser1)
-                    .build();
+        if (googleUser == null){
+            googleUser = new User(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
+            userService.addUser(googleUser);
         }
 
-        var jwtToken = jwtService.generateJwtToken(googleUser.get());
-        return GoogleUserAuthenticationResponse.builder()
+        var jwtToken = jwtService.generateJwtToken(googleUser);
+        return ResponseEntity.ok(GoogleUserAuthenticationResponse.builder()
                 .jwtToken(jwtToken)
-                .user(googleUser.get())
-                .build();
+                .user(googleUser)
+                .build());
     }
 }
