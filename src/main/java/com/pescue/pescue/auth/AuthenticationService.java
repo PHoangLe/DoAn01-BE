@@ -28,7 +28,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public ResponseEntity<AuthenticationResponse> userRegister(UserRegisterRequest request){
+    public Object userRegister(UserRegisterRequest request){
         User user = new User(
                 request.getUserEmail(),
                 passwordEncoder.encode(request.getUserPassword()),
@@ -42,15 +42,13 @@ public class AuthenticationService {
             userService.addUser(user);
         }
         catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
-                    .errorMessage("Tài khoản email đã tồn tại")
-                    .build());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản đã tồn tại");
         }
-        return ResponseEntity.ok(AuthenticationResponse.builder()
+        return ResponseEntity.status(HttpStatus.CREATED).body(AuthenticationResponse.builder()
                 .build());
     }
 
-    public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest request){
+    public Object authenticate(AuthenticationRequest request){
         try{
             Authentication authentication =  authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -62,35 +60,40 @@ public class AuthenticationService {
             User user = userService.findUserByUserEmail(request.getUserEmail());
 
             if (user.isLocked())
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
-                        .errorMessage("Bạn vui lòng xác thực tài khoản để đăng nhập")
-                        .build());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bạn vui lòng xác thực tài khoản để đăng nhập");
+
+            if (user.isDeleted())
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản này không còn tồn tại");
 
             var jwtToken = jwtService.generateJwtToken(user);
             return ResponseEntity.ok(AuthenticationResponse.builder()
                     .jwtToken(jwtToken)
-                    .user(user)
+                    .userID(user.getUserID())
+                    .userEmail(user.getUserEmail())
+                    .userFullName(user.getUserFirstName() + " " + user.getUserLastName())
+                    .userRoles(user.getUserRoles())
                     .build());
         }
         catch (AuthenticationException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AuthenticationResponse.builder()
-                    .errorMessage("Tài khoản hoăc mật khẩu không hợp lệ")
-                    .build());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản hoăc mật khẩu không hợp lệ");
         }
     }
 
-    public ResponseEntity<GoogleUserAuthenticationResponse> googleUserAuthenticate(GoogleUserAuthenticationRequest request){
-        User googleUser = userService.findUserByUserEmail(request.userEmail);
+    public Object googleUserAuthenticate(GoogleUserAuthenticationRequest request){
+        User user = userService.findUserByUserEmail(request.userEmail);
 
-        if (googleUser == null){
-            googleUser = new User(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
-            userService.addUser(googleUser);
+        if (user == null){
+            user = new User(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
+            userService.addUser(user);
         }
 
-        var jwtToken = jwtService.generateJwtToken(googleUser);
-        return ResponseEntity.ok(GoogleUserAuthenticationResponse.builder()
+        var jwtToken = jwtService.generateJwtToken(user);
+        return ResponseEntity.ok(AuthenticationResponse.builder()
                 .jwtToken(jwtToken)
-                .user(googleUser)
+                .userID(user.getUserID())
+                .userEmail(user.getUserEmail())
+                .userFullName(user.getUserFirstName() + " " + user.getUserLastName())
+                .userRoles(user.getUserRoles())
                 .build());
     }
 }

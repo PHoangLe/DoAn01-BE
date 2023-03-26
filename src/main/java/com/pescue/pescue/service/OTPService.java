@@ -1,21 +1,18 @@
 package com.pescue.pescue.service;
 
-import com.pescue.pescue.dto.OTPConfirmEmailDTO;
+import com.pescue.pescue.dto.OTP_DTO;
 import com.pescue.pescue.dto.ValidateOTPConfirmEmailDTO;
 import com.pescue.pescue.model.OTPConfirmEmail;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.OTPConfirmEmailRepository;
-import com.pescue.pescue.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -37,7 +34,7 @@ public class OTPService {
         }
     }
 
-    public ResponseEntity<String> sendOTPConfirmEmail(OTPConfirmEmailDTO request) {
+    public Object sendOTPConfirmEmail(OTP_DTO request) {
         // Tìm email trong bảng user
         String emailAddress = request.getEmailAddress();
         User user = userService.findUserByUserEmail(emailAddress);
@@ -68,7 +65,7 @@ public class OTPService {
         return ResponseEntity.ok("Đã gửi mail thành công");
     }
 
-    public ResponseEntity<String> validateOTPConfirmEmail(ValidateOTPConfirmEmailDTO request) {
+    public Object validateOTPConfirmEmail(ValidateOTPConfirmEmailDTO request) {
 
         List<OTPConfirmEmail> otpConfirmEmail = otpConfirmEmailRepository.findOTPConfirmEmailsByReceiverEmailOrderByDate(request.getEmailAddress());
 
