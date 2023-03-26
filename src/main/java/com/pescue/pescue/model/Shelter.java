@@ -25,10 +25,11 @@ public class Shelter {
     private String district;
     private String city;
     private String shelterPhoneNo;
+    private String shelterLogo;
     private List<String> relatedDocuments;
     private Boolean isApproved = false;
 
-    public Shelter(String userID, String shelterName,  String representativeFacebookLink, String representativeEmailAddress, String unitNoAndStreet, String ward, String district, String city, String shelterPhoneNo, List<String> relatedDocuments) {
+    public Shelter(String userID, String shelterName,  String representativeFacebookLink, String representativeEmailAddress, String unitNoAndStreet, String ward, String district, String city, String shelterPhoneNo, String shelterLogo, List<String> relatedDocuments) {
         this.userID = userID;
         this.shelterName = shelterName;
         this.representativeFacebookLink = representativeFacebookLink;
@@ -38,6 +39,7 @@ public class Shelter {
         this.district = district;
         this.city = city;
         this.shelterPhoneNo = shelterPhoneNo;
+        this.shelterLogo = shelterLogo;
         this.relatedDocuments = relatedDocuments;
     }
 
@@ -51,6 +53,7 @@ public class Shelter {
         this.district = DTO.getDistrict();
         this.city = DTO.getDistrict();
         this.shelterPhoneNo = DTO.getShelterPhoneNo();
+        this.shelterLogo = DTO.getShelterLogo();
         this.relatedDocuments = DTO.getRelatedDocuments();
     }
 

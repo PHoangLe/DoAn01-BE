@@ -1,4 +1,4 @@
-package com.pescue.pescue.auth;
+package com.pescue.pescue.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRegisterRequest {
+public class UserRegisterDTO {
     private String userEmail;
     private String userPassword;
     private String userFirstName;
