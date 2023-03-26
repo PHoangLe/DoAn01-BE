@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OTPConfirmEmailDTO {
+public class OTP_DTO {
     String emailAddress;
 }

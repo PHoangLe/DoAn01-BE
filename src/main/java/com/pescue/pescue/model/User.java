@@ -30,6 +30,7 @@ public class User implements UserDetails {
     private String userLastName;
     private String userAvatar;
     private boolean isLocked = true;
+    private boolean isDeleted = false;
     private List<Role> userRoles;
 
     public String getUserID() {
@@ -90,6 +91,14 @@ public class User implements UserDetails {
 
     public void setLocked(boolean locked) {
         isLocked = locked;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     public void setUserRoles(List<Role> userRoles) {

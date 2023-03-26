@@ -16,6 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 public class AuthenticationResponse {
     private String jwtToken;
-    private String errorMessage;
-    private User user;
+    private String userID;
+    private String userEmail;
+    private List<Role> userRoles;
+    private String userFullName;
 }

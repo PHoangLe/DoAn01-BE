@@ -1,20 +1,12 @@
 package com.pescue.pescue.service;
 
-import com.pescue.pescue.model.OTPConfirmEmail;
-import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.OTPConfirmEmailRepository;
 import com.pescue.pescue.repository.UserRepository;
-import com.pescue.pescue.dto.OTPConfirmEmailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class EmailService {
