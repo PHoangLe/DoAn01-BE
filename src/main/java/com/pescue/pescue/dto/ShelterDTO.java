@@ -21,5 +21,6 @@ public class ShelterDTO {
     private String district;
     private String city;
     private String shelterPhoneNo;
+    private String shelterLogo;
     private List<String> relatedDocuments;
 }

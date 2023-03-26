@@ -1,5 +1,7 @@
 package com.pescue.pescue.auth;
 
+import com.pescue.pescue.dto.AuthenticationDTO;
+import com.pescue.pescue.dto.UserRegisterDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,12 +14,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/userRegister")
-    public Object userRegister(@RequestBody UserRegisterRequest request){
+    public Object userRegister(@RequestBody UserRegisterDTO request){
         return authenticationService.userRegister(request);
     }
 
     @PostMapping("/authenticate")
-    public Object authenticate(@RequestBody AuthenticationRequest request){
+    public Object authenticate(@RequestBody AuthenticationDTO request){
         return authenticationService.authenticate(request);
     }
 

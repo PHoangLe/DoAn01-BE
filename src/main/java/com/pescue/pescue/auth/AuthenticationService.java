@@ -1,9 +1,9 @@
 package com.pescue.pescue.auth;
 
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
+import com.pescue.pescue.dto.AuthenticationDTO;
+import com.pescue.pescue.dto.UserRegisterDTO;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
-import com.pescue.pescue.repository.UserRepository;
 import com.pescue.pescue.service.JwtService;
 import com.pescue.pescue.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public Object userRegister(UserRegisterRequest request){
+    public Object userRegister(UserRegisterDTO request){
         User user = new User(
                 request.getUserEmail(),
                 passwordEncoder.encode(request.getUserPassword()),
@@ -48,7 +47,7 @@ public class AuthenticationService {
                 .build());
     }
 
-    public Object authenticate(AuthenticationRequest request){
+    public Object authenticate(AuthenticationDTO request){
         try{
             Authentication authentication =  authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
