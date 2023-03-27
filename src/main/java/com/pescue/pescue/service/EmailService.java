@@ -34,6 +34,7 @@ public class EmailService {
             return true;
         }
         catch (Exception e){
+            System.out.println(e);
             return false;
         }
     }
