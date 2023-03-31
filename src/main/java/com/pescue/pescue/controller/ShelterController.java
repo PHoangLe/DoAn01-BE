@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/shelter")
-@CrossOrigin("**")
+@CrossOrigin
 public class ShelterController {
     @Autowired
     private ShelterService shelterService;
