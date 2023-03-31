@@ -1,7 +1,7 @@
 package com.pescue.pescue.service;
 
-import com.pescue.pescue.repository.OTPConfirmEmailRepository;
-import com.pescue.pescue.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -14,11 +14,8 @@ public class EmailService {
     private JavaMailSender javaMailSender;
     @Value("${spring.mail.username}")
     private String sender;
-    @Autowired
-    private OTPConfirmEmailRepository otpConfirmEmailRepository;
-    @Autowired
-    private UserRepository userRepository;
 
+    Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     public boolean sendMail(String receiverEmail, String emailBody, String subject) {
         try{
@@ -30,6 +27,8 @@ public class EmailService {
             mailMessage.setSubject(subject);
 
             javaMailSender.send(mailMessage);
+
+            logger.trace("Mail has been sent to: " + receiverEmail);
 
             return true;
         }

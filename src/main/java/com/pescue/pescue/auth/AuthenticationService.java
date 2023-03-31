@@ -27,7 +27,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public Object userRegister(UserRegisterDTO request){
+    public ResponseEntity<Object> userRegister(UserRegisterDTO request){
         User user = new User(
                 request.getUserEmail(),
                 passwordEncoder.encode(request.getUserPassword()),
@@ -47,7 +47,7 @@ public class AuthenticationService {
                 .build());
     }
 
-    public Object authenticate(AuthenticationDTO request){
+    public ResponseEntity<Object> authenticate(AuthenticationDTO request){
         try{
             Authentication authentication =  authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -78,12 +78,13 @@ public class AuthenticationService {
         }
     }
 
-    public Object googleUserAuthenticate(GoogleUserAuthenticationRequest request){
+    public ResponseEntity<Object> googleUserAuthenticate(GoogleUserAuthenticationRequest request){
         User user = userService.findUserByUserEmail(request.userEmail);
 
         if (user == null){
             user = new User(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
-            userService.addUser(user);
+            if (!userService.addUser(user))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm thông tin người dùng");
         }
 
         var jwtToken = jwtService.generateJwtToken(user);
