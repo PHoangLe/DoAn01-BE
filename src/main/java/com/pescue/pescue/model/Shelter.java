@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 public class Shelter {
     @Id
     private String shelterID;
+    @Indexed(unique = true)
     private String userID;
     private String shelterName;
     private String representativeFacebookLink;

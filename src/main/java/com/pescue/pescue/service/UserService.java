@@ -4,8 +4,6 @@ import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +13,6 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    Logger logger = LoggerFactory.getLogger(UserService.class);
 
     public List<User> getAllUser(){return userRepository.findAll();}
 
@@ -30,7 +27,9 @@ public class UserService {
     }
 
     public User findUserByUserEmail(String emailAddress){
-        return userRepository.findUserByUserEmail(emailAddress).get();
+        if(userRepository.findUserByUserEmail(emailAddress).isPresent())
+            return userRepository.findUserByUserEmail(emailAddress).get();
+        return null;
     }
 
     public User findUserByID(String userID){
@@ -53,10 +52,10 @@ public class UserService {
             userRepository.insert(user);
         }
         catch (Exception e){
-            logger.error("There is an error occur while adding user to database: " + user);
+//            logger.error("There is an error occur while adding user to database: " + user);
             return false;
         }
-        logger.trace("User information has been added to database: " + user);
+//        logger.trace("User information has been added to database: " + user);
         return true;
     }
 
@@ -67,7 +66,7 @@ public class UserService {
         user.setUserRoles(currentRole);
 
         if(!updateUser(user)) {
-            logger.error("There is an error occur while adding role for user: " + userID);
+//            logger.error("There is an error occur while adding role for user: " + userID);
             return false;
         }
         return true;

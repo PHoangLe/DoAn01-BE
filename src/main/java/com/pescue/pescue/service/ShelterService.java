@@ -25,11 +25,15 @@ public class ShelterService {
     Logger logger = LoggerFactory.getLogger(ShelterService.class);
 
     public Shelter findShelterByUserID(String userID){
-        return shelterRepository.findShelterByUserID(userID).get();
+        if (shelterRepository.findShelterByUserID(userID).isPresent())
+            return shelterRepository.findShelterByUserID(userID).get();
+        return null;
     }
 
     public Shelter findShelterByShelterID(String shelterID){
-        return shelterRepository.findShelterByShelterID(shelterID).get();
+        if (shelterRepository.findShelterByShelterID(shelterID).isPresent())
+            return shelterRepository.findShelterByShelterID(shelterID).get();
+        return null;
     }
 
     public boolean updateShelter(Shelter shelter){
@@ -45,6 +49,9 @@ public class ShelterService {
     }
 
     public ResponseEntity<Object> registerShelter(Shelter shelter){
+        if (userService.findUserByID(shelter.getUserID()) == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản đăng ký làm trại cứu trợ không tồn tại");
+
         if(!addShelter(shelter)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Đã có lỗi khi thêm thông tin trại cứu trợ vào cơ sở dữ liệu");
         }

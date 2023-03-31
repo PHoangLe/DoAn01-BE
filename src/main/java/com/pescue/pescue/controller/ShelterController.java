@@ -1,5 +1,6 @@
 package com.pescue.pescue.controller;
 
+import com.pescue.pescue.dto.ApproveShelterDTO;
 import com.pescue.pescue.dto.ShelterDTO;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.ShelterService;
@@ -20,7 +21,9 @@ public class ShelterController {
     private ShelterService shelterService;
 
     @PostMapping("/registerShelter")
-    public ResponseEntity<Object> addShelter(ShelterDTO shelter){
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> addShelter(@RequestBody ShelterDTO shelter){
         Shelter tempShelter = shelterService.findShelterByUserID(shelter.getUserID());
 
         if (tempShelter != null)
@@ -39,7 +42,7 @@ public class ShelterController {
     @PostMapping("/approveShelter")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> approveShelter(@RequestBody String shelterID){
-        return shelterService.approveShelter(shelterID);
+    public ResponseEntity<Object> approveShelter(@RequestBody ApproveShelterDTO approveShelterDTO){
+        return shelterService.approveShelter(approveShelterDTO.getShelterID());
     }
 }
