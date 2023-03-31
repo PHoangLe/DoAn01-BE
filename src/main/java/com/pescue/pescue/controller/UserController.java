@@ -4,6 +4,7 @@ import com.pescue.pescue.model.User;
 import com.pescue.pescue.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,8 @@ public class UserController {
     @GetMapping("/getAllUser")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public List<User> fetchAllUser() {
-        return userService.getAllUser();
+    public ResponseEntity<Object> fetchAllUser() {
+        return ResponseEntity.ok(userService.getAllUser());
     }
 
 }

@@ -6,5 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface ShelterRepository extends MongoRepository<Shelter, String> {
-    Optional<Shelter> findByUserID(String userID);
+    Optional<Shelter> findShelterByUserID(String userID);
+    Optional<Shelter> findShelterByShelterID(String shelterID);
 }

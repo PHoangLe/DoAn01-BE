@@ -6,7 +6,6 @@ import com.pescue.pescue.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,16 +16,24 @@ public class UserService {
 
     public List<User> getAllUser(){return userRepository.findAll();}
 
-    public User saveUser(User user){
-        List<Role> userRoles = new ArrayList<>();
-        userRoles.add(Role.ROLE_USER);
-        user.setUserRoles(userRoles);
-        userRepository.insert(user);
-        return user;
+    public boolean updateUser(User user){
+        try {
+            userRepository.save(user);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 
     public User findUserByUserEmail(String emailAddress){
-        return userRepository.findUserByUserEmail(emailAddress).get();
+        if(userRepository.findUserByUserEmail(emailAddress).isPresent())
+            return userRepository.findUserByUserEmail(emailAddress).get();
+        return null;
+    }
+
+    public User findUserByID(String userID){
+        return userRepository.findUserByUserID(userID).get();
     }
 
     public boolean unlockUser(String emailAddress){
@@ -40,7 +47,28 @@ public class UserService {
         return true;
     }
 
-    public void addUser(User user) {
-        userRepository.insert(user);
+    public boolean addUser(User user) {
+        try {
+            userRepository.insert(user);
+        }
+        catch (Exception e){
+//            logger.error("There is an error occur while adding user to database: " + user);
+            return false;
+        }
+//        logger.trace("User information has been added to database: " + user);
+        return true;
+    }
+
+    public boolean addRoleForUser(String userID, Role role){
+        User user = findUserByID(userID);
+        List<Role> currentRole = user.getUserRoles();
+        currentRole.add(role);
+        user.setUserRoles(currentRole);
+
+        if(!updateUser(user)) {
+//            logger.error("There is an error occur while adding role for user: " + userID);
+            return false;
+        }
+        return true;
     }
 }
