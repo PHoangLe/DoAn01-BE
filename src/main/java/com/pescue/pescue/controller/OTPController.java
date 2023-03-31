@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/otp")
-@CrossOrigin(origins = "**")
+@CrossOrigin("**")
 public class OTPController {
     private final OTPService otpService;
 
