@@ -4,12 +4,10 @@ import com.pescue.pescue.model.User;
 import com.pescue.pescue.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,4 +26,21 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUser());
     }
 
+    @GetMapping("/getUserByEmail/{userEmail}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getUserByEmail(@PathVariable String userEmail) {
+        if (userService.findUserByUserEmail(userEmail) == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại người dùng cần tìm");
+        return ResponseEntity.ok(userService.findUserByUserEmail(userEmail));
+    }
+
+    @GetMapping("/getUserByEmail/{userID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getUserByUserID(@PathVariable String userID) {
+        if (userService.findUserByID(userID) == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại người dùng cần tìm");
+        return ResponseEntity.ok(userService.findUserByID(userID));
+    }
 }

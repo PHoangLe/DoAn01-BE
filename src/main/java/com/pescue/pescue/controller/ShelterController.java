@@ -45,4 +45,22 @@ public class ShelterController {
     public ResponseEntity<Object> approveShelter(@RequestBody ApproveShelterDTO approveShelterDTO){
         return shelterService.approveShelter(approveShelterDTO.getShelterID());
     }
+
+    @GetMapping("/getShelterByUserID/{userID}")
+    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getShelterByUserID(@PathVariable String userID){
+        if (shelterService.findShelterByUserID(userID) == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại trại cứu trợ cần tìm");
+        return ResponseEntity.ok(shelterService.findShelterByUserID(userID));
+    }
+
+    @GetMapping("/getShelterByShelterID/{shelterID}")
+    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getShelterByShelterID(@PathVariable String shelterID){
+        if (shelterService.findShelterByShelterID(shelterID) == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại trại cứu trợ cần tìm");
+        return ResponseEntity.ok(shelterService.findShelterByShelterID(shelterID));
+    }
 }
