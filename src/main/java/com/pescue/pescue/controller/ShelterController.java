@@ -2,6 +2,7 @@ package com.pescue.pescue.controller;
 
 import com.pescue.pescue.dto.ApproveShelterDTO;
 import com.pescue.pescue.dto.ShelterDTO;
+import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.ShelterService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -51,7 +52,9 @@ public class ShelterController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getShelterByUserID(@PathVariable String userID){
         if (shelterService.findShelterByUserID(userID) == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại trại cứu trợ cần tìm");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại trại cứu trợ cần tìm")
+                    .build());
         return ResponseEntity.ok(shelterService.findShelterByUserID(userID));
     }
 
@@ -60,7 +63,9 @@ public class ShelterController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getShelterByShelterID(@PathVariable String shelterID){
         if (shelterService.findShelterByShelterID(shelterID) == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại trại cứu trợ cần tìm");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại trại cứu trợ cần tìm")
+                    .build());
         return ResponseEntity.ok(shelterService.findShelterByShelterID(shelterID));
     }
 }

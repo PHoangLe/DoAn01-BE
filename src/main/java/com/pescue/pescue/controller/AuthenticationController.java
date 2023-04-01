@@ -1,5 +1,7 @@
-package com.pescue.pescue.auth;
+package com.pescue.pescue.controller;
 
+import com.pescue.pescue.service.AuthenticationService;
+import com.pescue.pescue.dto.GoogleUserAuthenticationRequestDTO;
 import com.pescue.pescue.dto.AuthenticationDTO;
 import com.pescue.pescue.dto.UserRegisterDTO;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticateGoogleUser")
-    public Object googleUserAuthenticate(@RequestBody GoogleUserAuthenticationRequest request){
+    public Object googleUserAuthenticate(@RequestBody GoogleUserAuthenticationRequestDTO request){
 
         return authenticationService.googleUserAuthenticate(request);
     }
