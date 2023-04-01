@@ -3,6 +3,7 @@ package com.pescue.pescue.service;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.repository.ShelterRepository;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
