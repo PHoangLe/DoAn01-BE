@@ -1,12 +1,10 @@
-package com.pescue.pescue.auth;
+package com.pescue.pescue.dto;
 
 import com.pescue.pescue.model.Role;
-import com.pescue.pescue.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.AuthenticationException;
 
 import java.util.List;
 
@@ -14,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class AuthenticationResponseDTO {
     private String jwtToken;
     private String userID;
     private String userEmail;

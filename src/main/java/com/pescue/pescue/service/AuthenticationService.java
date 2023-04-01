@@ -1,11 +1,8 @@
-package com.pescue.pescue.auth;
+package com.pescue.pescue.service;
 
-import com.pescue.pescue.dto.AuthenticationDTO;
-import com.pescue.pescue.dto.UserRegisterDTO;
+import com.pescue.pescue.dto.*;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
-import com.pescue.pescue.service.JwtService;
-import com.pescue.pescue.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +43,14 @@ public class AuthenticationService {
         }
         catch (Exception e){
             logger.error("Register user failed: " + request.getUserEmail() + "EXISTED");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản đã tồn tại");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Tài khoản đã tồn tại")
+                    .build());
         }
         logger.trace("Successfully register user: " + request.getUserEmail());
-        return ResponseEntity.status(HttpStatus.CREATED).body("Tạo tài khoản mới thành công");
+        return ResponseEntity.status(HttpStatus.CREATED).body(StringResponseDTO.builder()
+                .message("Tạo tài khoản mới thành công")
+                .build());
     }
 
     public ResponseEntity<Object> authenticate(AuthenticationDTO request){
@@ -65,17 +66,21 @@ public class AuthenticationService {
 
             if (user.isLocked()) {
                 logger.error("Authenticate user failed: " + request.getUserEmail() + " LOCKED");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bạn vui lòng xác thực tài khoản để đăng nhập");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                        .message("Bạn vui lòng xác thực tài khoản để đăng nhập")
+                        .build());
             }
 
             if (user.isDeleted()) {
                 logger.error("Authenticate user failed: " + request.getUserEmail() + " DELETED");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản này không còn tồn tại");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                        .message("Tài khoản này không còn tồn tại")
+                        .build());
             }
 
             var jwtToken = jwtService.generateJwtToken(user);
             logger.trace("Successfully authenticate user: " + request.getUserEmail());
-            return ResponseEntity.ok(AuthenticationResponse.builder()
+            return ResponseEntity.ok(AuthenticationResponseDTO.builder()
                     .jwtToken(jwtToken)
                     .userID(user.getUserID())
                     .userEmail(user.getUserEmail())
@@ -86,23 +91,27 @@ public class AuthenticationService {
         }
         catch (AuthenticationException e){
             logger.error("Authenticate user failed: " + request.getUserEmail() + " BAD_CREDENTIAL");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản hoăc mật khẩu không hợp lệ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( StringResponseDTO.builder()
+                    .message("Tài khoản hoăc mật khẩu không hợp lệ")
+                    .build());
         }
     }
 
-    public ResponseEntity<Object> googleUserAuthenticate(GoogleUserAuthenticationRequest request){
-        User user = userService.findUserByUserEmail(request.userEmail);
+    public ResponseEntity<Object> googleUserAuthenticate(GoogleUserAuthenticationRequestDTO request){
+        User user = userService.findUserByUserEmail(request.getUserEmail());
 
         if (user == null){
-            user = new User(request.userEmail, request.userFirstName, request.userLastName, request.userAvatar, List.of(Role.ROLE_USER));
+            user = new User(request.getUserEmail(), request.getUserFirstName(), request.getUserLastName(), request.getUserAvatar(), List.of(Role.ROLE_USER));
             if (!userService.addUser(user))
                 logger.error("Authenticate user failed: " + request.getUserEmail());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm thông tin người dùng");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                        .message("Có lỗi xảy ra khi thêm thông tin người dùng")
+                        .build());
         }
 
         var jwtToken = jwtService.generateJwtToken(user);
         logger.trace("Successfully authenticate user: " + request.getUserEmail());
-        return ResponseEntity.ok(AuthenticationResponse.builder()
+        return ResponseEntity.ok(AuthenticationResponseDTO.builder()
                 .jwtToken(jwtToken)
                 .userID(user.getUserID())
                 .userEmail(user.getUserEmail())

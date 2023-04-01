@@ -1,6 +1,7 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.OTP_DTO;
+import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.dto.ValidateOTPConfirmEmailDTO;
 import com.pescue.pescue.model.OTPConfirmEmail;
 import com.pescue.pescue.model.User;
@@ -47,7 +48,9 @@ public class OTPService {
 
         if (user == null) {
             logger.error("Can't find user with emailAddress: " + emailAddress);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Người dùng không tồn tại");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Người dùng không tồn tại")
+                    .build());
         }
 
         // Tạo OTP
@@ -61,7 +64,9 @@ public class OTPService {
 
         if (!emailStatus) {
             logger.error("There is an error occur when sending OTP to: " + emailAddress);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi gửi mail");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Có lỗi xảy ra khi gửi mail")
+                    .build());
         }
 
         logger.trace("OTP has been sent to: " + emailAddress);
@@ -73,10 +78,14 @@ public class OTPService {
                 otp);
 
         if (!addOTPConfirmEmail(otpConfirmEmail)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Đã gửi mail thành công nhưng có lỗi khi lưu OTP vào cơ sở dữ liệu");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Đã gửi mail thành công nhưng có lỗi khi lưu OTP vào cơ sở dữ liệu")
+                    .build());
         }
 
-        return ResponseEntity.ok("Đã gửi mail thành công");
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã gửi mail thành công")
+                .build());
     }
 
     public boolean addOTPConfirmEmail(OTPConfirmEmail confirmEmail){
@@ -99,32 +108,44 @@ public class OTPService {
 
         if(request.getOtp().length() != 6 || !isNumeric(request.getOtp())) {
             logger.error("Invalid OTP " + request);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP không hợp lệ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Mã OTP không hợp lệ")
+                    .build());
         }
 
         if (otpConfirmEmail.isEmpty()) {
             logger.error("Invalid Email Address " + request);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email không hợp lệ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Email không hợp lệ")
+                    .build());
         }
 
         if (recentOtpConfirmEmail.getExpiredDate().before(new Date(System.currentTimeMillis()))) {
             logger.error("Expired OTP " + request);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP đã hết hạn");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Mã OTP đã hết hạn")
+                    .build());
         }
 
         if (request.getOtp().equals(recentOtpConfirmEmail.getOTP())) {
             boolean isUnlock = userService.unlockUser(recentOtpConfirmEmail.getReceiverEmail());
             if (!isUnlock) {
                 logger.error("Invalid User " + request);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Người dùng không tồn tại");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                        .message("Người dùng không tồn tại")
+                        .build());
             }
 
             logger.error("Valid OTP " + request);
-            return ResponseEntity.ok("Mã OTP hợp lệ");
+            return ResponseEntity.ok(StringResponseDTO.builder()
+                    .message("Mã OTP hợp lệ")
+                    .build());
         }
 
         logger.error("Invalid OTP " + request);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mã OTP không trùng khớp");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                .message("Mã OTP không trùng khớp")
+                .build());
 
     }
 

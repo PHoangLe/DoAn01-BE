@@ -1,5 +1,6 @@
 package com.pescue.pescue.controller;
 
+import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,7 +32,9 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getUserByEmail(@PathVariable String userEmail) {
         if (userService.findUserByUserEmail(userEmail) == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại người dùng cần tìm");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại người dùng cần tìm")
+                    .build());
         return ResponseEntity.ok(userService.findUserByUserEmail(userEmail));
     }
 
@@ -40,7 +43,9 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getUserByUserID(@PathVariable String userID) {
         if (userService.findUserByID(userID) == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại người dùng cần tìm");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại người dùng cần tìm")
+                    .build());
         return ResponseEntity.ok(userService.findUserByID(userID));
     }
 }

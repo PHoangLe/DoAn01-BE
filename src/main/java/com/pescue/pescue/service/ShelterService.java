@@ -1,5 +1,6 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.repository.ShelterRepository;
@@ -57,15 +58,21 @@ public class ShelterService {
 
     public ResponseEntity<Object> registerShelter(Shelter shelter){
         if (userService.findUserByID(shelter.getUserID()) == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản đăng ký làm trại cứu trợ không tồn tại");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Tài khoản đăng ký làm trại cứu trợ không tồn tại")
+                    .build());
 
         if(!addShelter(shelter)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Đã có lỗi khi thêm thông tin trại cứu trợ vào cơ sở dữ liệu");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Đã có lỗi khi thêm thông tin trại cứu trợ vào cơ sở dữ liệu")
+                    .build());
         }
 
         logger.trace("Shelter information has been inserted in the database: " + shelter);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Bạn đã gửi yêu cầu làm trại cứu hộ thành công. Vui lòng đợi 3-5 ngày để nhận được kết quả đăng ký");
+        return ResponseEntity.status(HttpStatus.CREATED).body(StringResponseDTO.builder()
+                .message("Bạn đã gửi yêu cầu làm trại cứu hộ thành công. Vui lòng đợi 3-5 ngày để nhận được kết quả đăng ký")
+                .build());
     }
 
     public boolean addShelter(Shelter shelter){
@@ -87,20 +94,28 @@ public class ShelterService {
         Shelter shelter = findShelterByShelterID(shelterID);
 
         if (shelter == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Không tồn tại trại cứu trợ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại trại cứu trợ")
+                    .build());
 
         shelter.setApproved(true);
 
         if(updateShelter(shelter) && sendNotifyEmail(shelter)) {
             if (!userService.addRoleForUser(shelter.getUserID(), Role.ROLE_SHELTER_MANAGER)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi thêm quyền cho người dùng");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                        .message("Có lỗi xảy ra khi thêm quyền cho người dùng")
+                        .build());
             }
 
             logger.trace("Added ROLE_SHELTER_MANAGER for user with Id: " + shelter.getUserID());
-            return ResponseEntity.ok("Đã xác thực yêu cầu làm trại cứu trợ thành công");
+            return ResponseEntity.ok(StringResponseDTO.builder()
+                    .message("Đã xác thực yêu cầu làm trại cứu trợ thành công")
+                    .build());
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Đã có lỗi xảy ra vui lòng thử lại sau");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                .message("Đã có lỗi xảy ra vui lòng thử lại sau")
+                .build());
     }
 
     private boolean sendNotifyEmail(Shelter shelter) {
