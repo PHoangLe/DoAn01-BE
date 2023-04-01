@@ -45,8 +45,10 @@ public class OTPService {
         String emailAddress = request.getEmailAddress();
         User user = userService.findUserByUserEmail(emailAddress);
 
-        if (user == null)
+        if (user == null) {
+            logger.error("Can't find user with emailAddress: " + emailAddress);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Người dùng không tồn tại");
+        }
 
         // Tạo OTP
         String otp = generateOTP();
@@ -58,11 +60,11 @@ public class OTPService {
         boolean emailStatus = emailService.sendMail(emailAddress, emailBody, "Xác nhận tài khoản");
 
         if (!emailStatus) {
-            logger.trace("OTP has been sent to: " + emailAddress);
+            logger.error("There is an error occur when sending OTP to: " + emailAddress);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Có lỗi xảy ra khi gửi mail");
         }
 
-        logger.error("There is an error occur when sending OTP to: " + emailAddress);
+        logger.trace("OTP has been sent to: " + emailAddress);
 
         // Lưu lịch sử gửi mail vào db
         OTPConfirmEmail otpConfirmEmail = new OTPConfirmEmail(emailAddress,
@@ -70,14 +72,23 @@ public class OTPService {
                 new Date(System.currentTimeMillis() + OTP_EXPIRATION_TIME),
                 otp);
 
-        addOTPConfirmEmail(otpConfirmEmail);
+        if (!addOTPConfirmEmail(otpConfirmEmail)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Đã gửi mail thành công nhưng có lỗi khi lưu OTP vào cơ sở dữ liệu");
+        }
 
         return ResponseEntity.ok("Đã gửi mail thành công");
     }
 
-    public void addOTPConfirmEmail(OTPConfirmEmail confirmEmail){
-        otpConfirmEmailRepository.insert(confirmEmail);
+    public boolean addOTPConfirmEmail(OTPConfirmEmail confirmEmail){
+        try {
+            otpConfirmEmailRepository.insert(confirmEmail);
+        }
+        catch (Exception e){
+            logger.error("There is an error occur when adding OTPConfirmEmail to database: " + confirmEmail);
+            return false;
+        }
         logger.trace("OTP of " + confirmEmail.getReceiverEmail() +  " has been stored to database");
+        return true;
     }
 
     public ResponseEntity<Object> validateOTPConfirmEmail(ValidateOTPConfirmEmailDTO request) {

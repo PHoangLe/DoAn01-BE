@@ -26,14 +26,20 @@ public class ShelterService {
     Logger logger = LoggerFactory.getLogger(ShelterService.class);
 
     public Shelter findShelterByUserID(String userID){
-        if (shelterRepository.findShelterByUserID(userID).isPresent())
+        if (shelterRepository.findShelterByUserID(userID).isPresent()) {
+            logger.trace("Found shelter with userID: " + userID);
             return shelterRepository.findShelterByUserID(userID).get();
+        }
+        logger.trace("Can't find shelter with userID: " + userID);
         return null;
     }
 
     public Shelter findShelterByShelterID(String shelterID){
-        if (shelterRepository.findShelterByShelterID(shelterID).isPresent())
+        if (shelterRepository.findShelterByShelterID(shelterID).isPresent()) {
+            logger.trace("Found shelter with shelterID: " + shelterID);
             return shelterRepository.findShelterByShelterID(shelterID).get();
+        }
+        logger.trace("Can't find shelter with shelterID: " + shelterID);
         return null;
     }
 
