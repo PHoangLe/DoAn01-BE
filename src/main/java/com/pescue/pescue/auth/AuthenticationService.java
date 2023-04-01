@@ -71,6 +71,7 @@ public class AuthenticationService {
                     .userEmail(user.getUserEmail())
                     .userFullName(user.getUserFirstName() + " " + user.getUserLastName())
                     .userRoles(user.getUserRoles())
+                    .userAvatar(user.getUserAvatar())
                     .build());
         }
         catch (AuthenticationException e){
@@ -94,6 +95,7 @@ public class AuthenticationService {
                 .userEmail(user.getUserEmail())
                 .userFullName(user.getUserFirstName() + " " + user.getUserLastName())
                 .userRoles(user.getUserRoles())
+                .userAvatar(user.getUserAvatar())
                 .build());
     }
 }

@@ -20,4 +20,5 @@ public class AuthenticationResponse {
     private String userEmail;
     private List<Role> userRoles;
     private String userFullName;
+    private String userAvatar;
 }
