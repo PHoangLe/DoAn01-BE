@@ -23,7 +23,7 @@ public class AuthenticationController {
         return authenticationService.authenticate(request);
     }
 
-    @GetMapping("/authenticateGoogleUser")
+    @PostMapping("/authenticateGoogleUser")
     public Object googleUserAuthenticate(@RequestBody GoogleUserAuthenticationRequest request){
 
         return authenticationService.googleUserAuthenticate(request);
