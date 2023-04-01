@@ -71,9 +71,10 @@ public class UserService {
         user.setUserRoles(currentRole);
 
         if(!updateUser(user)) {
-            logger.error("There is an error occur while adding role for user: " + userID);
+            logger.error("There is an error occur while adding role " + role + " for user: " + userID);
             return false;
         }
+        logger.trace("Succeed to add role " + role + " to user: " + userID);
         return true;
     }
 }
