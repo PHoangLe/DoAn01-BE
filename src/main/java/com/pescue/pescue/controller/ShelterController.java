@@ -34,7 +34,7 @@ public class ShelterController {
     }
 
     @GetMapping("/getAllShelter")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllShelter(){
         return ResponseEntity.ok(shelterService.findAllShelter());
@@ -67,5 +67,16 @@ public class ShelterController {
                     .message("Không tồn tại trại cứu trợ cần tìm")
                     .build());
         return ResponseEntity.ok(shelterService.findShelterByShelterID(shelterID));
+    }
+
+    @GetMapping("/getShelterByShelterName/{shelterName}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getShelterByShelterName(@PathVariable String shelterName){
+        if (shelterService.findShelterByShelterName(shelterName) == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại trại cứu trợ cần tìm")
+                    .build());
+        return ResponseEntity.ok(shelterService.findShelterByShelterName(shelterName));
     }
 }

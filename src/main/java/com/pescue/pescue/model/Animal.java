@@ -1,5 +1,6 @@
 package com.pescue.pescue.model;
 
+import com.pescue.pescue.dto.AnimalDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -20,16 +21,17 @@ public class Animal {
     private Integer animalAge;
     private boolean animalGender;
     private Integer animalWeight;
-    private Integer animalBreed;
-    private Integer animalColor;
-    private Integer animalImg;
+    private String animalBreed;
+    private String animalColor;
+    private String animalImg;
     private boolean isVaccinated;
     private boolean isDeWormed;
     private boolean isSterilized;
     private boolean isFriendly;
-    private List<String> onlineAdapters;
+    private boolean isDeleted = false;
+    private List<String> onlineAdaptors;
 
-    public Animal(String shelterID, String animalName, Integer animalAge, boolean animalGender, Integer animalWeight, Integer animalBreed, Integer animalColor, Integer animalImg, boolean isVaccinated, boolean isDeWormed, boolean isSterilized, boolean isFriendly, List<String> onlineAdapters) {
+    public Animal(String shelterID, String animalName, Integer animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalColor, String animalImg, boolean isVaccinated, boolean isDeWormed, boolean isSterilized, boolean isFriendly, List<String> onlineAdapters) {
         this.shelterID = shelterID;
         this.animalName = animalName;
         this.animalAge = animalAge;
@@ -42,7 +44,23 @@ public class Animal {
         this.isDeWormed = isDeWormed;
         this.isSterilized = isSterilized;
         this.isFriendly = isFriendly;
-        this.onlineAdapters = onlineAdapters;
+        this.onlineAdaptors = onlineAdapters;
+    }
+
+    public Animal(AnimalDTO animalDTO){
+        this.shelterID = animalDTO.getShelterID();
+        this.animalName = animalDTO.getAnimalName();
+        this.animalAge = animalDTO.getAnimalAge();
+        this.animalGender = animalDTO.isAnimalGender();
+        this.animalWeight = animalDTO.getAnimalWeight();
+        this.animalBreed = animalDTO.getAnimalBreed();
+        this.animalColor = animalDTO.getAnimalColor();
+        this.animalImg = animalDTO.getAnimalImg();
+        this.isVaccinated = animalDTO.isVaccinated();
+        this.isDeWormed = animalDTO.isDeWormed();
+        this.isSterilized = animalDTO.isSterilized();
+        this.isFriendly = animalDTO.isFriendly();
+        this.onlineAdaptors = animalDTO.getOnlineAdaptors();
     }
 
     public String getAnimalID() {
@@ -93,27 +111,27 @@ public class Animal {
         this.animalWeight = animalWeight;
     }
 
-    public Integer getAnimalBreed() {
+    public String getAnimalBreed() {
         return animalBreed;
     }
 
-    public void setAnimalBreed(Integer animalBreed) {
+    public void setAnimalBreed(String animalBreed) {
         this.animalBreed = animalBreed;
     }
 
-    public Integer getAnimalColor() {
+    public String getAnimalColor() {
         return animalColor;
     }
 
-    public void setAnimalColor(Integer animalColor) {
+    public void setAnimalColor(String animalColor) {
         this.animalColor = animalColor;
     }
 
-    public Integer getAnimalImg() {
+    public String getAnimalImg() {
         return animalImg;
     }
 
-    public void setAnimalImg(Integer animalImg) {
+    public void setAnimalImg(String animalImg) {
         this.animalImg = animalImg;
     }
 
@@ -149,11 +167,19 @@ public class Animal {
         isFriendly = friendly;
     }
 
-    public List<String> getOnlineAdapters() {
-        return onlineAdapters;
+    public boolean isDeleted() {
+        return isDeleted;
     }
 
-    public void setOnlineAdapters(List<String> onlineAdapters) {
-        this.onlineAdapters = onlineAdapters;
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public List<String> getOnlineAdaptors() {
+        return onlineAdaptors;
+    }
+
+    public void setOnlineAdaptors(List<String> onlineAdaptors) {
+        this.onlineAdaptors = onlineAdaptors;
     }
 }

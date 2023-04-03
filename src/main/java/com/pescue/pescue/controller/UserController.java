@@ -23,7 +23,7 @@ public class UserController {
     @GetMapping("/getAllUser")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> fetchAllUser() {
+    public ResponseEntity<Object> getAllUser() {
         return ResponseEntity.ok(userService.getAllUser());
     }
 

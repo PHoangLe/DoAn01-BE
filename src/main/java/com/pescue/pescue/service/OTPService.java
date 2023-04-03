@@ -93,7 +93,7 @@ public class OTPService {
             otpConfirmEmailRepository.insert(confirmEmail);
         }
         catch (Exception e){
-            logger.error("There is an error occur when adding OTPConfirmEmail to database: " + confirmEmail);
+            logger.error("There is an error occur when inserting OTPConfirmEmail to database: " + confirmEmail);
             return false;
         }
         logger.trace("OTP of " + confirmEmail.getReceiverEmail() +  " has been stored to database");
