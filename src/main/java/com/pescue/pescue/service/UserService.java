@@ -3,7 +3,6 @@ package com.pescue.pescue.service;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ public class UserService {
             userRepository.insert(user);
         }
         catch (Exception e){
-            logger.error("There is an error occur while adding user to database: " + user);
+            logger.error("There is an error occur while inserting user to database: " + user);
             return false;
         }
         logger.trace("User information has been added to database: " + user);
@@ -71,7 +70,7 @@ public class UserService {
         user.setUserRoles(currentRole);
 
         if(!updateUser(user)) {
-            logger.error("There is an error occur while adding role " + role + " for user: " + userID);
+            logger.error("There is an error occur while inserting role " + role + " for user: " + userID);
             return false;
         }
         logger.trace("Succeed to add role " + role + " to user: " + userID);

@@ -31,7 +31,7 @@ public class ShelterService {
             logger.trace("Found shelter with userID: " + userID);
             return shelterRepository.findShelterByUserID(userID).get();
         }
-        logger.trace("Can't find shelter with userID: " + userID);
+        logger.trace("Can't find any shelter with userID: " + userID);
         return null;
     }
 
@@ -40,7 +40,7 @@ public class ShelterService {
             logger.trace("Found shelter with shelterID: " + shelterID);
             return shelterRepository.findShelterByShelterID(shelterID).get();
         }
-        logger.trace("Can't find shelter with shelterID: " + shelterID);
+        logger.trace("Can't find any shelter with shelterID: " + shelterID);
         return null;
     }
 
@@ -52,7 +52,7 @@ public class ShelterService {
             logger.error("There is an error occur while saving shelter information: " + shelter);
             return false;
         }
-        logger.trace("Shelter information has been saved in the database: " + shelter);
+        logger.trace("Shelter information have been saved in the database: " + shelter);
         return true;
     }
 
@@ -68,7 +68,7 @@ public class ShelterService {
                     .build());
         }
 
-        logger.trace("Shelter information has been inserted in the database: " + shelter);
+        logger.trace("Shelter information have been inserted in the database: " + shelter);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(StringResponseDTO.builder()
                 .message("Bạn đã gửi yêu cầu làm trại cứu hộ thành công. Vui lòng đợi 3-5 ngày để nhận được kết quả đăng ký")
@@ -80,7 +80,7 @@ public class ShelterService {
             shelterRepository.insert(shelter);
         }
         catch (Exception e){
-            logger.error("There is an error occur while adding shelter information to database: " + shelter);
+            logger.error("There is an error occur while inserting shelter information to database: " + shelter);
             return false;
         }
         return true;
@@ -122,5 +122,14 @@ public class ShelterService {
         return emailService.sendMail(shelter.getRepresentativeEmailAddress(),
                 "Đăng ký làm trại cứu trợ của bạn đã được chấp thuận. Tài khoản của bạn đã trở thành tài khoản của trại cứu trợ. Chào mừng bạn đến với Pescue!",
                 "Kết quả đăng ký làm trại cứu hộ");
+    }
+
+    public Shelter findShelterByShelterName(String shelterName) {
+        if (shelterRepository.findShelterByShelterName(shelterName).isPresent()) {
+            logger.trace("Found shelter with shelterName: " + shelterName);
+            return shelterRepository.findShelterByShelterName(shelterName).get();
+        }
+        logger.trace("Can't find any shelter with shelterName: " + shelterName);
+        return null;
     }
 }
