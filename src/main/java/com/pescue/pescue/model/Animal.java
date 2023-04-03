@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document("Animal")
@@ -24,14 +25,14 @@ public class Animal {
     private String animalBreed;
     private String animalColor;
     private String animalImg;
-    private boolean isVaccinated;
-    private boolean isDeWormed;
-    private boolean isSterilized;
-    private boolean isFriendly;
-    private boolean isDeleted = false;
+    private boolean vaccinated;
+    private boolean deWormed;
+    private boolean sterilized;
+    private boolean friendly;
+    private boolean deleted = false;
     private List<String> onlineAdaptors;
 
-    public Animal(String shelterID, String animalName, Integer animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalColor, String animalImg, boolean isVaccinated, boolean isDeWormed, boolean isSterilized, boolean isFriendly, List<String> onlineAdapters) {
+    public Animal(String shelterID, String animalName, Integer animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalColor, String animalImg, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters) {
         this.shelterID = shelterID;
         this.animalName = animalName;
         this.animalAge = animalAge;
@@ -40,10 +41,10 @@ public class Animal {
         this.animalBreed = animalBreed;
         this.animalColor = animalColor;
         this.animalImg = animalImg;
-        this.isVaccinated = isVaccinated;
-        this.isDeWormed = isDeWormed;
-        this.isSterilized = isSterilized;
-        this.isFriendly = isFriendly;
+        this.vaccinated = vaccinated;
+        this.deWormed = deWormed;
+        this.sterilized = sterilized;
+        this.friendly = friendly;
         this.onlineAdaptors = onlineAdapters;
     }
 
@@ -56,11 +57,12 @@ public class Animal {
         this.animalBreed = animalDTO.getAnimalBreed();
         this.animalColor = animalDTO.getAnimalColor();
         this.animalImg = animalDTO.getAnimalImg();
-        this.isVaccinated = animalDTO.isVaccinated();
-        this.isDeWormed = animalDTO.isDeWormed();
-        this.isSterilized = animalDTO.isSterilized();
-        this.isFriendly = animalDTO.isFriendly();
-        this.onlineAdaptors = animalDTO.getOnlineAdaptors();
+        this.vaccinated = animalDTO.isVaccinated();
+        this.deWormed = animalDTO.isDeWormed();
+        this.sterilized = animalDTO.isSterilized();
+        this.friendly = animalDTO.isFriendly();
+        this.onlineAdaptors = new ArrayList<>();
+        this.deleted = false;
     }
 
     public String getAnimalID() {
@@ -136,43 +138,43 @@ public class Animal {
     }
 
     public boolean isVaccinated() {
-        return isVaccinated;
+        return vaccinated;
     }
 
     public void setVaccinated(boolean vaccinated) {
-        isVaccinated = vaccinated;
+        this.vaccinated = vaccinated;
     }
 
     public boolean isDeWormed() {
-        return isDeWormed;
+        return deWormed;
     }
 
     public void setDeWormed(boolean deWormed) {
-        isDeWormed = deWormed;
+        this.deWormed = deWormed;
     }
 
     public boolean isSterilized() {
-        return isSterilized;
+        return sterilized;
     }
 
     public void setSterilized(boolean sterilized) {
-        isSterilized = sterilized;
+        this.sterilized = sterilized;
     }
 
     public boolean isFriendly() {
-        return isFriendly;
+        return friendly;
     }
 
     public void setFriendly(boolean friendly) {
-        isFriendly = friendly;
+        this.friendly = friendly;
     }
 
     public boolean isDeleted() {
-        return isDeleted;
+        return deleted;
     }
 
     public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+        this.deleted = deleted;
     }
 
     public List<String> getOnlineAdaptors() {

@@ -20,10 +20,8 @@ public class AnimalDTO {
     private String animalBreed;
     private String animalColor;
     private String animalImg;
-    private boolean isVaccinated;
-    private boolean isDeWormed;
-    private boolean isSterilized;
-    private boolean isFriendly;
-    private boolean isDeleted = false;
-    private List<String> onlineAdaptors;
+    private boolean vaccinated;
+    private boolean deWormed;
+    private boolean sterilized;
+    private boolean friendly;
 }

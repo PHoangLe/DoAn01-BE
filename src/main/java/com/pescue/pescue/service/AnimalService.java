@@ -76,7 +76,7 @@ public class AnimalService {
     }
 
     public List<Animal> findAnimalsByShelterID(String shelterID){
-        if (animalRepository.findAnimalsByShelterIDAndDeletedIsFalse(shelterID).isEmpty()) {
+        if (!animalRepository.findAnimalsByShelterIDAndDeletedIsFalse(shelterID).isEmpty()) {
             logger.trace("Found animals with shelterID: " + shelterID);
             return animalRepository.findAnimalsByShelterIDAndDeletedIsFalse(shelterID);
         }

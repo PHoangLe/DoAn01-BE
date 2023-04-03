@@ -5,6 +5,8 @@ import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.model.Animal;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.AnimalService;
+import com.pescue.pescue.service.ShelterService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,21 +21,26 @@ public class AnimalController {
 
     @Autowired
     AnimalService animalService;
+    @Autowired
+    ShelterService shelterService;
 
     @GetMapping("/getAllAnimals")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllAnimals(){
         return ResponseEntity.ok(animalService.findAllAnimals());
     }
 
-    @GetMapping("/getAnimalsByShelterID")
+    @GetMapping("/getAnimalsByShelterID/{shelterID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
-    public ResponseEntity<Object> getAnimalsByShelterID(@RequestBody String shelterID){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getAnimalsByShelterID(@PathVariable String shelterID){
         return ResponseEntity.ok(animalService.findAnimalsByShelterID(shelterID));
     }
 
     @PostMapping("/addAnimal")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> addAnimal(@RequestBody AnimalDTO animal){
         Animal tempAnimal = animalService.findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
 
@@ -53,7 +60,15 @@ public class AnimalController {
 
     @PostMapping("/updateAnimal")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> updateAnimal(@RequestBody Animal animal){
+        Shelter tempShelter = shelterService.findShelterByShelterID(animal.getShelterID());
+
+        if(tempShelter != null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại trại cứu trợ")
+                    .build());
+
         Animal tempAnimal = animalService.findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
 
         if(tempAnimal != null) {
@@ -72,9 +87,17 @@ public class AnimalController {
                 .build());
     }
 
-    @DeleteMapping("/deleteAnimal")
+    @DeleteMapping("/deleteAnimal/{animalID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
-    public ResponseEntity<Object> deleteAnimal(@RequestBody Animal animal){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> deleteAnimal(@PathVariable String animalID){
+        Animal animal = animalService.findAnimalByAnimalID(animalID);
+
+        if (animal == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Thú cưng không tồn tại")
+                    .build());
+
         if (!animalService.deleteAnimal(animal))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                     .message("Có lỗi xảy ra khi xóa thông tin thú cưng")
