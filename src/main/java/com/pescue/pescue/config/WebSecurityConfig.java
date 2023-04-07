@@ -33,7 +33,7 @@ public class WebSecurityConfig{
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-        httpSecurity.cors(AbstractHttpConfigurer::disable); // Su dung mot bean voi ten la corsConfigurationSource
+        httpSecurity.cors(Customizer.withDefaults()); // Su dung mot bean voi ten la corsConfigurationSource
 
         httpSecurity
                 .csrf().disable()
@@ -54,9 +54,10 @@ public class WebSecurityConfig{
     @Bean
     CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        configuration.setAllowedMethods(List.of("PUT", "GET", "DELETE", "POST"));
-        configuration.setAllowedHeaders(List.of("Authorization"));
+        configuration.setAllowedOrigins(List.of("*"));
+        configuration.setAllowedMethods(List.of("PUT", "GET", "DELETE", "POST", "OPTIONS"));
+        configuration.addExposedHeader("Access-Control-Allow-Origin");
+        configuration.setAllowedHeaders(List.of("Authorization", "Origin", "X-Requested-With", "Content-Type", "Accept"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
