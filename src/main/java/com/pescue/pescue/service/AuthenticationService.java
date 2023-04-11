@@ -38,13 +38,21 @@ public class AuthenticationService {
                 true,
                 List.of(Role.ROLE_USER)
         );
+
+        if (userService.findUserByUserEmail(request.getUserEmail()) != null){
+            logger.error("Register user failed: " + request.getUserEmail() + "EXISTED");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Tài khoản đã tồn tại")
+                    .build());
+        }
+
         try{
             userService.addUser(user);
         }
         catch (Exception e){
             logger.error("Register user failed: " + request.getUserEmail() + "EXISTED");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Tài khoản đã tồn tại")
+                    .message("Có lỗi xảy ra khi thêm thông tin người dùng vào database")
                     .build());
         }
         logger.trace("Successfully register user: " + request.getUserEmail());
