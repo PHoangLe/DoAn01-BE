@@ -14,14 +14,16 @@ import java.util.List;
 public class AnimalDTO {
     private String shelterID;
     private String animalName;
-    private Integer animalAge;
+    private String animalAge;
     private boolean animalGender;
     private Integer animalWeight;
     private String animalBreed;
+    private String animalSpecie;
     private String animalColor;
     private String animalImg;
     private boolean vaccinated;
     private boolean deWormed;
     private boolean sterilized;
     private boolean friendly;
+    private List<String> othersImg;
 }
