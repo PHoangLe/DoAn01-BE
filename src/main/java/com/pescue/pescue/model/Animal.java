@@ -19,10 +19,11 @@ public class Animal {
     private String animalID;
     private String shelterID;
     private String animalName;
-    private Integer animalAge;
+    private String animalAge;
     private boolean animalGender;
     private Integer animalWeight;
     private String animalBreed;
+    private String animalSpecie;
     private String animalColor;
     private String animalImg;
     private boolean vaccinated;
@@ -32,13 +33,14 @@ public class Animal {
     private boolean deleted = false;
     private List<String> onlineAdaptors;
 
-    public Animal(String shelterID, String animalName, Integer animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalColor, String animalImg, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters) {
+    public Animal(String shelterID, String animalName, String animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalSpecie, String animalColor, String animalImg, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters) {
         this.shelterID = shelterID;
         this.animalName = animalName;
         this.animalAge = animalAge;
         this.animalGender = animalGender;
         this.animalWeight = animalWeight;
         this.animalBreed = animalBreed;
+        this.animalSpecie = animalSpecie;
         this.animalColor = animalColor;
         this.animalImg = animalImg;
         this.vaccinated = vaccinated;
@@ -55,6 +57,7 @@ public class Animal {
         this.animalGender = animalDTO.isAnimalGender();
         this.animalWeight = animalDTO.getAnimalWeight();
         this.animalBreed = animalDTO.getAnimalBreed();
+        this.animalSpecie = animalDTO.getAnimalSpecie();
         this.animalColor = animalDTO.getAnimalColor();
         this.animalImg = animalDTO.getAnimalImg();
         this.vaccinated = animalDTO.isVaccinated();
@@ -89,11 +92,11 @@ public class Animal {
         this.animalName = animalName;
     }
 
-    public Integer getAnimalAge() {
+    public String getAnimalAge() {
         return animalAge;
     }
 
-    public void setAnimalAge(Integer animalAge) {
+    public void setAnimalAge(String animalAge) {
         this.animalAge = animalAge;
     }
 
@@ -119,6 +122,14 @@ public class Animal {
 
     public void setAnimalBreed(String animalBreed) {
         this.animalBreed = animalBreed;
+    }
+
+    public String getAnimalSpecie() {
+        return animalSpecie;
+    }
+
+    public void setAnimalSpecie(String animalSpecie) {
+        this.animalSpecie = animalSpecie;
     }
 
     public String getAnimalColor() {
