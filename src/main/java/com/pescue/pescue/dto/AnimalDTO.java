@@ -25,4 +25,5 @@ public class AnimalDTO {
     private boolean deWormed;
     private boolean sterilized;
     private boolean friendly;
+    private List<String> othersImg;
 }

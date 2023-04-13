@@ -32,8 +32,9 @@ public class Animal {
     private boolean friendly;
     private boolean deleted = false;
     private List<String> onlineAdaptors;
+    private List<String> othersImg;
 
-    public Animal(String shelterID, String animalName, String animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalSpecie, String animalColor, String animalImg, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters) {
+    public Animal(String shelterID, String animalName, String animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalSpecie, String animalColor, String animalImg, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters, List<String> othersImg) {
         this.shelterID = shelterID;
         this.animalName = animalName;
         this.animalAge = animalAge;
@@ -48,6 +49,7 @@ public class Animal {
         this.sterilized = sterilized;
         this.friendly = friendly;
         this.onlineAdaptors = onlineAdapters;
+        this.othersImg = othersImg;
     }
 
     public Animal(AnimalDTO animalDTO){
@@ -65,6 +67,7 @@ public class Animal {
         this.sterilized = animalDTO.isSterilized();
         this.friendly = animalDTO.isFriendly();
         this.onlineAdaptors = new ArrayList<>();
+        this.othersImg = animalDTO.getOthersImg();
         this.deleted = false;
     }
 
@@ -194,5 +197,13 @@ public class Animal {
 
     public void setOnlineAdaptors(List<String> onlineAdaptors) {
         this.onlineAdaptors = onlineAdaptors;
+    }
+
+    public List<String> getOthersImg() {
+        return othersImg;
+    }
+
+    public void setOthersImg(List<String> othersImg) {
+        this.othersImg = othersImg;
     }
 }
