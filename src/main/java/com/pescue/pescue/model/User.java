@@ -1,6 +1,7 @@
 package com.pescue.pescue.model;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import com.pescue.pescue.dto.GoogleUserAuthenticationRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -138,6 +139,16 @@ public class User implements UserDetails {
         this.userAvatar = userAvatar;
         this.isLocked = isLocked;
         this.userRoles = userRoles;
+    }
+
+    public User(GoogleUserAuthenticationRequestDTO dto){
+        this.userEmail = dto.getUserEmail();
+        this.userFirstName = dto.getUserFirstName();
+        this.userLastName = dto.getUserLastName();
+        this.userAvatar = dto.getUserAvatar();
+        this.isLocked = false;
+        this.isDeleted = false;
+        this.userRoles = List.of(Role.ROLE_USER);
     }
 
     @Override
