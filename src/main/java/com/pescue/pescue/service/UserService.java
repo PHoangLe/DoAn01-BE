@@ -1,22 +1,28 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.dto.ChangePasswordDTO;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAllUser(){return userRepository.findAll();}
 
@@ -74,6 +80,18 @@ public class UserService {
             return false;
         }
         logger.trace("Succeed to add role " + role + " to user: " + userID);
+        return true;
+    }
+
+    public boolean changePassword(ChangePasswordDTO dto, User user) {
+        user.setUserPassword(passwordEncoder.encode(dto.getUserNewPassword()));
+        try {
+            userRepository.save(user);
+            logger.trace("Changed password of User: " + dto.getUserEmail());
+        } catch (Exception e) {
+            return false;
+        }
+
         return true;
     }
 }

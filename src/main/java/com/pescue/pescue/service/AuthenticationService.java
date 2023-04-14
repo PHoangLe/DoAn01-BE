@@ -12,8 +12,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -109,7 +111,7 @@ public class AuthenticationService {
         User user = userService.findUserByUserEmail(request.getUserEmail());
 
         if (user == null){
-            user = new User(request.getUserEmail(), request.getUserFirstName(), request.getUserLastName(), request.getUserAvatar(), List.of(Role.ROLE_USER));
+            user = new User(request);
             if (!userService.addUser(user))
                 logger.error("Authenticate user failed: " + request.getUserEmail());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
