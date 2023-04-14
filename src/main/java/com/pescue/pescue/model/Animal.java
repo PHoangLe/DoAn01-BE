@@ -26,6 +26,7 @@ public class Animal {
     private String animalSpecie;
     private String animalColor;
     private String animalImg;
+    private String animalStatus;
     private boolean vaccinated;
     private boolean deWormed;
     private boolean sterilized;
@@ -34,7 +35,7 @@ public class Animal {
     private List<String> onlineAdaptors;
     private List<String> othersImg;
 
-    public Animal(String shelterID, String animalName, String animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalSpecie, String animalColor, String animalImg, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters, List<String> othersImg) {
+    public Animal(String shelterID, String animalName, String animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalSpecie, String animalColor, String animalImg, String animalStatus, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters, List<String> othersImg) {
         this.shelterID = shelterID;
         this.animalName = animalName;
         this.animalAge = animalAge;
@@ -44,6 +45,7 @@ public class Animal {
         this.animalSpecie = animalSpecie;
         this.animalColor = animalColor;
         this.animalImg = animalImg;
+        this.animalStatus = animalStatus;
         this.vaccinated = vaccinated;
         this.deWormed = deWormed;
         this.sterilized = sterilized;
@@ -62,6 +64,7 @@ public class Animal {
         this.animalSpecie = animalDTO.getAnimalSpecie();
         this.animalColor = animalDTO.getAnimalColor();
         this.animalImg = animalDTO.getAnimalImg();
+        this.animalStatus = animalDTO.getAnimalStatus();
         this.vaccinated = animalDTO.isVaccinated();
         this.deWormed = animalDTO.isDeWormed();
         this.sterilized = animalDTO.isSterilized();
@@ -149,6 +152,14 @@ public class Animal {
 
     public void setAnimalImg(String animalImg) {
         this.animalImg = animalImg;
+    }
+
+    public String getAnimalStatus() {
+        return animalStatus;
+    }
+
+    public void setAnimalStatus(String animalStatus) {
+        this.animalStatus = animalStatus;
     }
 
     public boolean isVaccinated() {

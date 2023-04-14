@@ -1,6 +1,7 @@
 package com.pescue.pescue.model;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pescue.pescue.dto.GoogleUserAuthenticationRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,6 +51,7 @@ public class User implements UserDetails {
         this.userEmail = userEmail;
     }
 
+    @JsonIgnore
     public String getUserPassword() {
         return userPassword;
     }
@@ -161,26 +163,31 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return userPassword;
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return userEmail;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }

@@ -21,6 +21,7 @@ public class AnimalDTO {
     private String animalSpecie;
     private String animalColor;
     private String animalImg;
+    private String animalStatus;
     private boolean vaccinated;
     private boolean deWormed;
     private boolean sterilized;
