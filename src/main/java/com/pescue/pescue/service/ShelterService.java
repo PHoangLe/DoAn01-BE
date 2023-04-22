@@ -5,6 +5,7 @@ import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.repository.ShelterRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,11 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class ShelterService {
-    @Autowired
-    ShelterRepository shelterRepository;
-    @Autowired
-    UserService userService;
-    @Autowired
-    EmailService emailService;
+    private final ShelterRepository shelterRepository;
+    private final UserService userService;
+    private final EmailService emailService;
     Logger logger = LoggerFactory.getLogger(ShelterService.class);
 
     public Shelter findShelterByUserID(String userID){
@@ -87,7 +86,10 @@ public class ShelterService {
     }
 
     public List<Shelter> findAllShelter(){
-        return shelterRepository.findAll();
+        return shelterRepository.findShelterByIsApproved(true);
+
+    }public List<Shelter> findShelterToApprove(){
+        return shelterRepository.findShelterByIsApproved(false);
     }
 
     public ResponseEntity<Object> approveShelter(String shelterID) {
