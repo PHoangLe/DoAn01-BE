@@ -7,6 +7,7 @@ import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.ShelterService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +15,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("api/v1/shelter")
 @CrossOrigin
 public class ShelterController {
-    @Autowired
-    private ShelterService shelterService;
+
+    private final ShelterService shelterService;
 
     @PostMapping("/registerShelter")
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -28,7 +29,7 @@ public class ShelterController {
         Shelter tempShelter = shelterService.findShelterByUserID(shelter.getUserID());
 
         if (tempShelter != null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản này đã là tài khoản Shelter");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản này đã là tài khoản Shelter hoặc đang trong quá trình xác thực bởi ban quan lý.");
 
         return shelterService.registerShelter(new Shelter(shelter));
     }
@@ -38,6 +39,12 @@ public class ShelterController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllShelter(){
         return ResponseEntity.ok(shelterService.findAllShelter());
+
+    }@GetMapping("/getShelterToApprove")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getShelterToApprove(){
+        return ResponseEntity.ok(shelterService.findShelterToApprove());
     }
 
     @PostMapping("/approveShelter")
