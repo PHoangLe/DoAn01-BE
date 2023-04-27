@@ -38,7 +38,7 @@ public class WebSecurityConfig{
         httpSecurity
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**", "/api/v1/otp/**").permitAll()
+                .requestMatchers("/api/v1/auth/**", "/api/v1/otp/**", "/api/v1/chat/**", "/ws/**").permitAll()
                 .requestMatchers("/swagger-ui/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -51,15 +51,16 @@ public class WebSecurityConfig{
         return httpSecurity.build();
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(List.of("PUT", "GET", "DELETE", "POST", "OPTIONS"));
-        configuration.addExposedHeader("Access-Control-Allow-Origin");
-        configuration.setAllowedHeaders(List.of("Authorization", "Origin", "X-Requested-With", "Content-Type", "Accept"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource(){
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+//        configuration.setAllowedMethods(List.of("PUT", "GET", "DELETE", "POST", "OPTIONS"));
+//        configuration.addExposedHeader("Access-Control-Allow-Origin");
+//        configuration.setAllowedHeaders(List.of("Authorization", "Origin", "X-Requested-With", "Content-Type", "Accept"));
+//        configuration.setAllowCredentials(true);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }

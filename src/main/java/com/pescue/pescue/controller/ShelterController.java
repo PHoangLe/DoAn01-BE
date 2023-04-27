@@ -29,7 +29,9 @@ public class ShelterController {
         Shelter tempShelter = shelterService.findShelterByUserID(shelter.getUserID());
 
         if (tempShelter != null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tài khoản này đã là tài khoản Shelter hoặc đang trong quá trình xác thực bởi ban quan lý.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Tài khoản này đã là tài khoản Shelter hoặc đang trong quá trình xác thực bởi ban quan lý.")
+                    .build());
 
         return shelterService.registerShelter(new Shelter(shelter));
     }
