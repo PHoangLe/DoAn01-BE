@@ -25,10 +25,20 @@ public class AnimalController {
     ShelterService shelterService;
 
     @GetMapping("/getAllAnimals")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllAnimals(){
         return ResponseEntity.ok(animalService.findAllAnimals());
+
+    }@GetMapping("/getAnimalByAnimalID/{animalID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getAllAnimalByAnimalID(@PathVariable String animalID){
+        if(animalService.findAnimalByAnimalID(animalID) == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
+                    .message("Không có bé bạn cần tìm")
+                    .build());
+        return ResponseEntity.ok(animalService.findAnimalByAnimalID(animalID));
     }
 
     @GetMapping("/getAnimalsByShelterID/{shelterID}")
@@ -37,7 +47,6 @@ public class AnimalController {
     public ResponseEntity<Object> getAnimalsByShelterID(@PathVariable String shelterID){
         return ResponseEntity.ok(animalService.findAnimalsByShelterID(shelterID));
     }
-
     @PostMapping("/addAnimal")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
@@ -46,16 +55,16 @@ public class AnimalController {
 
         if(tempAnimal != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Đã tồn tại thú cưng cùng tên trong trại")
+                    .message("Đã tồn tại bé có cùng tên trong trại")
                     .build());
         }
 
         if (!animalService.addAnimal(animal))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Có lỗi xảy ra khi thêm thông tin thú cưng")
+                    .message("Có lỗi xảy ra khi thêm thông tin cho bé")
                     .build());
 
-        return ResponseEntity.ok("Thông tin của thú nuôi đã được thêm thành công");
+        return ResponseEntity.ok("Thông tin của bé đã được thêm thành công");
     }
 
     @PostMapping("/updateAnimal")
@@ -73,7 +82,7 @@ public class AnimalController {
 
         if(tempAnimal != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Đã tồn tại thú cưng cùng tên trong trại")
+                    .message("Đã tồn tại bé có cùng tên trong trại")
                     .build());
         }
 
@@ -83,7 +92,7 @@ public class AnimalController {
                     .build());
 
         return ResponseEntity.ok(StringResponseDTO.builder()
-                .message("Thông tin của thú nuôi đã chỉnh sửa thành công")
+                .message("Thông tin của bé đã được chỉnh sửa thành công")
                 .build());
     }
 
@@ -95,16 +104,16 @@ public class AnimalController {
 
         if (animal == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Thú cưng không tồn tại")
+                    .message("Bé không tồn tại")
                     .build());
 
         if (!animalService.deleteAnimal(animal))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Có lỗi xảy ra khi xóa thông tin thú cưng")
+                    .message("Có lỗi xảy ra khi xóa thông tin của bé")
                     .build());
 
         return ResponseEntity.ok(StringResponseDTO.builder()
-                .message("Thông tin của thú nuôi đã được xóa thành công")
+                .message("Thông tin của bé đã được xóa thành công")
                 .build());
     }
 }
