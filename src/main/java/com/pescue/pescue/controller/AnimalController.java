@@ -64,7 +64,9 @@ public class AnimalController {
                     .message("Có lỗi xảy ra khi thêm thông tin cho bé")
                     .build());
 
-        return ResponseEntity.ok("Thông tin của bé đã được thêm thành công");
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Thông tin của bé đã được thêm thành công")
+                .build());
     }
 
     @PostMapping("/updateAnimal")
