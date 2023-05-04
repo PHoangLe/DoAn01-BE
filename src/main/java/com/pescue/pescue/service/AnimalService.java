@@ -6,9 +6,11 @@ import com.pescue.pescue.repository.AnimalRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.number.AbstractNumberFormatter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AnimalService {
@@ -18,7 +20,7 @@ public class AnimalService {
     Logger logger = LoggerFactory.getLogger(AnimalService.class);
 
     public List<Animal> findAllAnimals(){
-        return animalRepository.findAll();
+        return animalRepository.findAllByAdopted(false);
     }
 
     public boolean addAnimal(AnimalDTO animal){
@@ -46,8 +48,7 @@ public class AnimalService {
 
     public boolean deleteAnimal(Animal animal){
         try {
-            animal.setDeleted(true);
-            animalRepository.save(animal);
+            animalRepository.delete(animal);
         }
         catch (Exception e){
             logger.error("There is an error occur while deleting animal information: " + animal);
@@ -58,27 +59,33 @@ public class AnimalService {
     }
 
     public Animal findAnimalByAnimalID(String animalID){
-        if (animalRepository.findAnimalByAnimalIDAndDeletedIsFalse(animalID).isPresent()) {
+        Optional<Animal> animal = animalRepository.findAnimalByAnimalID(animalID);
+
+        if (animal.isPresent()) {
             logger.trace("Found animal with animalID: " + animalID);
-            return animalRepository.findAnimalByAnimalIDAndDeletedIsFalse(animalID).get();
+            return animal.get();
         }
         logger.trace("Can't find animal with animalID: " + animalID);
         return null;
     }
 
     public Animal findAnimalByAnimalNameAndShelterID(String animalID, String shelterID){
-        if (animalRepository.findAnimalByAnimalNameAndShelterIDAndDeletedIsFalse(animalID, shelterID).isPresent()) {
+        Optional<Animal> animal = animalRepository.findAnimalByAnimalNameAndShelterID(animalID, shelterID);
+
+        if (animal.isPresent()) {
             logger.trace("Found animal with animalName and shelterID: " + animalID + ", " + shelterID);
-            return animalRepository.findAnimalByAnimalNameAndShelterIDAndDeletedIsFalse(animalID, shelterID).get();
+            return animal.get();
         }
         logger.trace("Can't find animal with animalName and shelterID: " + animalID + ", " + shelterID);
         return null;
     }
 
     public List<Animal> findAnimalsByShelterID(String shelterID){
-        if (!animalRepository.findAnimalsByShelterIDAndDeletedIsFalse(shelterID).isEmpty()) {
+        List<Animal> animals = animalRepository.findAnimalsByShelterID(shelterID);
+
+        if (!animals.isEmpty()) {
             logger.trace("Found animals with shelterID: " + shelterID);
-            return animalRepository.findAnimalsByShelterIDAndDeletedIsFalse(shelterID);
+            return animals;
         }
         logger.trace("Can't find any animal with shelterID: " + shelterID);
         return null;

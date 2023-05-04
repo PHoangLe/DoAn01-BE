@@ -31,28 +31,9 @@ public class Animal {
     private boolean deWormed;
     private boolean sterilized;
     private boolean friendly;
-    private boolean deleted = false;
+    private boolean isAdopted = false;
     private List<String> onlineAdaptors;
     private List<String> othersImg;
-
-    public Animal(String shelterID, String animalName, String animalAge, boolean animalGender, Integer animalWeight, String animalBreed, String animalSpecie, String animalColor, String animalImg, String animalStatus, boolean vaccinated, boolean deWormed, boolean sterilized, boolean friendly, List<String> onlineAdapters, List<String> othersImg) {
-        this.shelterID = shelterID;
-        this.animalName = animalName;
-        this.animalAge = animalAge;
-        this.animalGender = animalGender;
-        this.animalWeight = animalWeight;
-        this.animalBreed = animalBreed;
-        this.animalSpecie = animalSpecie;
-        this.animalColor = animalColor;
-        this.animalImg = animalImg;
-        this.animalStatus = animalStatus;
-        this.vaccinated = vaccinated;
-        this.deWormed = deWormed;
-        this.sterilized = sterilized;
-        this.friendly = friendly;
-        this.onlineAdaptors = onlineAdapters;
-        this.othersImg = othersImg;
-    }
 
     public Animal(AnimalDTO animalDTO){
         this.shelterID = animalDTO.getShelterID();
@@ -71,7 +52,7 @@ public class Animal {
         this.friendly = animalDTO.isFriendly();
         this.onlineAdaptors = new ArrayList<>();
         this.othersImg = animalDTO.getOthersImg();
-        this.deleted = false;
+        this.isAdopted = false;
     }
 
     public String getAnimalID() {
@@ -194,12 +175,12 @@ public class Animal {
         this.friendly = friendly;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public boolean isAdopted() {
+        return isAdopted;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setAdopted(boolean adopted) {
+        this.isAdopted = adopted;
     }
 
     public List<String> getOnlineAdaptors() {

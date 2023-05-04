@@ -132,6 +132,7 @@ public class User implements UserDetails {
         this.userEmail = dto.getUserEmail();
         this.userFirstName = dto.getUserFirstName();
         this.userLastName = dto.getUserLastName();
+        this.phoneNo = "none";
         this.userAvatar = dto.getUserAvatar();
         this.isLocked = false;
         this.isDeleted = false;

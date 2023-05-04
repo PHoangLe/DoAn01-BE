@@ -11,17 +11,25 @@ import java.util.Optional;
 public interface AnimalRepository extends MongoRepository<Animal, String> {
     Optional<Animal> findAnimalByAnimalID(
             @Param("animalID")String animalID);
-    Optional<Animal> findAnimalByAnimalIDAndDeletedIsFalse(
-            @Param("animalID") String animalID);
+    Optional<Animal> findAnimalByAnimalIDAndAdopted(
+            @Param("animalID")String animalID,
+            @Param("isAdopted") boolean isAdopted);
+
     Optional<Animal> findAnimalByAnimalNameAndShelterID(
             @Param("animalName") String animalName,
             @Param("shelterID") String shelterID);
-    Optional<Animal> findAnimalByAnimalNameAndShelterIDAndDeletedIsFalse(
+    Optional<Animal> findAnimalByAnimalNameAndShelterIDAndAdopted(
             @Param("animalName") String animalName,
-            @Param("shelterID") String shelterID);
+            @Param("shelterID") String shelterID,
+            @Param("isAdopted") boolean isAdopted);
 
     List<Animal> findAnimalsByShelterID(
             @Param("shelterID") String shelterID);
-    List<Animal> findAnimalsByShelterIDAndDeletedIsFalse(
-            @Param("shelterID") String shelterID);
+    List<Animal> findAnimalsByShelterIDAndAdopted(
+            @Param("shelterID") String shelterID,
+            @Param("isAdopted") boolean isAdopted);
+
+    List<Animal> findAllByAdopted(
+            @Param("isAdopted") boolean isAdopted
+    );
 }
