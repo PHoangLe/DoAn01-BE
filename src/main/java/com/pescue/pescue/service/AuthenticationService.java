@@ -31,15 +31,7 @@ public class AuthenticationService {
     Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     public ResponseEntity<Object> userRegister(UserRegisterDTO request){
-        User user = new User(
-                request.getUserEmail(),
-                passwordEncoder.encode(request.getUserPassword()),
-                request.getUserFirstName(),
-                request.getUserLastName(),
-                request.getUserAvatar(),
-                true,
-                List.of(Role.ROLE_USER)
-        );
+        User user = new User(request);
 
         if (userService.findUserByUserEmail(request.getUserEmail()) != null){
             logger.error("Register user failed: " + request.getUserEmail() + "EXISTED");

@@ -14,5 +14,6 @@ public class UserRegisterDTO {
     private String userPassword;
     private String userFirstName;
     private String userLastName;
+    private String phoneNo;
     private String userAvatar;
 }
