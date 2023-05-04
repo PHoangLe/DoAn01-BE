@@ -29,7 +29,7 @@ public interface AnimalRepository extends MongoRepository<Animal, String> {
             @Param("shelterID") String shelterID,
             @Param("isAdopted") boolean isAdopted);
 
-    List<Animal> findAllByAdopted(
+    List<Animal> findAllByIsAdopted(
             @Param("isAdopted") boolean isAdopted
     );
 }

@@ -20,7 +20,7 @@ public class AnimalService {
     Logger logger = LoggerFactory.getLogger(AnimalService.class);
 
     public List<Animal> findAllAnimals(){
-        return animalRepository.findAllByAdopted(false);
+        return animalRepository.findAllByIsAdopted(false);
     }
 
     public boolean addAnimal(AnimalDTO animal){
