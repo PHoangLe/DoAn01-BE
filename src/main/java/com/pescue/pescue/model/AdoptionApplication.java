@@ -1,5 +1,6 @@
 package com.pescue.pescue.model;
 
+import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,6 +29,14 @@ public class AdoptionApplication {
         this.userID = userID;
         this.date = date;
         this.applicationStatus = applicationStatus;
+    }
+
+    public AdoptionApplication(AdoptionApplicationDTO dto) {
+        this.animalID = dto.getAnimalID();
+        this.shelterID = dto.getShelterID();
+        this.userID = dto.getUserID();
+        this.date = dto.getDate();
+        this.applicationStatus = "pending";
     }
 
     public String getApplicationID() {
