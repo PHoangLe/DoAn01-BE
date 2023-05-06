@@ -1,9 +1,8 @@
 package com.pescue.pescue.model;
 
-import com.pescue.pescue.dto.AdoptionApplicationDTO;
+import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,7 +30,7 @@ public class AdoptionApplication {
         this.applicationStatus = applicationStatus;
     }
 
-    public AdoptionApplication(AdoptionApplicationDTO dto) {
+    public AdoptionApplication(AdoptionApplicationRequestDTO dto) {
         this.animalID = dto.getAnimalID();
         this.shelterID = dto.getShelterID();
         this.userID = dto.getUserID();

@@ -1,5 +1,8 @@
 package com.pescue.pescue.dto;
 
+import com.pescue.pescue.model.AdoptionApplication;
+import com.pescue.pescue.model.Animal;
+import com.pescue.pescue.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +15,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdoptionApplicationDTO {
-    private String animalID;
-    private String shelterID;
-    private String userID;
+    private AdoptionApplication application;
+    private User user;
+    private Animal animal;
 }

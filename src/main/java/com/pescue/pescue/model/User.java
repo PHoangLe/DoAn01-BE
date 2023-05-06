@@ -98,6 +98,7 @@ public class User implements UserDetails {
         return userRoles;
     }
 
+    @JsonIgnore
     public boolean isLocked() {
         return isLocked;
     }
@@ -106,6 +107,7 @@ public class User implements UserDetails {
         isLocked = locked;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return isDeleted;
     }
@@ -150,6 +152,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
         userRoles.forEach(_role -> {
@@ -189,6 +192,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

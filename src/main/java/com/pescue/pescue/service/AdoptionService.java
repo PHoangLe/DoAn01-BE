@@ -1,15 +1,18 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
+import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.model.AdoptionApplication;
 import com.pescue.pescue.model.Animal;
+import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.AdoptionApplicationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +20,8 @@ import java.util.Optional;
 public class AdoptionService {
     private final AdoptionApplicationRepository repository;
     private final AnimalService animalService;
-    public boolean createAdoptionRequest(AdoptionApplicationDTO dto){
+    private final UserService userService;
+    public boolean createAdoptionRequest(AdoptionApplicationRequestDTO dto){
         AdoptionApplication application = new AdoptionApplication(dto);
 
         try{
@@ -31,6 +35,7 @@ public class AdoptionService {
     }
 
     public AdoptionApplication findByApplicationID(String applicationID){
+        log.trace("Finding adoption application with ID: " + applicationID);
         return repository.findByApplicationID(applicationID).orElse(null);
 
     }
@@ -81,7 +86,17 @@ public class AdoptionService {
         return true;
     }
 
-    public List<AdoptionApplication> findByShelterID(String shelterID) {
-        return repository.findAllByShelterID(shelterID);
+    public List<AdoptionApplicationDTO> findByShelterID(String shelterID) {
+        List<AdoptionApplication> adoptionApplicationList = repository.findAllByShelterID(shelterID);
+
+        List<AdoptionApplicationDTO> applicationDTOS = new ArrayList<>();
+        adoptionApplicationList.forEach(application -> {
+            User user = userService.findUserByID(application.getUserID());
+            Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
+
+            applicationDTOS.add(new AdoptionApplicationDTO(application, user, animal));
+        });
+
+        return applicationDTOS;
     }
 }
