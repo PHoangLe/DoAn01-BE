@@ -1,6 +1,6 @@
 package com.pescue.pescue.controller;
 
-import com.pescue.pescue.dto.AdoptionApplicationDTO;
+import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.model.AdoptionApplication;
 import com.pescue.pescue.service.AdoptionService;
@@ -21,7 +21,7 @@ public class AdoptionController {
     @PostMapping("/sendAdoptRequest")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> createAdoptionRequest(AdoptionApplicationDTO dto) {
+    public ResponseEntity<Object> createAdoptionRequest(AdoptionApplicationRequestDTO dto) {
         if (service.createAdoptionRequest(dto))
             return ResponseEntity.ok(StringResponseDTO.builder()
                     .message("Đã gửi yêu cầu nhận nuôi bé thành công. Bạn vui lòng đợi để trại cứu trợ liên hệ bạn.")
@@ -35,8 +35,7 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAdoptionApplicationByShelterID(@PathVariable String shelterID) {
-        List<AdoptionApplication> applicationList = service.findByShelterID(shelterID);
-        return ResponseEntity.ok(applicationList);
+        return ResponseEntity.ok(service.findByShelterID(shelterID));
     }
 
     @PostMapping("/confirmAdoptionRequest/{adoptionApplicationID}")

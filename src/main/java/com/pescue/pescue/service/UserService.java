@@ -5,6 +5,7 @@ import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
 
@@ -43,7 +45,8 @@ public class UserService {
     }
 
     public User findUserByID(String userID){
-        return userRepository.findUserByUserID(userID).get();
+        log.trace("Finding user with ID: " + userID);
+        return userRepository.findUserByUserID(userID).orElse(null);
     }
 
     public boolean unlockUser(String emailAddress){
