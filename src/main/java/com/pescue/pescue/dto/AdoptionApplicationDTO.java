@@ -15,5 +15,4 @@ public class AdoptionApplicationDTO {
     private String animalID;
     private String shelterID;
     private String userID;
-    private Date date;
 }
