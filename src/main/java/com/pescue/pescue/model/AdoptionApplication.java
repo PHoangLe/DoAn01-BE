@@ -35,7 +35,7 @@ public class AdoptionApplication {
         this.animalID = dto.getAnimalID();
         this.shelterID = dto.getShelterID();
         this.userID = dto.getUserID();
-        this.date = dto.getDate();
+        this.date = new Date(System.currentTimeMillis());
         this.applicationStatus = "pending";
     }
 

@@ -2,6 +2,7 @@ package com.pescue.pescue.controller;
 
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
+import com.pescue.pescue.model.AdoptionApplication;
 import com.pescue.pescue.service.AdoptionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/adopt")
@@ -29,6 +32,14 @@ public class AdoptionController {
         else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
                 .message("Đã có lỗi đã xảy ra")
                 .build());
+    }
+
+    @PostMapping("/getAdoptionApplicationByShelterID/{shelterID}")
+    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getAdoptionApplicationByShelterID(@PathVariable String shelterID) {
+        List<AdoptionApplication> applicationList = service.findByShelterID(shelterID);
+        return ResponseEntity.ok(applicationList);
     }
 
     @PostMapping("/confirmAdoptionRequest/{adoptionApplicationID}")
