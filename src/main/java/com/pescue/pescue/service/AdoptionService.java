@@ -4,6 +4,7 @@ import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.model.AdoptionApplication;
 import com.pescue.pescue.model.Animal;
+import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.AdoptionApplicationRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class AdoptionService {
     private final AdoptionApplicationRepository repository;
     private final AnimalService animalService;
     private final UserService userService;
+    private final ShelterService shelterService;
     public boolean createAdoptionRequest(AdoptionApplicationRequestDTO dto){
         AdoptionApplication application = new AdoptionApplication(dto);
 
@@ -93,8 +95,9 @@ public class AdoptionService {
         adoptionApplicationList.forEach(application -> {
             User user = userService.findUserByID(application.getUserID());
             Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
+            Shelter shelter = shelterService.findShelterByShelterID(application.getShelterID());
 
-            applicationDTOS.add(new AdoptionApplicationDTO(application, user, animal));
+            applicationDTOS.add(new AdoptionApplicationDTO(application, user, animal, shelter));
         });
 
         return applicationDTOS;
