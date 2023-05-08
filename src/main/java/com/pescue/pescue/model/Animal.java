@@ -1,6 +1,7 @@
 package com.pescue.pescue.model;
 
 import com.pescue.pescue.dto.AnimalDTO;
+import com.pescue.pescue.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,7 @@ public class Animal {
     private boolean sterilized;
     private boolean friendly;
     private boolean isAdopted = false;
-    private List<String> onlineAdaptors;
+    private List<UserDTO> onlineAdopters;
     private List<String> othersImg;
 
     public Animal(AnimalDTO animalDTO){
@@ -50,7 +51,7 @@ public class Animal {
         this.deWormed = animalDTO.isDeWormed();
         this.sterilized = animalDTO.isSterilized();
         this.friendly = animalDTO.isFriendly();
-        this.onlineAdaptors = new ArrayList<>();
+        this.onlineAdopters = new ArrayList<>();
         this.othersImg = animalDTO.getOthersImg();
         this.isAdopted = false;
     }
@@ -183,12 +184,12 @@ public class Animal {
         this.isAdopted = adopted;
     }
 
-    public List<String> getOnlineAdaptors() {
-        return onlineAdaptors;
+    public List<UserDTO> getOnlineAdopters() {
+        return onlineAdopters;
     }
 
-    public void setOnlineAdaptors(List<String> onlineAdaptors) {
-        this.onlineAdaptors = onlineAdaptors;
+    public void setOnlineAdopters(List<UserDTO> onlineAdopters) {
+        this.onlineAdopters = onlineAdopters;
     }
 
     public List<String> getOthersImg() {
