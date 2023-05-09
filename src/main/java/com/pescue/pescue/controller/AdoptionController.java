@@ -1,18 +1,25 @@
 package com.pescue.pescue.controller;
 
+import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
+import com.pescue.pescue.exception.*;
+import com.pescue.pescue.model.OnlineAdoptionApplication;
 import com.pescue.pescue.service.AdoptionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/adopt")
 @RequiredArgsConstructor
+@Slf4j
 public class AdoptionController {
     private final AdoptionService service;
     // Offline Adoption
@@ -20,12 +27,19 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> createAdoptionRequest(AdoptionApplicationRequestDTO dto) {
-        if (service.createAdoptionRequest(dto))
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã gửi yêu cầu nhận nuôi bé thành công. Bạn vui lòng đợi để trại cứu trợ liên hệ bạn.")
-                    .build());
-        else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                .message("Đã có lỗi đã xảy ra")
+        try{
+            service.createAdoptionRequest(dto);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã gửi yêu cầu nhận nuôi bé thành công. Bạn vui lòng đợi để trại cứu trợ liên hệ bạn.")
                 .build());
     }
 
@@ -33,19 +47,38 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAdoptionApplicationByShelterID(@PathVariable String shelterID) {
-        return ResponseEntity.ok(service.getApplicationByShelterID(shelterID));
+        List<AdoptionApplicationDTO> applicationByShelterID;
+        try {
+            applicationByShelterID = service.findApplicationByShelterID(shelterID);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(applicationByShelterID);
     }
 
     @PostMapping("/confirmAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmAdoptionRequest(@PathVariable String adoptionApplicationID){
-        if (service.confirmAdoptionRequest(adoptionApplicationID))
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã xác thực thành công yêu cầu nhận nuôi của bé")
-                    .build());
-        else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                .message("Đã có lỗi đã xảy ra")
+        try{
+            service.confirmAdoptionRequest(adoptionApplicationID);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã xác thực thành công yêu cầu nhận nuôi của bé")
                 .build());
     }
 
@@ -53,12 +86,19 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> declineAdoptionRequest(@PathVariable String adoptionApplicationID){
-        if (service.declineAdoptionRequest(adoptionApplicationID))
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã từ chối yêu cầu nhận nuôi của bé")
-                    .build());
-        else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                .message("Đã có lỗi đã xảy ra")
+        try {
+            service.declineAdoptionRequest(adoptionApplicationID);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã từ chối yêu cầu nhận nuôi của bé")
                 .build());
     }
 
@@ -67,43 +107,73 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto) {
-        if (service.createOnlineAdoptionRequest(dto))
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã gửi yêu cầu nhận nuôi bé thành công. Bạn vui lòng đợi 1-2 ngày để chúng tôi xử lý yêu cầu của bạn")
-                    .build());
-        else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                .message("Đã có lỗi đã xảy ra")
+        try{
+            service.createOnlineAdoptionRequest(dto);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã gửi yêu cầu nhận nuôi bé thành công. Bạn vui lòng đợi 1-2 ngày để chúng tôi xử lý yêu cầu của bạn")
                 .build());
     }
     @GetMapping("/getAllOnlineApplication")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllOnlineApplication() {
-        return ResponseEntity.ok(service.getAllOnlineApplication());
+        List<OnlineAdoptionApplication> allOnlineApplication;
+        try {
+            allOnlineApplication = service.getAllOnlineApplication();
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(allOnlineApplication);
     }
     @PostMapping("/confirmOnlineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmOnlineAdoptionRequest(@PathVariable String adoptionApplicationID){
-        if (service.confirmOnlineAdoptionRequest(adoptionApplicationID))
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã xác thực thành công yêu cầu nhận nuôi của bé")
-                    .build());
-        else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                .message("Đã có lỗi đã xảy ra")
-                .build());
+        try {
+            service.confirmOnlineAdoptionRequest(adoptionApplicationID);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+            .message("Đã xác thực thành công yêu cầu nhận nuôi của bé")
+            .build());
     }
 
     @PostMapping("/declineOnlineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> declineOnlineAdoptionRequest(@PathVariable String adoptionApplicationID){
-        if (service.declineOnlineAdoptionRequest(adoptionApplicationID))
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã từ chối yêu cầu nhận nuôi của bé")
-                    .build());
-        else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                .message("Đã có lỗi đã xảy ra")
+        try{
+            service.declineOnlineAdoptionRequest(adoptionApplicationID);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã từ chối yêu cầu nhận nuôi của bé")
                 .build());
     }
 }

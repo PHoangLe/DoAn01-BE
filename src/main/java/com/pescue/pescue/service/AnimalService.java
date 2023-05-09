@@ -101,11 +101,7 @@ public class AnimalService {
         onlineAdopters.add(new UserDTO(adopters));
         animal.setOnlineAdopters(onlineAdopters);
 
-        try {
-            updateAnimal(animal);
-            logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopters.getUserID());
-        }catch (Exception e){
-            logger.error(e.getMessage());
-        }
+        updateAnimal(animal);
+        logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopters.getUserID());
     }
 }

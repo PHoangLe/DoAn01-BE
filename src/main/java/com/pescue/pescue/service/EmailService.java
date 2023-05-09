@@ -1,5 +1,6 @@
 package com.pescue.pescue.service;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
-    @Autowired
-    private JavaMailSender javaMailSender;
-    @Value("${spring.mail.username}")
+    private final JavaMailSender javaMailSender;
+    @Value("${MAIL_USERNAME}")
     private String sender;
 
     Logger logger = LoggerFactory.getLogger(EmailService.class);
@@ -33,7 +34,7 @@ public class EmailService {
             return true;
         }
         catch (Exception e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
             return false;
         }
     }
