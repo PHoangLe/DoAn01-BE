@@ -3,10 +3,7 @@ package com.pescue.pescue.controller;
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
-import com.pescue.pescue.exception.AnimalNotFoundException;
-import com.pescue.pescue.exception.ApplicationNotFoundException;
-import com.pescue.pescue.exception.ShelterNotFoundException;
-import com.pescue.pescue.exception.UserNotFoundException;
+import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.OnlineAdoptionApplication;
 import com.pescue.pescue.service.AdoptionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -72,7 +69,7 @@ public class AdoptionController {
         try{
             service.confirmAdoptionRequest(adoptionApplicationID);
         }
-        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException e){
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){
@@ -92,7 +89,7 @@ public class AdoptionController {
         try {
             service.declineAdoptionRequest(adoptionApplicationID);
         }
-        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException e){
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){
@@ -147,7 +144,7 @@ public class AdoptionController {
         try {
             service.confirmOnlineAdoptionRequest(adoptionApplicationID);
         }
-        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException e){
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){
@@ -167,7 +164,7 @@ public class AdoptionController {
         try{
             service.declineOnlineAdoptionRequest(adoptionApplicationID);
         }
-        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException e){
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){

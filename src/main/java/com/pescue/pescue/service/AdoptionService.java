@@ -2,10 +2,7 @@ package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
-import com.pescue.pescue.exception.AnimalNotFoundException;
-import com.pescue.pescue.exception.ApplicationNotFoundException;
-import com.pescue.pescue.exception.ShelterNotFoundException;
-import com.pescue.pescue.exception.UserNotFoundException;
+import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.*;
 import com.pescue.pescue.repository.AdoptionApplicationRepository;
 import com.pescue.pescue.repository.OnlineAdoptionApplicationRepository;
@@ -25,8 +22,29 @@ public class AdoptionService {
     private final AnimalService animalService;
     private final UserService userService;
     private final ShelterService shelterService;
+    private final EmailService emailService;
 
+    private void sendResultEmail(String receiverEmail, boolean isConfirm) throws SendMailFailedException {
+        String emailBody;
+        String subject = "Nhận nuôi";
 
+        if (isConfirm){
+            emailBody = """
+                    Chúc mừng bạn,
+                    Yêu cầu nhận nuôi của bạn đã được xử lý xong.
+                    Chúng tôi đại diện trại cứu trợ và bé được bạn nhận nuôi gửi đến bạn một lời cảm ơn chân thành.
+                    Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng thôi qua email này.
+                    Pescue.""";
+        }else {
+            emailBody = """
+                    Chào bạn,
+                    Yêu cầu nhận nuôi của bạn đã được xử lý xong.
+                    Nhưng chúng tôi lấy làm tiếc về việc nhận nuôi của bạn không thành công.
+                    Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng thôi qua email này.
+                    Pescue.""";
+        }
+        emailService.sendMail(receiverEmail, emailBody, subject);
+    }
     //Offline Adoption
     public void createAdoptionRequest(AdoptionApplicationRequestDTO dto){
         AdoptionApplication application = new AdoptionApplication(dto);
@@ -69,6 +87,9 @@ public class AdoptionService {
         animal.setAdopted(true);
         animalService.updateAnimal(animal);
 
+        User user = userService.findUserByID(application.getUserID());
+        sendResultEmail(user.getUserEmail(), true);
+
         log.trace("Approved application with ID: " + applicationID);
     }
     public void declineAdoptionRequest(String applicationID) {
@@ -81,6 +102,9 @@ public class AdoptionService {
 
         application.setApplicationStatus(ApplicationStatus.REJECTED);
         adoptionApplicationRepository.save(application);
+
+        User user = userService.findUserByID(application.getUserID());
+        sendResultEmail(user.getUserEmail(), false);
 
         log.trace("Declined application with ID: " + applicationID);
     }
@@ -150,6 +174,8 @@ public class AdoptionService {
         onlineAdoptionApplicationRepository.save(application);
         animalService.addOnlineAdopters(animal, user);
 
+        sendResultEmail(user.getUserEmail(), true);
+
         log.trace("Approved online application with ID: " + applicationID);
 
     }
@@ -163,6 +189,9 @@ public class AdoptionService {
 
         application.setApplicationStatus(ApplicationStatus.REJECTED);
         onlineAdoptionApplicationRepository.save(application);
+
+        User user = userService.findUserByID(application.getUserID());
+        sendResultEmail(user.getUserEmail(), false);
 
         log.trace("Declined online application with ID: " + applicationID);
     }
