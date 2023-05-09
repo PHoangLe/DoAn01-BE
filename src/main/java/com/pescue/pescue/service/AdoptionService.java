@@ -3,6 +3,7 @@ package com.pescue.pescue.service;
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.exception.AnimalNotFoundException;
+import com.pescue.pescue.exception.ApplicationNotFoundException;
 import com.pescue.pescue.exception.ShelterNotFoundException;
 import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.*;
@@ -54,49 +55,43 @@ public class AdoptionService {
         return adoptionApplicationRepository.findByApplicationID(applicationID).orElse(null);
     }
 
-    public boolean confirmAdoptionRequest(String applicationID) {
+    public void confirmAdoptionRequest(String applicationID) {
         AdoptionApplication application = findApplicationByApplicationID(applicationID);
 
-        if (application == null)
-            return false;
-
-        Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
+        if (application == null){
+            log.trace("Can't find application with ID: " + applicationID);
+            throw new ApplicationNotFoundException();
+        }
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
+        adoptionApplicationRepository.save(application);
+        Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
         animal.setAdopted(true);
+        animalService.updateAnimal(animal);
 
-        try {
-            adoptionApplicationRepository.save(application);
-            animalService.updateAnimal(animal);
-
-            log.trace("Approved application with ID: " + applicationID);
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return false;
-        }
-
-        return true;
+        log.trace("Approved application with ID: " + applicationID);
     }
-    public boolean declineAdoptionRequest(String applicationID) {
+    public void declineAdoptionRequest(String applicationID) {
         AdoptionApplication application = findApplicationByApplicationID(applicationID);
 
-        if (application == null)
-            return false;
-
-        application.setApplicationStatus(ApplicationStatus.REJECTED);
-
-        try {
-            adoptionApplicationRepository.save(application);
-
-            log.trace("Declined application with ID: " + applicationID);
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return false;
+        if (application == null){
+            log.trace("Can't find application with ID: " + applicationID);
+            throw new ApplicationNotFoundException();
         }
 
-        return true;
+        application.setApplicationStatus(ApplicationStatus.REJECTED);
+        adoptionApplicationRepository.save(application);
+
+        log.trace("Declined application with ID: " + applicationID);
     }
-    public List<AdoptionApplicationDTO> getApplicationByShelterID(String shelterID) {
+    public List<AdoptionApplicationDTO> findApplicationByShelterID(String shelterID) {
+        Shelter shelterByShelterID = shelterService.findShelterByShelterID(shelterID);
+
+        if (shelterByShelterID == null){
+            log.trace("Shelter not found ID: " + shelterID);
+            throw new ShelterNotFoundException();
+        }
+
         List<AdoptionApplication> adoptionApplicationList = adoptionApplicationRepository.findAllByShelterID(shelterID);
 
         List<AdoptionApplicationDTO> applicationDTOS = new ArrayList<>();
@@ -113,63 +108,63 @@ public class AdoptionService {
 
 
     //Online Adoption
-    public boolean createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto){
+    public void createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto){
         OnlineAdoptionApplication application = new OnlineAdoptionApplication(dto);
 
-        try{
-            onlineAdoptionApplicationRepository.insert(application);
-            log.trace("added online adoption application for user: " + application.getUserID() + " pet: " + application.getAnimalID());
-            return true;
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return false;
+        User user = userService.findUserByID(dto.getUserID());
+        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
+        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
+
+        if (user == null) {
+            log.trace("User not found ID: " + dto.getUserID());
+            throw new UserNotFoundException();
         }
+        if (animal == null) {
+            log.trace("Animal not found ID: " + dto.getAnimalID());
+            throw new AnimalNotFoundException();
+        }
+        if (shelter == null) {
+            log.trace("Shelter not found ID: " + dto.getShelterID());
+            throw new ShelterNotFoundException();
+        }
+        onlineAdoptionApplicationRepository.insert(application);
+        log.trace("added online adoption application for user: " + application.getUserID() + " pet: " + application.getAnimalID());
+
     }
     public OnlineAdoptionApplication findOnlineApplicationByApplicationID(String applicationID){
         log.trace("Finding adoption application with ID: " + applicationID);
         return onlineAdoptionApplicationRepository.findByApplicationID(applicationID).orElse(null);
     }
-    public boolean confirmOnlineAdoptionRequest(String applicationID) {
+    public void confirmOnlineAdoptionRequest(String applicationID) {
         OnlineAdoptionApplication application = findOnlineApplicationByApplicationID(applicationID);
 
-        if (application == null)
-            return false;
+        if (application == null) {
+            log.trace("Can't find application with ID: " + applicationID);
+            throw new ApplicationNotFoundException();
+        }
 
         Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
         User user = userService.findUserByID(application.getUserID());
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
+        onlineAdoptionApplicationRepository.save(application);
+        animalService.addOnlineAdopters(animal, user);
 
-        try {
-            animalService.addOnlineAdopters(animal, user);
-            onlineAdoptionApplicationRepository.save(application);
+        log.trace("Approved online application with ID: " + applicationID);
 
-            log.trace("Approved online application with ID: " + applicationID);
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return false;
-        }
-
-        return true;
     }
-    public boolean declineOnlineAdoptionRequest(String applicationID) {
+    public void declineOnlineAdoptionRequest(String applicationID) {
         OnlineAdoptionApplication application = findOnlineApplicationByApplicationID(applicationID);
 
-        if (application == null)
-            return false;
-
-        application.setApplicationStatus(ApplicationStatus.REJECTED);
-
-        try {
-            onlineAdoptionApplicationRepository.save(application);
-
-            log.trace("Declined online application with ID: " + applicationID);
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return false;
+        if (application == null) {
+            log.trace("Can't find application with ID: " + applicationID);
+            throw new ApplicationNotFoundException();
         }
 
-        return true;
+        application.setApplicationStatus(ApplicationStatus.REJECTED);
+        onlineAdoptionApplicationRepository.save(application);
+
+        log.trace("Declined online application with ID: " + applicationID);
     }
     public List<OnlineAdoptionApplication> getAllOnlineApplication(){
         return onlineAdoptionApplicationRepository.findAll();
