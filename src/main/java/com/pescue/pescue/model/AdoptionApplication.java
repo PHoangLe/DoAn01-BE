@@ -20,9 +20,9 @@ public class AdoptionApplication {
     private String shelterID;
     private String userID;
     private Date date;
-    private String applicationStatus;
+    private ApplicationStatus applicationStatus;
 
-    public AdoptionApplication(String animalID, String shelterID, String userID, Date date, String applicationStatus) {
+    public AdoptionApplication(String animalID, String shelterID, String userID, Date date, ApplicationStatus applicationStatus) {
         this.animalID = animalID;
         this.shelterID = shelterID;
         this.userID = userID;
@@ -35,7 +35,7 @@ public class AdoptionApplication {
         this.shelterID = dto.getShelterID();
         this.userID = dto.getUserID();
         this.date = new Date(System.currentTimeMillis());
-        this.applicationStatus = "pending";
+        this.applicationStatus = ApplicationStatus.PENDING;
     }
 
     public String getApplicationID() {
@@ -78,11 +78,11 @@ public class AdoptionApplication {
         this.date = date;
     }
 
-    public String getApplicationStatus() {
+    public ApplicationStatus getApplicationStatus() {
         return applicationStatus;
     }
 
-    public void setApplicationStatus(String applicationStatus) {
+    public void setApplicationStatus(ApplicationStatus applicationStatus) {
         this.applicationStatus = applicationStatus;
     }
 }

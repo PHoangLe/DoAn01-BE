@@ -1,14 +1,16 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AnimalDTO;
+import com.pescue.pescue.dto.UserDTO;
 import com.pescue.pescue.model.Animal;
+import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.AnimalRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.number.AbstractNumberFormatter;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,5 +93,19 @@ public class AnimalService {
         return null;
     }
 
+    public void addOnlineAdopters(Animal animal, User adopters) {
+        List<UserDTO> onlineAdopters = animal.getOnlineAdopters();
+        if (onlineAdopters == null)
+            onlineAdopters = new ArrayList<>();
 
+        onlineAdopters.add(new UserDTO(adopters));
+        animal.setOnlineAdopters(onlineAdopters);
+
+        try {
+            updateAnimal(animal);
+            logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopters.getUserID());
+        }catch (Exception e){
+            logger.error(e.getMessage());
+        }
+    }
 }
