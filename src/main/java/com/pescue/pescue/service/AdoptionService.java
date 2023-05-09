@@ -2,6 +2,9 @@ package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
+import com.pescue.pescue.exception.AnimalNotFoundException;
+import com.pescue.pescue.exception.ShelterNotFoundException;
+import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.*;
 import com.pescue.pescue.repository.AdoptionApplicationRepository;
 import com.pescue.pescue.repository.OnlineAdoptionApplicationRepository;
@@ -24,17 +27,27 @@ public class AdoptionService {
 
 
     //Offline Adoption
-    public boolean createAdoptionRequest(AdoptionApplicationRequestDTO dto){
+    public void createAdoptionRequest(AdoptionApplicationRequestDTO dto){
         AdoptionApplication application = new AdoptionApplication(dto);
 
-        try{
-            adoptionApplicationRepository.insert(application);
-            log.trace("added adoption application for user: " + application.getUserID() + " pet: " + application.getAnimalID());
-            return true;
-        }catch (Exception e){
-            log.error(e.getMessage());
-            return false;
+        User user = userService.findUserByID(dto.getUserID());
+        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
+        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
+
+        if (user == null) {
+            log.trace("User not found ID: " + dto.getUserID());
+            throw new UserNotFoundException();
         }
+        if (animal == null) {
+            log.trace("Animal not found ID: " + dto.getAnimalID());
+            throw new AnimalNotFoundException();
+        }
+        if (shelter == null) {
+            log.trace("Shelter not found ID: " + dto.getShelterID());
+            throw new ShelterNotFoundException();
+        }
+        adoptionApplicationRepository.insert(application);
+        log.trace("Added adoption application for user: " + application.getUserID() + " pet: " + application.getAnimalID());
     }
     public AdoptionApplication findApplicationByApplicationID(String applicationID){
         log.trace("Finding adoption application with ID: " + applicationID);

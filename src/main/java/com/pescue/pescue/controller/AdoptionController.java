@@ -2,6 +2,9 @@ package com.pescue.pescue.controller;
 
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
+import com.pescue.pescue.exception.AnimalNotFoundException;
+import com.pescue.pescue.exception.ShelterNotFoundException;
+import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.service.AdoptionService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +23,17 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> createAdoptionRequest(AdoptionApplicationRequestDTO dto) {
-        if (service.createAdoptionRequest(dto))
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã gửi yêu cầu nhận nuôi bé thành công. Bạn vui lòng đợi để trại cứu trợ liên hệ bạn.")
-                    .build());
-        else return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                .message("Đã có lỗi đã xảy ra")
+        try{
+            service.createAdoptionRequest(dto);
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã gửi yêu cầu nhận nuôi bé thành công. Bạn vui lòng đợi để trại cứu trợ liên hệ bạn.")
                 .build());
     }
 
