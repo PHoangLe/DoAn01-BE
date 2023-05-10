@@ -69,7 +69,7 @@ public class AnimalController {
                 .build());
     }
 
-    @PostMapping("/updateAnimal")
+    @PutMapping("/updateAnimal")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> updateAnimal(@RequestBody Animal animal){
