@@ -82,12 +82,6 @@ public class AnimalController {
 
         Animal tempAnimal = animalService.findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
 
-        if(tempAnimal != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Đã tồn tại bé có cùng tên trong trại")
-                    .build());
-        }
-
         if (!animalService.updateAnimal(animal))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                     .message("Có lỗi xảy ra khi cập nhật thông tin thú cưng")
