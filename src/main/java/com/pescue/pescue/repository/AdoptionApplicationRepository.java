@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface AdoptionApplicationRepository extends MongoRepository<AdoptionApplication, String> {
     Optional<AdoptionApplication> findByApplicationID(@Param("applicationID") String applicationID);
-    Optional<AdoptionApplication> findByUserIDAndAnimalID(@Param("userID") String userID, @Param("animalID") String animalID);
-    List<AdoptionApplication> findAllByShelterID(@Param("shelterID") String shelterID);
+    Optional<AdoptionApplication> findByUserAndAnimal(@Param("user") String userID, @Param("animal") String animalID);
+    List<AdoptionApplication> findAllByShelter(@Param("shelter") String shelterID);
 }

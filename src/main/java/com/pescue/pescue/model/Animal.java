@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ public class Animal {
     private boolean sterilized;
     private boolean friendly;
     private boolean isAdopted = false;
-    private List<UserDTO> onlineAdopters;
+    @DBRef
+    private List<User> onlineAdopters;
     private List<String> othersImg;
 
     public Animal(AnimalDTO animalDTO){
@@ -184,11 +186,11 @@ public class Animal {
         this.isAdopted = adopted;
     }
 
-    public List<UserDTO> getOnlineAdopters() {
+    public List<User> getOnlineAdopters() {
         return onlineAdopters;
     }
 
-    public void setOnlineAdopters(List<UserDTO> onlineAdopters) {
+    public void setOnlineAdopters(List<User> onlineAdopters) {
         this.onlineAdopters = onlineAdopters;
     }
 

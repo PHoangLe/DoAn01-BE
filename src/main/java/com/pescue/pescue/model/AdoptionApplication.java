@@ -1,10 +1,12 @@
 package com.pescue.pescue.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import com.pescue.pescue.dto.UserDTO;
+import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -13,76 +15,25 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class AdoptionApplication {
     @Id
     private String applicationID;
-    private String animalID;
-    private String shelterID;
-    private String userID;
+    @DBRef
+    private Animal animal;
+    @DBRef
+    private Shelter shelter;
+    @DBRef
+    private User user;
     private Date date;
     private ApplicationStatus applicationStatus;
 
-    public AdoptionApplication(String animalID, String shelterID, String userID, Date date, ApplicationStatus applicationStatus) {
-        this.animalID = animalID;
-        this.shelterID = shelterID;
-        this.userID = userID;
-        this.date = date;
-        this.applicationStatus = applicationStatus;
-    }
-
-    public AdoptionApplication(AdoptionApplicationRequestDTO dto) {
-        this.animalID = dto.getAnimalID();
-        this.shelterID = dto.getShelterID();
-        this.userID = dto.getUserID();
+    public AdoptionApplication(Animal animal, Shelter shelter, User user) {
+        this.animal = animal;
+        this.shelter = shelter;
+        this.user = user;
         this.date = new Date(System.currentTimeMillis());
         this.applicationStatus = ApplicationStatus.PENDING;
-    }
-
-    public String getApplicationID() {
-        return applicationID;
-    }
-
-    public void setApplicationID(String applicationID) {
-        this.applicationID = applicationID;
-    }
-
-    public String getAnimalID() {
-        return animalID;
-    }
-
-    public void setAnimalID(String animalID) {
-        this.animalID = animalID;
-    }
-
-    public String getShelterID() {
-        return shelterID;
-    }
-
-    public void setShelterID(String shelterID) {
-        this.shelterID = shelterID;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public ApplicationStatus getApplicationStatus() {
-        return applicationStatus;
-    }
-
-    public void setApplicationStatus(ApplicationStatus applicationStatus) {
-        this.applicationStatus = applicationStatus;
     }
 }
