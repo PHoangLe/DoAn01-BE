@@ -1,6 +1,5 @@
 package com.pescue.pescue.service;
 
-import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.UserDTO;
 import com.pescue.pescue.exception.*;
@@ -11,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,14 +32,14 @@ public class AdoptionService {
                     Chúc mừng bạn,
                     Yêu cầu nhận nuôi của bạn đã được xử lý xong.
                     Chúng tôi đại diện trại cứu trợ và bé được bạn nhận nuôi gửi đến bạn một lời cảm ơn chân thành.
-                    Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng thôi qua email này.
+                    Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng tôi qua email này.
                     Pescue.""";
         }else {
             emailBody = """
                     Chào bạn,
                     Yêu cầu nhận nuôi của bạn đã được xử lý xong.
-                    Nhưng chúng tôi lấy làm tiếc về việc nhận nuôi của bạn không thành công.
-                    Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng thôi qua email này.
+                    Nhưng chúng tôi lấy làm tiếc về việc nhận nuôi của bạn đã không thành công.
+                    Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng tôi qua email này.
                     Pescue.""";
         }
         emailService.sendMail(receiverEmail, emailBody, subject);
@@ -125,15 +123,13 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        List<AdoptionApplication> adoptionApplicationList = adoptionApplicationRepository.findAllByShelter(shelterByShelterID);
-
-        return adoptionApplicationList;
+        return adoptionApplicationRepository.findAllByShelterID(shelterID);
     }
     public AdoptionApplication findApplicationByUserIDAndAnimalID(String userID, String animalID) {
         User user = userService.findUserByID(userID);
         Animal animal = animalService.findAnimalByAnimalID(animalID);
 
-        return adoptionApplicationRepository.findByUserAndAnimal(new UserDTO(user), animal).orElse(null);
+        return adoptionApplicationRepository.findByUserIDAndAnimalID(userID, animalID).orElse(null);
     }
 
 

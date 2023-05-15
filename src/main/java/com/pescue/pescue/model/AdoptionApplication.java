@@ -1,5 +1,6 @@
 package com.pescue.pescue.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.UserDTO;
@@ -18,8 +19,11 @@ import java.util.Date;
 public class AdoptionApplication {
     @Id
     private String applicationID;
+    @JsonIgnore
     private String animalID;
+    @JsonIgnore
     private String shelterID;
+    @JsonIgnore
     private String userID;
     private Animal animal;
     private Shelter shelter;
