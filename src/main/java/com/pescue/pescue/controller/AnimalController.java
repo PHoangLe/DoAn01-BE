@@ -75,7 +75,7 @@ public class AnimalController {
     public ResponseEntity<Object> updateAnimal(@RequestBody Animal animal){
         Shelter tempShelter = shelterService.findShelterByShelterID(animal.getShelterID());
 
-        if(tempShelter != null)
+        if(tempShelter == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                     .message("Không tồn tại trại cứu trợ")
                     .build());
