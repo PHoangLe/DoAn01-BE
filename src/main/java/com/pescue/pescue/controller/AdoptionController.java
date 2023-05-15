@@ -26,7 +26,7 @@ public class AdoptionController {
     @PostMapping("/sendAdoptRequest")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> createAdoptionRequest(AdoptionApplicationRequestDTO dto) {
+    public ResponseEntity<Object> createAdoptionRequest(@RequestBody AdoptionApplicationRequestDTO dto) {
         try{
             service.createAdoptionRequest(dto);
         }
@@ -106,7 +106,7 @@ public class AdoptionController {
     @PostMapping("/sendOnlineAdoptRequest")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto) {
+    public ResponseEntity<Object> createOnlineAdoptionRequest(@RequestBody AdoptionApplicationRequestDTO dto) {
         try{
             service.createOnlineAdoptionRequest(dto);
         }

@@ -49,6 +49,8 @@ public class AdoptionService {
     public void createAdoptionRequest(AdoptionApplicationRequestDTO dto){
         AdoptionApplication application = new AdoptionApplication(dto);
 
+        System.out.println(dto);
+
         User user = userService.findUserByID(dto.getUserID());
         Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
         Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
