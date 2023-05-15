@@ -6,6 +6,7 @@ import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.UserDTO;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -25,19 +26,22 @@ public class AdoptionApplication {
     private String shelterID;
     @JsonIgnore
     private String userID;
+    @DBRef
     private Animal animal;
+    @DBRef
     private Shelter shelter;
-    private UserDTO user;
+    @DBRef
+    private User user;
     private Date date;
     private ApplicationStatus applicationStatus;
 
-    public AdoptionApplication(AdoptionApplicationRequestDTO dto, Animal animal, Shelter shelter, UserDTO userDTO) {
+    public AdoptionApplication(AdoptionApplicationRequestDTO dto, Animal animal, Shelter shelter, User user) {
         this.animalID = dto.getAnimalID();
         this.shelterID = dto.getShelterID();
         this.userID = dto.getUserID();
         this.animal = animal;
         this.shelter = shelter;
-        this.user = userDTO;
+        this.user = user;
         this.date = new Date(System.currentTimeMillis());
         this.applicationStatus = ApplicationStatus.PENDING;
     }

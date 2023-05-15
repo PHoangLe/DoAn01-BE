@@ -11,12 +11,13 @@ import java.util.Date;
 
 @Document("OnlineAdoptionApplication")
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class OnlineAdoptionApplication extends AdoptionApplication{
     private Date expiry;
-    public OnlineAdoptionApplication(AdoptionApplicationRequestDTO dto, Animal animal, Shelter shelter, UserDTO userDTO){
-        super(dto, animal, shelter, userDTO);
+    public OnlineAdoptionApplication(AdoptionApplicationRequestDTO dto, Animal animal, Shelter shelter, User user){
+        super(dto, animal, shelter, user);
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date(System.currentTimeMillis()));

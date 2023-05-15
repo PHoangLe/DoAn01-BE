@@ -93,15 +93,15 @@ public class AnimalService {
         return null;
     }
 
-    public void addOnlineAdopters(Animal animal, User adopters) {
-        List<UserDTO> onlineAdopters = animal.getOnlineAdopters();
+    public void addOnlineAdopters(Animal animal, User adopter) {
+        List<User> onlineAdopters = animal.getOnlineAdopters();
         if (onlineAdopters == null)
             onlineAdopters = new ArrayList<>();
 
-        onlineAdopters.add(new UserDTO(adopters));
+        onlineAdopters.add(adopter);
         animal.setOnlineAdopters(onlineAdopters);
 
         updateAnimal(animal);
-        logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopters.getUserID());
+        logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
     }
 }

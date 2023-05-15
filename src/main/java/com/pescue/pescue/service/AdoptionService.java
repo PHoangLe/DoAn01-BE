@@ -70,7 +70,7 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        AdoptionApplication application = new AdoptionApplication(dto, animal, shelter, new UserDTO(user));
+        AdoptionApplication application = new AdoptionApplication(dto, animal, shelter, user);
 
         adoptionApplicationRepository.insert(application);
         log.trace("Added adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());
@@ -158,7 +158,7 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        OnlineAdoptionApplication application = new OnlineAdoptionApplication(dto, animal, shelter, new UserDTO(user));
+        OnlineAdoptionApplication application = new OnlineAdoptionApplication(dto, animal, shelter, user);
 
         onlineAdoptionApplicationRepository.insert(application);
         log.trace("added online adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());
