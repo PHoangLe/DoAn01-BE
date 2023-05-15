@@ -5,6 +5,6 @@ public class ApplicationExistedException extends Exception{
         super(message);
     }
     public ApplicationExistedException(){
-        super("Đã ồn tại yêu cầu nhận nuôi bạn vui lòng đợi từ 4-5 ngày để nhận được kết quả");
+        super("Bạn đã gửi yêu cầu nhận nuôi rồi. Bạn vui lòng đợi từ 4-5 ngày để nhận được kết quả");
     }
 }
