@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("api/v1/animal")
@@ -82,7 +83,7 @@ public class AnimalController {
 
         Animal tempAnimal = animalService.findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
 
-        if(tempAnimal != null) {
+        if(tempAnimal != null && !(tempAnimal.getAnimalID().equals(animal.getAnimalID()))) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                     .message("Đã tồn tại bé có cùng tên trong trại")
                     .build());
