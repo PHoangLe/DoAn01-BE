@@ -2,9 +2,11 @@ package com.pescue.pescue.model;
 
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
+import com.pescue.pescue.dto.UserDTO;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Calendar;
 import java.util.Date;
 
 @Document("OnlineAdoptionApplication")
@@ -12,11 +14,13 @@ import java.util.Date;
 @Getter
 @Setter
 public class OnlineAdoptionApplication extends AdoptionApplication{
-    public OnlineAdoptionApplication(AdoptionApplicationRequestDTO dto){
-        super(dto);
-    }
+    private Date expiry;
+    public OnlineAdoptionApplication(Animal animal, Shelter shelter, UserDTO userDTO){
+        super(animal, shelter, userDTO);
 
-    public OnlineAdoptionApplication(String animalID, String shelterID, String userID, Date date, ApplicationStatus applicationStatus) {
-        super(animalID, shelterID, userID, date, applicationStatus);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date(System.currentTimeMillis()));
+        cal.add(Calendar.MONTH, 1);
+        this.expiry = cal.getTime();
     }
 }

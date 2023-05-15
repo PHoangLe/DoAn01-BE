@@ -2,6 +2,7 @@ package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
+import com.pescue.pescue.dto.UserDTO;
 import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.*;
 import com.pescue.pescue.repository.AdoptionApplicationRepository;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -47,33 +49,34 @@ public class AdoptionService {
     }
     //Offline Adoption
     public void createAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ApplicationExistedException {
-        AdoptionApplication application = new AdoptionApplication(dto);
-
-        System.out.println(dto);
-
-        User user = userService.findUserByID(dto.getUserID());
-        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
-        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
         AdoptionApplication existedApplication = findApplicationByUserIDAndAnimalID(dto.getUserID(), dto.getAnimalID());
-
         if(existedApplication != null && existedApplication.getApplicationStatus() != ApplicationStatus.REJECTED){
-            log.trace("Application already existed: User " + existedApplication.getUserID() + " Animal " + existedApplication.getAnimalID());
+            log.trace("Application already existed: User " + existedApplication.getUser().getUserID() + " Animal " + existedApplication.getAnimal().getAnimalID());
             throw new ApplicationExistedException();
         }
+
+        User user = userService.findUserByID(dto.getUserID());
         if (user == null) {
             log.trace("User not found ID: " + dto.getUserID());
             throw new UserNotFoundException();
         }
+
+        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
         if (animal == null) {
             log.trace("Animal not found ID: " + dto.getAnimalID());
             throw new AnimalNotFoundException();
         }
+
+        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
         if (shelter == null) {
             log.trace("Shelter not found ID: " + dto.getShelterID());
             throw new ShelterNotFoundException();
         }
+
+        AdoptionApplication application = new AdoptionApplication(animal, shelter, new UserDTO(user));
+
         adoptionApplicationRepository.insert(application);
-        log.trace("Added adoption application for user: " + application.getUserID() + " pet: " + application.getAnimalID());
+        log.trace("Added adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());
     }
     public AdoptionApplication findApplicationByApplicationID(String applicationID){
         log.trace("Finding adoption application with ID: " + applicationID);
@@ -90,11 +93,11 @@ public class AdoptionService {
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
         adoptionApplicationRepository.save(application);
-        Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
+        Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
         animal.setAdopted(true);
         animalService.updateAnimal(animal);
 
-        User user = userService.findUserByID(application.getUserID());
+        User user = userService.findUserByID(application.getUser().getUserID());
         sendResultEmail(user.getUserEmail(), true);
 
         log.trace("Approved application with ID: " + applicationID);
@@ -110,7 +113,7 @@ public class AdoptionService {
         application.setApplicationStatus(ApplicationStatus.REJECTED);
         adoptionApplicationRepository.save(application);
 
-        User user = userService.findUserByID(application.getUserID());
+        User user = userService.findUserByID(application.getUser().getUserID());
         sendResultEmail(user.getUserEmail(), false);
 
         log.trace("Declined application with ID: " + applicationID);
@@ -127,9 +130,9 @@ public class AdoptionService {
 
         List<AdoptionApplicationDTO> applicationDTOS = new ArrayList<>();
         adoptionApplicationList.forEach(application -> {
-            User user = userService.findUserByID(application.getUserID());
-            Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
-            Shelter shelter = shelterService.findShelterByShelterID(application.getShelterID());
+            User user = userService.findUserByID(application.getUser().getUserID());
+            Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
+            Shelter shelter = shelterService.findShelterByShelterID(application.getShelter().getShelterID());
 
             applicationDTOS.add(new AdoptionApplicationDTO(application, user, animal, shelter));
         });
@@ -142,27 +145,34 @@ public class AdoptionService {
 
 
     //Online Adoption
-    public void createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto){
-        OnlineAdoptionApplication application = new OnlineAdoptionApplication(dto);
-
+    public void createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ApplicationExistedException {
+        OnlineAdoptionApplication existedApplication = findOnlineApplicationByUserIDAndAnimalID(dto.getUserID(), dto.getAnimalID());
+        if(existedApplication != null){
+            if (existedApplication.getApplicationStatus() == ApplicationStatus.PENDING) {
+                log.trace("Application already existed: User " + existedApplication.getUser().getUserID() + " Animal " + existedApplication.getAnimal().getAnimalID());
+                throw new ApplicationExistedException();
+            }
+        }
         User user = userService.findUserByID(dto.getUserID());
-        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
-        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
-
         if (user == null) {
             log.trace("User not found ID: " + dto.getUserID());
             throw new UserNotFoundException();
         }
+        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
         if (animal == null) {
             log.trace("Animal not found ID: " + dto.getAnimalID());
             throw new AnimalNotFoundException();
         }
+        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
         if (shelter == null) {
             log.trace("Shelter not found ID: " + dto.getShelterID());
             throw new ShelterNotFoundException();
         }
+
+        OnlineAdoptionApplication application = new OnlineAdoptionApplication(animal, shelter, new UserDTO(user));
+
         onlineAdoptionApplicationRepository.insert(application);
-        log.trace("added online adoption application for user: " + application.getUserID() + " pet: " + application.getAnimalID());
+        log.trace("added online adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());
 
     }
     public OnlineAdoptionApplication findOnlineApplicationByApplicationID(String applicationID){
@@ -177,8 +187,8 @@ public class AdoptionService {
             throw new ApplicationNotFoundException();
         }
 
-        Animal animal = animalService.findAnimalByAnimalID(application.getAnimalID());
-        User user = userService.findUserByID(application.getUserID());
+        Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
+        User user = userService.findUserByID(application.getUser().getUserID());
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
         onlineAdoptionApplicationRepository.save(application);
@@ -200,7 +210,7 @@ public class AdoptionService {
         application.setApplicationStatus(ApplicationStatus.REJECTED);
         onlineAdoptionApplicationRepository.save(application);
 
-        User user = userService.findUserByID(application.getUserID());
+        User user = userService.findUserByID(application.getUser().getUserID());
         sendResultEmail(user.getUserEmail(), false);
 
         log.trace("Declined online application with ID: " + applicationID);
