@@ -1,6 +1,10 @@
 package com.pescue.pescue.repository;
 
+import com.pescue.pescue.dto.UserDTO;
 import com.pescue.pescue.model.AdoptionApplication;
+import com.pescue.pescue.model.Animal;
+import com.pescue.pescue.model.Shelter;
+import com.pescue.pescue.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -9,6 +13,6 @@ import java.util.Optional;
 
 public interface AdoptionApplicationRepository extends MongoRepository<AdoptionApplication, String> {
     Optional<AdoptionApplication> findByApplicationID(@Param("applicationID") String applicationID);
-    Optional<AdoptionApplication> findByUserIDAndAnimalID(@Param("userID") String userID, @Param("animalID") String animalID);
-    List<AdoptionApplication> findAllByShelterID(@Param("shelterID") String shelterID);
+    Optional<AdoptionApplication> findByUserAndAnimal(@Param("user") UserDTO userDTO, @Param("animal") Animal animal);
+    List<AdoptionApplication> findAllByShelter(@Param("shelter") Shelter shelter);
 }

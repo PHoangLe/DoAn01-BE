@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -73,7 +72,7 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        AdoptionApplication application = new AdoptionApplication(animal, shelter, new UserDTO(user));
+        AdoptionApplication application = new AdoptionApplication(dto, animal, shelter, new UserDTO(user));
 
         adoptionApplicationRepository.insert(application);
         log.trace("Added adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());
@@ -118,7 +117,7 @@ public class AdoptionService {
 
         log.trace("Declined application with ID: " + applicationID);
     }
-    public List<AdoptionApplicationDTO> findApplicationByShelterID(String shelterID) {
+    public List<AdoptionApplication> findApplicationByShelterID(String shelterID) {
         Shelter shelterByShelterID = shelterService.findShelterByShelterID(shelterID);
 
         if (shelterByShelterID == null){
@@ -126,21 +125,15 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        List<AdoptionApplication> adoptionApplicationList = adoptionApplicationRepository.findAllByShelterID(shelterID);
+        List<AdoptionApplication> adoptionApplicationList = adoptionApplicationRepository.findAllByShelter(shelterByShelterID);
 
-        List<AdoptionApplicationDTO> applicationDTOS = new ArrayList<>();
-        adoptionApplicationList.forEach(application -> {
-            User user = userService.findUserByID(application.getUser().getUserID());
-            Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
-            Shelter shelter = shelterService.findShelterByShelterID(application.getShelter().getShelterID());
-
-            applicationDTOS.add(new AdoptionApplicationDTO(application, user, animal, shelter));
-        });
-
-        return applicationDTOS;
+        return adoptionApplicationList;
     }
     public AdoptionApplication findApplicationByUserIDAndAnimalID(String userID, String animalID) {
-        return adoptionApplicationRepository.findByUserIDAndAnimalID(userID, animalID).orElse(null);
+        User user = userService.findUserByID(userID);
+        Animal animal = animalService.findAnimalByAnimalID(animalID);
+
+        return adoptionApplicationRepository.findByUserAndAnimal(new UserDTO(user), animal).orElse(null);
     }
 
 
@@ -169,7 +162,7 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        OnlineAdoptionApplication application = new OnlineAdoptionApplication(animal, shelter, new UserDTO(user));
+        OnlineAdoptionApplication application = new OnlineAdoptionApplication(dto, animal, shelter, new UserDTO(user));
 
         onlineAdoptionApplicationRepository.insert(application);
         log.trace("added online adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());

@@ -49,7 +49,7 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAdoptionApplicationByShelterID(@PathVariable String shelterID) {
-        List<AdoptionApplicationDTO> applicationByShelterID;
+        List<AdoptionApplication> applicationByShelterID;
         try {
             applicationByShelterID = service.findApplicationByShelterID(shelterID);
         }
