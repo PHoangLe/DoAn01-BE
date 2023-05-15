@@ -1,7 +1,6 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
-import com.pescue.pescue.dto.UserDTO;
 import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.*;
 import com.pescue.pescue.repository.AdoptionApplicationRepository;
@@ -70,7 +69,7 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        AdoptionApplication application = new AdoptionApplication(dto, animal, shelter, user);
+        AdoptionApplication application = new AdoptionApplication(animal, shelter, user);
 
         adoptionApplicationRepository.insert(application);
         log.trace("Added adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());
@@ -123,13 +122,13 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        return adoptionApplicationRepository.findAllByShelterID(shelterID);
+        return adoptionApplicationRepository.findAllByShelter(shelterID);
     }
     public AdoptionApplication findApplicationByUserIDAndAnimalID(String userID, String animalID) {
         User user = userService.findUserByID(userID);
         Animal animal = animalService.findAnimalByAnimalID(animalID);
 
-        return adoptionApplicationRepository.findByUserIDAndAnimalID(userID, animalID).orElse(null);
+        return adoptionApplicationRepository.findByUserAndAnimal(userID, animalID).orElse(null);
     }
 
 
@@ -158,7 +157,7 @@ public class AdoptionService {
             throw new ShelterNotFoundException();
         }
 
-        OnlineAdoptionApplication application = new OnlineAdoptionApplication(dto, animal, shelter, user);
+        OnlineAdoptionApplication application = new OnlineAdoptionApplication(animal, shelter, user);
 
         onlineAdoptionApplicationRepository.insert(application);
         log.trace("added online adoption application for user: " + application.getUser().getUserID() + " pet: " + application.getAnimal().getAnimalID());
@@ -209,6 +208,6 @@ public class AdoptionService {
     }
 
     public OnlineAdoptionApplication findOnlineApplicationByUserIDAndAnimalID(String userID, String animalID) {
-        return onlineAdoptionApplicationRepository.findByUserIDAndAnimalID(userID, animalID).orElse(null);
+        return onlineAdoptionApplicationRepository.findByUserAndAnimal(userID, animalID).orElse(null);
     }
 }

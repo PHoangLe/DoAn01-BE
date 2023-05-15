@@ -16,8 +16,8 @@ import java.util.Date;
 @Setter
 public class OnlineAdoptionApplication extends AdoptionApplication{
     private Date expiry;
-    public OnlineAdoptionApplication(AdoptionApplicationRequestDTO dto, Animal animal, Shelter shelter, User user){
-        super(dto, animal, shelter, user);
+    public OnlineAdoptionApplication(Animal animal, Shelter shelter, User user){
+        super(animal, shelter, user);
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date(System.currentTimeMillis()));

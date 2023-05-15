@@ -20,12 +20,6 @@ import java.util.Date;
 public class AdoptionApplication {
     @Id
     private String applicationID;
-    @JsonIgnore
-    private String animalID;
-    @JsonIgnore
-    private String shelterID;
-    @JsonIgnore
-    private String userID;
     @DBRef
     private Animal animal;
     @DBRef
@@ -35,10 +29,7 @@ public class AdoptionApplication {
     private Date date;
     private ApplicationStatus applicationStatus;
 
-    public AdoptionApplication(AdoptionApplicationRequestDTO dto, Animal animal, Shelter shelter, User user) {
-        this.animalID = dto.getAnimalID();
-        this.shelterID = dto.getShelterID();
-        this.userID = dto.getUserID();
+    public AdoptionApplication(Animal animal, Shelter shelter, User user) {
         this.animal = animal;
         this.shelter = shelter;
         this.user = user;
