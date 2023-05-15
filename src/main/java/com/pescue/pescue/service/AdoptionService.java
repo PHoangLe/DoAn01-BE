@@ -46,7 +46,7 @@ public class AdoptionService {
         emailService.sendMail(receiverEmail, emailBody, subject);
     }
     //Offline Adoption
-    public void createAdoptionRequest(AdoptionApplicationRequestDTO dto){
+    public void createAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ApplicationExistedException {
         AdoptionApplication application = new AdoptionApplication(dto);
 
         System.out.println(dto);
@@ -54,7 +54,12 @@ public class AdoptionService {
         User user = userService.findUserByID(dto.getUserID());
         Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
         Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
+        AdoptionApplication existedApplication = findApplicationByUserIDAndAnimalID(dto.getUserID(), dto.getAnimalID());
 
+        if(existedApplication != null && existedApplication.getApplicationStatus() != ApplicationStatus.REJECTED){
+            log.trace("Application already existed: User " + existedApplication.getUserID() + " Animal " + existedApplication.getAnimalID());
+            throw new ApplicationExistedException();
+        }
         if (user == null) {
             log.trace("User not found ID: " + dto.getUserID());
             throw new UserNotFoundException();
@@ -131,6 +136,9 @@ public class AdoptionService {
 
         return applicationDTOS;
     }
+    public AdoptionApplication findApplicationByUserIDAndAnimalID(String userID, String animalID) {
+        return adoptionApplicationRepository.findByUserIDAndAnimalID(userID, animalID).orElse(null);
+    }
 
 
     //Online Adoption
@@ -199,5 +207,9 @@ public class AdoptionService {
     }
     public List<OnlineAdoptionApplication> getAllOnlineApplication(){
         return onlineAdoptionApplicationRepository.findAll();
+    }
+
+    public OnlineAdoptionApplication findOnlineApplicationByUserIDAndAnimalID(String userID, String animalID) {
+        return onlineAdoptionApplicationRepository.findByUserIDAndAnimalID(userID, animalID).orElse(null);
     }
 }
