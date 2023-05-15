@@ -4,8 +4,10 @@ import com.pescue.pescue.dto.AdoptionApplicationDTO;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.exception.*;
+import com.pescue.pescue.model.AdoptionApplication;
 import com.pescue.pescue.model.OnlineAdoptionApplication;
 import com.pescue.pescue.service.AdoptionService;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class AdoptionController {
         try{
             service.createAdoptionRequest(dto);
         }
-        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException e){
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationExistedException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){
@@ -60,6 +62,23 @@ public class AdoptionController {
         }
 
         return ResponseEntity.ok(applicationByShelterID);
+    }
+
+    @GetMapping("/getAdoptionApplicationByUserIDAndAnimalID/{userID}/{animalID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getAdoptionApplicationByUserIDAndAnimalID(@PathVariable String userID, @PathVariable String animalID) {
+        try {
+            AdoptionApplication application = service.findApplicationByUserIDAndAnimalID(userID, animalID);
+
+            if (application != null)
+                ResponseEntity.ok(application);
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO("Chưa tồn tại yêu cầu nhận nuôi"));
     }
 
     @PostMapping("/confirmAdoptionRequest/{adoptionApplicationID}")
@@ -175,5 +194,21 @@ public class AdoptionController {
         return ResponseEntity.ok(StringResponseDTO.builder()
                 .message("Đã từ chối yêu cầu nhận nuôi của bé")
                 .build());
+    }
+    @GetMapping("/getOnlineAdoptionApplicationByUserIDAndAnimalID/{userID}/{animalID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getOnlineAdoptionApplicationByUserIDAndAnimalID(@PathVariable String userID, @PathVariable String animalID) {
+        try {
+            OnlineAdoptionApplication application = service.findOnlineApplicationByUserIDAndAnimalID(userID, animalID);
+
+            if (application != null)
+                ResponseEntity.ok(application);
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO("Chưa tồn tại yêu cầu nhận nuôi"));
     }
 }
