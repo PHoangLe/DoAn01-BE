@@ -17,9 +17,7 @@ import java.util.List;
 public class Shelter {
     @Id
     private String shelterID;
-    @Indexed(unique = true)
     private String userID;
-    @Indexed(unique = true)
     private String shelterName;
     private String representativeFacebookLink;
     private String representativeEmailAddress;
