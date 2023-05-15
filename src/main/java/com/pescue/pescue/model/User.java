@@ -26,7 +26,6 @@ public class User implements UserDetails {
 
     @Id
     private String userID;
-    @Indexed(unique = true)
     private String userEmail;
     private String userPassword;
     private String userFirstName;
