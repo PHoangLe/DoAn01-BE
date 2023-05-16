@@ -68,7 +68,7 @@ public class ShelterController {
     }
 
     @GetMapping("/getShelterByShelterID/{shelterID}")
-    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getShelterByShelterID(@PathVariable String shelterID){
         if (shelterService.findShelterByShelterID(shelterID) == null)
