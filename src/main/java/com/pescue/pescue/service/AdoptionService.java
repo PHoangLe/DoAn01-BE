@@ -125,9 +125,6 @@ public class AdoptionService {
         return adoptionApplicationRepository.findAllByShelter(shelterID);
     }
     public AdoptionApplication findApplicationByUserIDAndAnimalID(String userID, String animalID) {
-        User user = userService.findUserByID(userID);
-        Animal animal = animalService.findAnimalByAnimalID(animalID);
-
         return adoptionApplicationRepository.findByUserAndAnimal(userID, animalID).orElse(null);
     }
 
