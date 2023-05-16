@@ -72,7 +72,7 @@ public class AdoptionController {
             AdoptionApplication application = service.findApplicationByUserIDAndAnimalID(userID, animalID);
 
             if (application != null)
-                ResponseEntity.ok(application);
+                return ResponseEntity.ok(application);
         }
         catch (Exception e){
             log.trace(e.getMessage());
