@@ -1,5 +1,6 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.exception.FundNotFoundException;
 import com.pescue.pescue.exception.UpdateFundException;
 import com.pescue.pescue.model.Fund;
 import com.pescue.pescue.model.FundTransaction;

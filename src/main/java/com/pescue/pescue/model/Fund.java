@@ -16,12 +16,14 @@ import java.util.Currency;
 public class Fund {
     @Id
     private String fundID;
+    private String fundCover;
     private String fundName;
     private String fundDescription;
     private BigDecimal fundBalance;
 
-    public Fund(String fundName, String fundDescription) {
+    public Fund(String fundName, String fundCover, String fundDescription) {
         this.fundName = fundName;
+        this.fundCover = fundCover;
         this.fundDescription = fundDescription;
         this.fundBalance = new BigDecimal(0);
     }

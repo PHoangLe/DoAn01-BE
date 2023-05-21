@@ -13,17 +13,23 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class FundService {
     private final FundRepository fundRepository;
-    public void createFund(String fundName, String fundDescription){
-        fundRepository.insert(new Fund(fundName, fundDescription));
+    public void createFund(String fundName, String fundCover, String fundDescription){
+        fundRepository.insert(new Fund(fundName,fundCover, fundDescription));
     }
 
     public Fund getFundByFundID(String fundID) throws FundNotFoundException{
+        log.trace("Finding fund with ID: " + fundID);
         return fundRepository.findByFundID(fundID).orElseThrow(FundNotFoundException::new);
+    }
+
+    public List<Fund> getAllFund(){
+        return fundRepository.findAll();
     }
 }
