@@ -17,5 +17,12 @@ public class Fund {
     @Id
     private String fundID;
     private String fundName;
+    private String fundDescription;
     private BigDecimal fundBalance;
+
+    public Fund(String fundName, String fundDescription) {
+        this.fundName = fundName;
+        this.fundDescription = fundDescription;
+        this.fundBalance = new BigDecimal(0);
+    }
 }

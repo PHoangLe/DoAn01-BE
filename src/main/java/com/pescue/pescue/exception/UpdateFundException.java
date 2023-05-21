@@ -5,6 +5,6 @@ public class UpdateFundException extends Exception{
         super(message);
     }
     public UpdateFundException(){
-        super("Đã có lỗi xảy ra khi cập nhật quỹ");
+        super("Đã có lỗi xảy ra khi cập nhật quỹ cứu trợ");
     }
 }

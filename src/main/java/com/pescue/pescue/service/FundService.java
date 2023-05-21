@@ -1,6 +1,9 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.exception.FundNotFoundException;
 import com.pescue.pescue.exception.UpdateFundException;
+import com.pescue.pescue.model.Fund;
+import com.pescue.pescue.model.FundTransaction;
 import com.pescue.pescue.model.TransactionType;
 import com.pescue.pescue.repository.FundRepository;
 import com.pescue.pescue.repository.FundTransactionRepository;
@@ -16,26 +19,11 @@ import java.util.Date;
 @Slf4j
 public class FundService {
     private final FundRepository fundRepository;
-    private final FundTransactionRepository transactionRepository;
-
-    public void createTransaction(String source, String destination, TransactionType type){
-        try{
-            if (type == TransactionType.FUND_TO_SHELTER) {
-
-            }
-            if (type == TransactionType.USER_TO_FUND){
-
-            }
-        }catch (Exception e){
-            log.error(e.getMessage());
-        }
+    public void createFund(String fundName, String fundDescription){
+        fundRepository.insert(new Fund(fundName, fundDescription));
     }
 
-    public void createTransaction(String source, String destination, TransactionType type, Date date){
-
-    }
-
-    private void updateFundBalance(String transactionID, String fundID, BigDecimal value, TransactionType type) throws UpdateFundException {
-
+    public Fund getFundByFundID(String fundID) throws FundNotFoundException{
+        return fundRepository.findByFundID(fundID).orElseThrow(FundNotFoundException::new);
     }
 }
