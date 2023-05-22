@@ -163,7 +163,7 @@ public class AdoptionController {
         try {
             service.confirmOnlineAdoptionRequest(adoptionApplicationID);
         }
-        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException e){
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException | ApplicationNotFoundException | SendMailFailedException | UpdateFundException | ApplicationStatusException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){
