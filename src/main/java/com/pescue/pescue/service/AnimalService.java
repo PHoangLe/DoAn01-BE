@@ -98,10 +98,12 @@ public class AnimalService {
         if (onlineAdopters == null)
             onlineAdopters = new ArrayList<>();
 
-        onlineAdopters.add(adopter);
-        animal.setOnlineAdopters(onlineAdopters);
+        if (!onlineAdopters.contains(adopter)) {
+            onlineAdopters.add(adopter);
+            animal.setOnlineAdopters(onlineAdopters);
 
-        updateAnimal(animal);
-        logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
+            updateAnimal(animal);
+            logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
+        }
     }
 }

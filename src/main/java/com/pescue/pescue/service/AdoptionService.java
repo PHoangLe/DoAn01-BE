@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,6 +22,7 @@ public class AdoptionService {
     private final UserService userService;
     private final ShelterService shelterService;
     private final EmailService emailService;
+    private final FundTransactionService fundTransactionService;
 
     private void sendResultEmail(String receiverEmail, boolean isConfirm) throws SendMailFailedException {
         String emailBody;
@@ -164,7 +166,7 @@ public class AdoptionService {
         log.trace("Finding adoption application with ID: " + applicationID);
         return onlineAdoptionApplicationRepository.findByApplicationID(applicationID).orElse(null);
     }
-    public void confirmOnlineAdoptionRequest(String applicationID) {
+    public void confirmOnlineAdoptionRequest(String applicationID) throws UpdateFundException, ApplicationStatusException {
         OnlineAdoptionApplication application = findOnlineApplicationByApplicationID(applicationID);
 
         if (application == null) {
@@ -172,8 +174,15 @@ public class AdoptionService {
             throw new ApplicationNotFoundException();
         }
 
+        if (application.getApplicationStatus() == ApplicationStatus.COMPLETED){
+            log.trace("Application is already completed");
+            throw new ApplicationStatusException("Yêu cầu đã được chấp thuận rồi");
+        }
+
         Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
         User user = userService.findUserByID(application.getUser().getUserID());
+
+        fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, user.getUserID(), "646aed7fc03b151c35ce8d1b", new BigDecimal(120_000), application.getDate());
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
         onlineAdoptionApplicationRepository.save(application);

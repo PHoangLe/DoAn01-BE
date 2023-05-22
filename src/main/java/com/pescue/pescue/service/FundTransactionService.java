@@ -35,10 +35,10 @@ public class FundTransactionService {
 
     public void createTransaction(TransactionType type, String source, String destination, BigDecimal value, Date date) throws UpdateFundException {
         if (type == TransactionType.FUND_TO_SHELTER) {
-            updateFundBalance(source, value, type);
+            updateFundBalance(source, value.negate(), type);
         }
         if (type == TransactionType.USER_TO_FUND){
-            updateFundBalance(source, value.negate(), type);
+            updateFundBalance(destination, value, type);
         }
 
         transactionRepository.insert(new FundTransaction(type, source, destination, date, value));

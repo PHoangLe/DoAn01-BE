@@ -40,7 +40,7 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserByUserEmail(userEmail));
     }
 
-    @GetMapping("/getUserByEmail/{userID}")
+    @GetMapping("/getUserByID/{userID}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getUserByUserID(@PathVariable String userID) {
