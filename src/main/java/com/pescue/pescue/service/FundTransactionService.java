@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,10 @@ public class FundTransactionService {
 
         transactionRepository.insert(new FundTransaction(type, source, destination, date, value));
         log.trace("Created transaction: Source: " + source + " Destination: " + destination + " Value: " + value +  " Type: " + type);
+    }
+
+    public List<FundTransaction> getTransactionByFundID(String fundID){
+        return transactionRepository.findAllBySourceOrDestination(fundID, fundID);
     }
 
     private void updateFundBalance(String fundID, BigDecimal value, TransactionType type) throws UpdateFundException {
