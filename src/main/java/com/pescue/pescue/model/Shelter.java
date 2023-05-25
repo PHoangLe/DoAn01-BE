@@ -1,9 +1,7 @@
 package com.pescue.pescue.model;
 
 import com.pescue.pescue.dto.ShelterDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,6 +11,8 @@ import java.util.List;
 @Document("Shelter")
 @Builder
 @AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 public class Shelter {
     @Id
