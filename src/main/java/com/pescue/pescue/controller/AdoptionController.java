@@ -24,6 +24,24 @@ import java.util.List;
 @Slf4j
 public class AdoptionController {
     private final AdoptionService service;
+    @PostMapping("/checkExpiryOnlineAdoption")
+    public ResponseEntity<Object> checkExpiryOnlineAdoption() {
+        try{
+            service.checkExpiryOnlineAdoption();
+        }
+        catch (UserNotFoundException | ShelterNotFoundException | AnimalNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Đã kiểm tra và chỉnh sửa nhận nuôi online")
+                .build());
+    }
+
     // Offline Adoption
     @PostMapping("/sendAdoptRequest")
     @PreAuthorize("hasAuthority('ROLE_USER')")

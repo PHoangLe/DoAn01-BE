@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AnimalService {
@@ -105,5 +107,16 @@ public class AnimalService {
             updateAnimal(animal);
             logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
         }
+    }
+    public void removeOnlineAdopters(Animal animal, User user) {
+        List<User> onlineAdopters = animal.getOnlineAdopters();
+
+        List<User> collect = onlineAdopters.stream()
+                .filter(user1 -> !user1.getUserID().equals(user.getUserID()))
+                .toList();
+
+        animal.setOnlineAdopters(collect);
+        updateAnimal(animal);
+        logger.trace("Updated online adopters for Animal: " + animal.getAnimalID());
     }
 }

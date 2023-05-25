@@ -10,7 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -215,5 +218,27 @@ public class AdoptionService {
 
     public OnlineAdoptionApplication findOnlineApplicationByUserIDAndAnimalID(String userID, String animalID) {
         return onlineAdoptionApplicationRepository.findByUserAndAnimal(userID, animalID).orElse(null);
+    }
+    public List<OnlineAdoptionApplication> getAllOnlineApplicationByApplicationStatus(ApplicationStatus status){
+        return onlineAdoptionApplicationRepository.findAllByApplicationStatus(status);
+    }
+    public void updateOnlineAdoptionApplication(OnlineAdoptionApplication application){
+        onlineAdoptionApplicationRepository.save(application);
+        log.trace("Updated status Online Application: " + application.getApplicationID());
+    }
+    public void checkExpiryOnlineAdoption() {
+        log.trace("Daily check for online adoptions started");
+        List<OnlineAdoptionApplication> onlineAdoptionApplications = getAllOnlineApplicationByApplicationStatus(ApplicationStatus.COMPLETED);
+
+        List<OnlineAdoptionApplication> collect = onlineAdoptionApplications.stream()
+                .filter((application) -> application.getExpiry().before(new Date(System.currentTimeMillis())))
+                .toList();
+
+        collect.forEach(application -> {
+            application.setApplicationStatus(ApplicationStatus.EXPIRED);
+            updateOnlineAdoptionApplication(application);
+            animalService.removeOnlineAdopters(application.getAnimal(), application.getUser());
+        });
+        log.trace("Daily check for online adoptions ended");
     }
 }
