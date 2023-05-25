@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +143,11 @@ public class AdoptionService {
                 log.trace("Application already existed: User " + existedApplication.getUser().getUserID() + " Animal " + existedApplication.getAnimal().getAnimalID());
                 throw new ApplicationExistedException();
             }
+            if (existedApplication.getApplicationStatus() == ApplicationStatus.COMPLETED){
+                existedApplication.setApplicationStatus(ApplicationStatus.EXTENDING);
+                updateOnlineAdoptionApplication(existedApplication);
+                return;
+            }
         }
         User user = userService.findUserByID(dto.getUserID());
         if (user == null) {
@@ -182,6 +188,11 @@ public class AdoptionService {
             throw new ApplicationStatusException("Yêu cầu đã được chấp thuận rồi");
         }
 
+        if (application.getApplicationStatus() == ApplicationStatus.EXTENDING){
+            extendingOnlineAdoption(application);
+            return;
+        }
+
         Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
         User user = userService.findUserByID(application.getUser().getUserID());
 
@@ -196,12 +207,28 @@ public class AdoptionService {
         log.trace("Approved online application with ID: " + applicationID);
 
     }
+    private void extendingOnlineAdoption(OnlineAdoptionApplication application) {
+        application.setApplicationStatus(ApplicationStatus.COMPLETED);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(application.getExpiry());
+        cal.add(Calendar.MONTH, 1);
+        application.setExpiry(cal.getTime());
+
+        updateOnlineAdoptionApplication(application);
+        sendResultEmail(application.getUser().getUserEmail(), true);
+    }
     public void declineOnlineAdoptionRequest(String applicationID) {
         OnlineAdoptionApplication application = findOnlineApplicationByApplicationID(applicationID);
 
         if (application == null) {
             log.trace("Can't find application with ID: " + applicationID);
             throw new ApplicationNotFoundException();
+        }
+
+        if (application.getApplicationStatus() == ApplicationStatus.EXTENDING){
+            application.setApplicationStatus(ApplicationStatus.COMPLETED);
+            updateOnlineAdoptionApplication(application);
         }
 
         application.setApplicationStatus(ApplicationStatus.REJECTED);
