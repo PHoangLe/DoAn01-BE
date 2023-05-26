@@ -52,7 +52,7 @@ public class Shelter {
         this.unitNoAndStreet = DTO.getUnitNoAndStreet();
         this.ward = DTO.getWard();
         this.district = DTO.getDistrict();
-        this.city = DTO.getDistrict();
+        this.city = DTO.getCity();
         this.shelterPhoneNo = DTO.getShelterPhoneNo();
         this.shelterLogo = DTO.getShelterLogo();
         this.relatedDocuments = DTO.getRelatedDocuments();
