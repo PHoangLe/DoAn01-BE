@@ -1,7 +1,6 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AnimalDTO;
-import com.pescue.pescue.dto.UserDTO;
 import com.pescue.pescue.model.Animal;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.AnimalRepository;
@@ -12,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AnimalService {

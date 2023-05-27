@@ -19,8 +19,6 @@ import java.util.List;
 
 @Document("User")
 @Builder
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
@@ -121,7 +119,24 @@ public class User implements UserDetails {
     public void setUserRoles(List<Role> userRoles) {
         this.userRoles = userRoles;
     }
-    public User(String userEmail, String userPassword, String userFirstName, String userLastName,String phoneNo, Date dob, Gender userGender, String userAvatar, boolean isLocked, List<Role> userRoles) {
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public Gender getUserGender() {
+        return userGender;
+    }
+
+    public void setUserGender(Gender userGender) {
+        this.userGender = userGender;
+    }
+
+    public User(String userEmail, String userPassword, String userFirstName, String userLastName, String phoneNo, Date dob, Gender userGender, String userAvatar, boolean isLocked, List<Role> userRoles) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userFirstName = userFirstName;

@@ -95,6 +95,9 @@ public class AuthenticationService {
                     .userID(user.getUserID())
                     .userEmail(user.getUserEmail())
                     .userFullName(user.getUserFirstName() + " " + user.getUserLastName())
+                    .phoneNo(user.getPhoneNo())
+                    .userGender(user.getUserGender())
+                    .dob(user.getDob())
                     .userRoles(user.getUserRoles())
                     .userAvatar(user.getUserAvatar())
                     .build());
@@ -126,6 +129,9 @@ public class AuthenticationService {
                 .userID(user.getUserID())
                 .userEmail(user.getUserEmail())
                 .userFullName(user.getUserFirstName() + " " + user.getUserLastName())
+                .phoneNo(user.getPhoneNo())
+                .userGender(user.getUserGender())
+                .dob(user.getDob())
                 .userRoles(user.getUserRoles())
                 .userAvatar(user.getUserAvatar())
                 .build());
