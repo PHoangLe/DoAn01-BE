@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pescue.pescue.dto.GoogleUserAuthenticationRequestDTO;
 import com.pescue.pescue.dto.UserRegisterDTO;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,10 +14,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Document("User")
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
@@ -31,6 +32,8 @@ public class User implements UserDetails {
     private String userFirstName;
     private String userLastName;
     private String phoneNo;
+    private Date dob;
+    private Gender userGender;
     private String userAvatar;
     private boolean isLocked = true;
     private boolean isDeleted = false;
@@ -118,12 +121,14 @@ public class User implements UserDetails {
     public void setUserRoles(List<Role> userRoles) {
         this.userRoles = userRoles;
     }
-    public User(String userEmail, String userPassword, String userFirstName, String userLastName,String phoneNo, String userAvatar,boolean isLocked, List<Role> userRoles) {
+    public User(String userEmail, String userPassword, String userFirstName, String userLastName,String phoneNo, Date dob, Gender userGender, String userAvatar, boolean isLocked, List<Role> userRoles) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userFirstName = userFirstName;
         this.userLastName = userLastName;
         this.phoneNo = phoneNo;
+        this.dob = dob;
+        this.userGender = userGender;
         this.userAvatar = userAvatar;
         this.isLocked = isLocked;
         this.userRoles = userRoles;
@@ -134,6 +139,8 @@ public class User implements UserDetails {
         this.userFirstName = dto.getUserFirstName();
         this.userLastName = dto.getUserLastName();
         this.phoneNo = "none";
+        this.dob = new Date(System.currentTimeMillis());
+        this.userGender = Gender.OTHER;
         this.userAvatar = dto.getUserAvatar();
         this.isLocked = false;
         this.isDeleted = false;
@@ -144,6 +151,8 @@ public class User implements UserDetails {
         this.userFirstName = dto.getUserFirstName();
         this.userLastName = dto.getUserLastName();
         this.phoneNo = dto.getPhoneNo();
+        this.dob = dto.getDob();
+        this.userGender = dto.getUserGender();
         this.userAvatar = dto.getUserAvatar();
         this.isLocked = false;
         this.isDeleted = false;

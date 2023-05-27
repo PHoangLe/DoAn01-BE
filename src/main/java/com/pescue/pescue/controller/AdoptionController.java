@@ -174,6 +174,22 @@ public class AdoptionController {
 
         return ResponseEntity.ok(allOnlineApplication);
     }
+
+    @GetMapping("/getOnlineAdoptionsByUserID/{userID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getOnlineAdoptionsByUserID(@PathVariable String userID) {
+        List<OnlineAdoptionApplication> onlineAdoptionApplicationsByUserID;
+        try {
+            onlineAdoptionApplicationsByUserID = service.getOnlineAdoptionsByUserID(userID);
+        }
+        catch (Exception e){
+            log.trace(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+
+        return ResponseEntity.ok(onlineAdoptionApplicationsByUserID);
+    }
     @PostMapping("/confirmOnlineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
