@@ -33,7 +33,7 @@ public class AuthenticationService {
     public ResponseEntity<Object> userRegister(UserRegisterDTO request){
         User user = userService.findUserByUserEmail(request.getUserEmail());
         if (user != null){
-            if (user.isEnabled()) {
+            if (user.isLocked()) {
                 logger.error("Register user failed: " + request.getUserEmail() + "EXISTED");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                         .message("Tài khoản đã tồn tại")
