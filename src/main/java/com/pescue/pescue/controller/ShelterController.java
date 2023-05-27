@@ -49,11 +49,18 @@ public class ShelterController {
         return ResponseEntity.ok(shelterService.findShelterToApprove());
     }
 
-    @PostMapping("/approveShelter")
+    @PostMapping("/approveShelter/{shelterID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> approveShelter(@RequestBody ApproveShelterDTO approveShelterDTO){
-        return shelterService.approveShelter(approveShelterDTO.getShelterID());
+    public ResponseEntity<Object> approveShelter(@PathVariable String shelterID){
+        return shelterService.approveShelter(shelterID);
+    }
+
+    @PostMapping("/disapproveShelter/{shelterID}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> disapproveShelter(@PathVariable String shelterID){
+        return shelterService.disapproveShelter(shelterID);
     }
 
     @GetMapping("/getShelterByUserID/{userID}")

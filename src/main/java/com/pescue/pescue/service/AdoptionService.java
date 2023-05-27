@@ -196,9 +196,10 @@ public class AdoptionService {
         Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
         User user = userService.findUserByID(application.getUser().getUserID());
 
-        fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, user.getUserID(), "646aed7fc03b151c35ce8d1b", new BigDecimal(120_000), application.getDate());
+        fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, user.getUserID(), "646aed7fc03b151c35ce8d1b", new BigDecimal(120_000));
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
+        application = setExpiry(application);
         onlineAdoptionApplicationRepository.save(application);
         animalService.addOnlineAdopters(animal, user);
 
@@ -248,6 +249,13 @@ public class AdoptionService {
     }
     public List<OnlineAdoptionApplication> getAllOnlineApplicationByApplicationStatus(ApplicationStatus status){
         return onlineAdoptionApplicationRepository.findAllByApplicationStatus(status);
+    }
+    public OnlineAdoptionApplication setExpiry(OnlineAdoptionApplication onlineAdoptionApplication){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date(System.currentTimeMillis()));
+        cal.add(Calendar.MONTH, 1);
+        onlineAdoptionApplication.setExpiry(cal.getTime());
+        return onlineAdoptionApplication;
     }
     public void updateOnlineAdoptionApplication(OnlineAdoptionApplication application){
         onlineAdoptionApplicationRepository.save(application);

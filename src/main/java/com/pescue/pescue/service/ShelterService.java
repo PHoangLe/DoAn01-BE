@@ -102,7 +102,7 @@ public class ShelterService {
 
         shelter.setApproved(true);
 
-        if(updateShelter(shelter) && sendNotifyEmail(shelter)) {
+        if(updateShelter(shelter) && sendNotifyEmail(shelter, true)) {
             if (!userService.addRoleForUser(shelter.getUserID(), Role.ROLE_SHELTER_MANAGER)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                         .message("Có lỗi xảy ra khi thêm quyền cho người dùng")
@@ -120,9 +120,20 @@ public class ShelterService {
                 .build());
     }
 
-    private boolean sendNotifyEmail(Shelter shelter) {
+    private boolean sendNotifyEmail(Shelter shelter, boolean isApprove) {
+        String emailBody;
+        if (isApprove){
+            emailBody = "Đăng ký làm trại cứu trợ của bạn đã được chấp thuận. Tài khoản của bạn đã trở thành tài khoản của trại cứu trợ. Chào mừng bạn đến với Pescue!";
+        }
+        else {
+            emailBody = """
+                    Chúng tôi rất tiếc khi phải thông báo rằng yêu cầu làm trại cứu trợ của bạn đã bị từ chối.
+                    Để biết thêm thông tin chi tiết xin vui lòng liên lạc lại với chúng tôi
+                    Bạn có thể gửi lại yêu cầu với đầy đủ thông tin hơn.""";
+        }
+
         return emailService.sendMail(shelter.getRepresentativeEmailAddress(),
-                "Đăng ký làm trại cứu trợ của bạn đã được chấp thuận. Tài khoản của bạn đã trở thành tài khoản của trại cứu trợ. Chào mừng bạn đến với Pescue!",
+                emailBody,
                 "Kết quả đăng ký làm trại cứu hộ");
     }
 
@@ -133,5 +144,38 @@ public class ShelterService {
         }
         logger.trace("Can't find any shelter with shelterName: " + shelterName);
         return null;
+    }
+
+    public boolean deleteShelter(Shelter shelter){
+        try {
+            shelterRepository.delete(shelter);
+            return true;
+        }
+        catch (Exception e){
+            logger.error(e.getMessage());
+            return false;
+        }
+    }
+
+    public ResponseEntity<Object> disapproveShelter(String shelterID) {
+        Shelter shelter = findShelterByShelterID(shelterID);
+
+        if (shelter == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                    .message("Không tồn tại trại cứu trợ")
+                    .build());
+
+        shelterRepository.delete(shelter);
+
+        if(deleteShelter(shelter) && sendNotifyEmail(shelter, false)) {
+            logger.trace("Deleted shelter: " + shelterID);
+            return ResponseEntity.ok(StringResponseDTO.builder()
+                    .message("Đã từ chối yêu cầu làm trại cứu trợ thành công")
+                    .build());
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                .message("Đã có lỗi xảy ra vui lòng thử lại sau")
+                .build());
     }
 }
