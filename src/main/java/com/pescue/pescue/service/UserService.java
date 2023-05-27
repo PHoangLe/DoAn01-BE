@@ -1,6 +1,9 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.ChangePasswordDTO;
+import com.pescue.pescue.dto.UserProfileDTO;
+import com.pescue.pescue.exception.UserNotFoundException;
+import com.pescue.pescue.model.Gender;
 import com.pescue.pescue.model.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
@@ -13,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +35,7 @@ public class UserService {
     public boolean updateUser(User user){
         try {
             userRepository.save(user);
+            logger.trace("Updated user with Id: " + user.getUserID());
             return true;
         }
         catch (Exception e){
@@ -96,5 +101,27 @@ public class UserService {
         }
 
         return true;
+    }
+
+    public User updateUserProfile(UserProfileDTO userProfileDTO) throws Exception {
+        User user = findUserByID(userProfileDTO.getUserID());
+
+        if (user == null) {
+            log.error("Can't find any user with Id: " + userProfileDTO.getUserID());
+            throw new UserNotFoundException();
+        }
+
+        user.setUserFirstName(userProfileDTO.getUserFirstName());
+        user.setUserLastName(userProfileDTO.getUserLastName());
+        user.setPhoneNo(userProfileDTO.getPhoneNo());
+        user.setDob(userProfileDTO.getDob());
+        user.setUserGender(userProfileDTO.getUserGender());
+        user.setUserAvatar(userProfileDTO.getUserAvatar());
+
+        if(!updateUser(user)) {
+            throw new Exception();
+        }
+
+        return user;
     }
 }

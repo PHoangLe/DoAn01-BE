@@ -1,8 +1,5 @@
 package com.pescue.pescue.model;
 
-import com.pescue.pescue.dto.AdoptionApplicationDTO;
-import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
-import com.pescue.pescue.dto.UserDTO;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 

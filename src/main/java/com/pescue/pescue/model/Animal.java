@@ -1,7 +1,6 @@
 package com.pescue.pescue.model;
 
 import com.pescue.pescue.dto.AnimalDTO;
-import com.pescue.pescue.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

@@ -1,9 +1,5 @@
 package com.pescue.pescue.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pescue.pescue.dto.AdoptionApplicationDTO;
-import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
-import com.pescue.pescue.dto.UserDTO;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
