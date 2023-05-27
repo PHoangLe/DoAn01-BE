@@ -136,7 +136,7 @@ public class OTPService {
                         .build());
             }
 
-            logger.error("Valid OTP " + request);
+            logger.trace("Valid OTP " + request);
             return ResponseEntity.ok(StringResponseDTO.builder()
                     .message("Mã OTP hợp lệ")
                     .build());
