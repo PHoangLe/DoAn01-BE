@@ -276,4 +276,11 @@ public class AdoptionService {
         });
         log.trace("Daily check for online adoptions ended");
     }
+
+    public List<OnlineAdoptionApplication> getOnlineAdoptionsByUserID(String userID) {
+        List<OnlineAdoptionApplication> allByUser = onlineAdoptionApplicationRepository.findAllByUser(userID);
+        return allByUser.stream()
+                .filter((application) -> application.getApplicationStatus() == ApplicationStatus.COMPLETED)
+                .toList();
+    }
 }

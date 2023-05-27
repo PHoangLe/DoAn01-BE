@@ -33,11 +33,12 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getUserByEmail(@PathVariable String userEmail) {
-        if (userService.findUserByUserEmail(userEmail) == null)
+        User user = userService.findUserByUserEmail(userEmail);
+        if (user == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                     .message("Không tồn tại người dùng cần tìm")
                     .build());
-        return ResponseEntity.ok(userService.findUserByUserEmail(userEmail));
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/getUserByID/{userID}")
