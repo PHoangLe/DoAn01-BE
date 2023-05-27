@@ -31,14 +31,22 @@ public class AuthenticationService {
     Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     public ResponseEntity<Object> userRegister(UserRegisterDTO request){
-        User user = new User(request);
-
-        if (userService.findUserByUserEmail(request.getUserEmail()) != null){
-            logger.error("Register user failed: " + request.getUserEmail() + "EXISTED");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Tài khoản đã tồn tại")
-                    .build());
+        User user = userService.findUserByUserEmail(request.getUserEmail());
+        if (user != null){
+            if (user.isEnabled()) {
+                logger.error("Register user failed: " + request.getUserEmail() + "EXISTED");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                        .message("Tài khoản đã tồn tại")
+                        .build());
+            }
+            else {
+                logger.error("Register user failed: " + request.getUserEmail() + "NON_APPROVED");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
+                        .message("Tài khoản đã tồn tại nhưng chưa được xác thực. Bạn vui lòng xác thực tài khoản để đăng nhập")
+                        .build());
+            }
         }
+        user = new User(request);
 
         try{
             userService.addUser(user);
