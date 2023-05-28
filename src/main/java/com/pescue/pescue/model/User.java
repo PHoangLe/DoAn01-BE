@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pescue.pescue.dto.GoogleUserAuthenticationRequestDTO;
 import com.pescue.pescue.dto.UserRegisterDTO;
+import com.pescue.pescue.exception.DateOfBirthFormatException;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,10 +13,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Document("User")
 @Builder
@@ -161,12 +161,11 @@ public class User implements UserDetails {
         this.isDeleted = false;
         this.userRoles = List.of(Role.ROLE_USER);
     }
-    public User(UserRegisterDTO dto){
+    public User(UserRegisterDTO dto) {
         this.userEmail = dto.getUserEmail();
         this.userFirstName = dto.getUserFirstName();
         this.userLastName = dto.getUserLastName();
         this.phoneNo = dto.getPhoneNo();
-        this.dob = dto.getDob();
         this.userGender = dto.getUserGender();
         this.userAvatar = dto.getUserAvatar();
         this.isLocked = false;

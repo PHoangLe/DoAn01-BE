@@ -15,6 +15,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/v1/user")
@@ -65,6 +67,11 @@ public class UserController {
         catch (UserNotFoundException unfe){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
                     .message(unfe.getMessage())
+                    .build());
+        }
+        catch (ParseException pe){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
+                    .message("Ngày sinh không đúng định dạng vui lòng kiểm tra lại")
                     .build());
         }
         catch (Exception e) {

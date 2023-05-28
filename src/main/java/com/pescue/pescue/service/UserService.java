@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -114,7 +116,7 @@ public class UserService {
         user.setUserFirstName(userProfileDTO.getUserFirstName());
         user.setUserLastName(userProfileDTO.getUserLastName());
         user.setPhoneNo(userProfileDTO.getPhoneNo());
-        user.setDob(userProfileDTO.getDob());
+        user.setDob(stringToDate(userProfileDTO.getDob()));
         user.setUserGender(userProfileDTO.getUserGender());
         user.setUserAvatar(userProfileDTO.getUserAvatar());
 
@@ -123,5 +125,10 @@ public class UserService {
         }
 
         return user;
+    }
+
+
+    private Date stringToDate(String dob) throws ParseException {
+        return new SimpleDateFormat("dd/MM/yyyy").parse(dob);
     }
 }
