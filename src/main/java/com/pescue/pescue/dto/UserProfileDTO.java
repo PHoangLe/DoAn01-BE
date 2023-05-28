@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
@@ -18,17 +20,7 @@ public class UserProfileDTO {
     private String userFirstName;
     private String userLastName;
     private String phoneNo;
-    private Date dob;
+    private String dob;
     private Gender userGender;
     private String userAvatar;
-
-    public UserProfileDTO(User user){
-        this.userID = user.getUserID();
-        this.userFirstName = user.getUserFirstName();
-        this.userLastName = user.getUserLastName();
-        this.phoneNo = user.getPhoneNo();
-        this.dob = user.getDob();
-        this.userGender = user.getUserGender();
-        this.userAvatar = user.getUserAvatar();
-    }
 }
