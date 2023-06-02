@@ -19,10 +19,8 @@ public class ChatMessage {
     @Id
     private String messageID;
     private String chatRoomID;
-    @DBRef
-    private User sender;
-    @DBRef
-    private User recipient;
+    private String senderID;
+    private String recipientID;
     private String content;
     private Date timestamp;
     private MessageStatus status;

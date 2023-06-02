@@ -34,8 +34,8 @@ public class ChatMessageService {
             return null;
 
         message.setChatRoomID(chatRoomID);
-        message.setSender(sender);
-        message.setRecipient(recipient);
+        message.setSenderID(dto.getSenderID());
+        message.setRecipientID(dto.getRecipientID());
         message.setTimestamp(new Date(System.currentTimeMillis()));
         message.setContent(dto.getContent());
         message.setStatus(MessageStatus.RECEIVED);
@@ -44,9 +44,9 @@ public class ChatMessageService {
         return message;
     }
 
-    public long countNewMessage(String senderId, String recipientId){
-        return repository.countBySenderAndRecipientAndStatus(senderId, recipientId, MessageStatus.RECEIVED);
-    }
+//    public long countNewMessage(String senderId, String recipientId){
+//        return repository.countBySenderAndRecipientAndStatus(senderId, recipientId, MessageStatus.RECEIVED);
+//    }
     public ChatMessage findById(String id){
         return repository
                 .findById(id)
@@ -55,11 +55,6 @@ public class ChatMessageService {
                     return repository.save(chatMessage);
                 })
                 .orElseThrow();
-    }
-
-    public List<List<ChatMessage>> findChatMessages(String userID) {
-//        List<ChatMessage>
-        return null;
     }
 //
 //    private void updateStatuses(String senderId, String recipientId, MessageStatus status) {
