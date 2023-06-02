@@ -18,6 +18,7 @@ import java.util.Date;
 public class ChatMessage {
     @Id
     private String messageID;
+    private String chatRoomID;
     @DBRef
     private User sender;
     @DBRef

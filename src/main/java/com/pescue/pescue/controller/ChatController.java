@@ -4,6 +4,7 @@ import com.pescue.pescue.dto.MessageDTO;
 import com.pescue.pescue.model.ChatMessage;
 import com.pescue.pescue.model.ChatNotification;
 import com.pescue.pescue.service.ChatMessageService;
+import com.pescue.pescue.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/v1/chat")
 @RequiredArgsConstructor
@@ -21,13 +24,21 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
-
+    private final ChatRoomService chatRoomService;
     @MessageMapping("/private-message")
     public ChatMessage processMessage(@Payload MessageDTO messageDTO){
         log.trace(messageDTO.getContent());
-        ChatMessage chatMessage = chatMessageService.save(messageDTO);
+        Optional<String> chatID = chatRoomService
+                .getChatId(messageDTO.getSenderID(), messageDTO.getRecipientID(), true);
+
+        if (chatID.isEmpty())
+            return null;
+
+        ChatMessage chatMessage = chatMessageService.save(messageDTO, chatID.get());
+
         if (chatMessage == null)
             return null;
+
         messagingTemplate.convertAndSendToUser(chatMessage.getRecipient().getUserID(),"/private",chatMessage); // /user/userID/private
         return chatMessage;
     }
@@ -43,12 +54,11 @@ public class ChatController {
 //        return ResponseEntity.ok(chatMessageService.countNewMessage(senderId, recipientId));
 //    }
 
-//    @GetMapping("/messages/{senderId}/{recipientId}")
-//    public ResponseEntity<?> findChatMessages ( @PathVariable String senderId,
-//                                                @PathVariable String recipientId) {
-//        return ResponseEntity
-//                .ok(chatMessageService.findChatMessages(senderId, recipientId));
-//    }
+    @GetMapping("/getAllChatRoomByUserID/{userID}")
+    public ResponseEntity<Object> getAllChatRoomByUserID (@PathVariable String userID) {
+        return ResponseEntity
+                .ok(chatRoomService.findAllChatRoomByUserID(userID));
+    }
 
 //    @GetMapping("/messages/{id}")
 //    public ResponseEntity<?> findMessage(@PathVariable String id){
