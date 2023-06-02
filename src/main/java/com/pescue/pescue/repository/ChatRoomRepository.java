@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
     Optional<ChatRoom> findByChatRoomID (@Param("chatRoomID") String chatRoomID);
-    Optional<ChatRoom> findByUser1OrUser2AndUser2OrUser1(@Param("user1.userID") String user1ID, @Param("user2.userID") String user2ID);
+    Optional<ChatRoom> findByUser1AndUser2(@Param("user1.userID") String user1ID, @Param("user2.userID") String user2ID);
 
     List<ChatRoom> findAllByUser1OrUser2(@Param("user1.userID") String user1ID, @Param("user2.userID") String user2ID);
 }
