@@ -40,7 +40,7 @@ public class ChatController {
             return null;
 
         messagingTemplate.convertAndSendToUser(chatMessage.getRecipient().getUserID(),"/private", chatMessage); // /user/userID/private
-        System.out.println("Sent message from: " + messageDTO.getSenderID() + " to: " + messageDTO.getRecipientID());
+        log.trace("Sent message from: " + chatMessage.getSender().getUserID() + " to: " + chatMessage.getRecipient().getUserID());
         return chatMessage;
     }
 
