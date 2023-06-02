@@ -36,9 +36,11 @@ public class ChatController {
 
         ChatMessage chatMessage = chatMessageService.save(messageDTO, chatID.get());
 
-        System.out.println("sent message from:" + messageDTO.getSenderID() + " to: " + messageDTO.getRecipientID());
+        if (chatMessage == null)
+            return null;
 
-        messagingTemplate.convertAndSendToUser(chatMessage.getRecipient().getUserID(),"/private",chatMessage); // /user/userID/private
+        messagingTemplate.convertAndSendToUser(chatMessage.getRecipient().getUserID(),"/private", chatMessage); // /user/userID/private
+        System.out.println("Sent message from: " + messageDTO.getSenderID() + " to: " + messageDTO.getRecipientID());
         return chatMessage;
     }
 
