@@ -22,18 +22,22 @@ public class ChatRoomService {
         User recipient = userService.findUserByID(recipientId);
 
         return repository
-                .findByUser1OrUser2AndUser2OrUser1(senderId, recipientId)
+                .findByUser1AndUser2(senderId, recipientId)
                 .map(ChatRoom::getChatRoomID)
                 .or(() -> {
                     if(!createIfNotExist)
                         return Optional.empty();
 
-                    ChatRoom newChatRoom = new ChatRoom(sender, recipient);
+                    return repository.findByUser1AndUser2(recipientId, senderId)
+                            .map(ChatRoom::getChatRoomID)
+                            .or(() -> {
+                                ChatRoom newChatRoom = new ChatRoom(sender, recipient);
 
-                    repository.insert(newChatRoom);
-                    String chatRoomID = newChatRoom.getChatRoomID();
+                                repository.insert(newChatRoom);
+                                String chatRoomID = newChatRoom.getChatRoomID();
 
-                    return Optional.of(chatRoomID);
+                                return Optional.of(chatRoomID);
+                            });
                 });
     }
 
