@@ -61,6 +61,12 @@ public class ChatController {
                 .ok(chatRoomService.findAllChatRoomByUserID(userID));
     }
 
+    @GetMapping("/getAllMessageByChatRoomID/{chatRoomID}")
+    public ResponseEntity<Object> getAllMessageByChatRoomID (@PathVariable String chatRoomID) {
+        return ResponseEntity
+                .ok(chatRoomService.findAllChatMessageByChatRoomID(chatRoomID));
+    }
+
 //    @GetMapping("/messages/{id}")
 //    public ResponseEntity<?> findMessage(@PathVariable String id){
 //        return ResponseEntity.ok(chatMessageService.findById(id));
