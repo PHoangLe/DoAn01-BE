@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
-    long countBySenderAndRecipientAndStatus(@Param("sender.userID") String senderId, @Param("recipient.userID") String recipientId, @Param("status") MessageStatus status);
+    long countBySenderIDAndRecipientIDAndStatus(@Param("senderID") String senderID, @Param("recipientID") String recipientId, @Param("status") MessageStatus status);
     List<ChatMessage> findAllByChatRoomID (@Param("chatRoomID") String chatRoomID);
 }

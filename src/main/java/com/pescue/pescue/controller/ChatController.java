@@ -39,8 +39,8 @@ public class ChatController {
         if (chatMessage == null)
             return null;
 
-        messagingTemplate.convertAndSendToUser(chatMessage.getRecipient().getUserID(),"/private", chatMessage); // /user/userID/private
-        log.trace("Sent message from: " + chatMessage.getSender().getUserID() + " to: " + chatMessage.getRecipient().getUserID());
+        messagingTemplate.convertAndSendToUser(chatMessage.getRecipientID(),"/private", chatMessage); // /user/userID/private
+        log.trace("Sent message from: " + chatMessage.getSenderID() + " to: " + chatMessage.getRecipientID());
         return chatMessage;
     }
 
