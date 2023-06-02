@@ -22,7 +22,7 @@ public class ChatRoomService {
         User recipient = userService.findUserByID(recipientId);
 
         return repository
-                .findByUser1AndUser2(senderId, recipientId)
+                .findByUser1OrUser2AndUser2OrUser1(senderId, recipientId)
                 .map(ChatRoom::getChatRoomID)
                 .or(() -> {
                     if(!createIfNotExist)
