@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class ChatMessageService {
     private final ChatMessageRepository repository;
     private final UserService userService;
 
-    public ChatMessage save(MessageDTO dto){
+    public ChatMessage save(MessageDTO dto, String chatRoomID){
         log.info("save messages");
         ChatMessage message = new ChatMessage();
         User sender = userService.findUserByID(dto.getSenderID());
@@ -32,6 +33,7 @@ public class ChatMessageService {
         if (sender == null || recipient == null)
             return null;
 
+        message.setChatRoomID(chatRoomID);
         message.setSender(sender);
         message.setRecipient(recipient);
         message.setTimestamp(new Date(System.currentTimeMillis()));
@@ -53,6 +55,11 @@ public class ChatMessageService {
                     return repository.save(chatMessage);
                 })
                 .orElseThrow();
+    }
+
+    public List<List<ChatMessage>> findChatMessages(String userID) {
+//        List<ChatMessage>
+        return null;
     }
 //
 //    private void updateStatuses(String senderId, String recipientId, MessageStatus status) {
