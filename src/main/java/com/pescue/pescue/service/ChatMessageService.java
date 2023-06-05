@@ -1,27 +1,22 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.MessageDTO;
-import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.ChatMessage;
 import com.pescue.pescue.model.MessageStatus;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ChatMessageService {
     private final ChatMessageRepository repository;
+    private final ChatRoomService chatRoomService;
     private final UserService userService;
     public ChatMessage save(MessageDTO dto, String chatRoomID){
         log.info("save messages");
@@ -40,7 +35,14 @@ public class ChatMessageService {
         message.setStatus(MessageStatus.DELIVERED);
 
         repository.save(message);
+
+        readUnreadMessages(message.getRecipientID(), message.getSenderID());
+
         return message;
+    }
+
+    private void readUnreadMessages(String senderID, String recipientID) {
+        chatRoomService.updateStatuses(senderID, recipientID, MessageStatus.RECEIVED);
     }
 
     public long countNewMessage(String senderId, String recipientId){
