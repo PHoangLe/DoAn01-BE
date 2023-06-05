@@ -14,6 +14,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -50,10 +51,10 @@ public class ChatController {
 //        return message;
 //    }
 
-//    @GetMapping("/messages/{senderId}/{recipientId}/count")
-//    public ResponseEntity<Long> countNewMessages(@PathVariable String recipientId, @PathVariable String senderId){
-//        return ResponseEntity.ok(chatMessageService.countNewMessage(senderId, recipientId));
-//    }
+    @GetMapping("/messages/{senderId}/{recipientId}/count")
+    public ResponseEntity<Long> countNewMessages(@PathVariable String recipientId, @PathVariable String senderId){
+        return ResponseEntity.ok(chatMessageService.countNewMessage(senderId, recipientId));
+    }
 
     @GetMapping("/getAllChatRoomByUserID/{userID}")
     public ResponseEntity<Object> getAllChatRoomByUserID (@PathVariable String userID) {
@@ -61,10 +62,11 @@ public class ChatController {
                 .ok(chatRoomService.findAllChatRoomByUserID(userID));
     }
 
-    @GetMapping("/getAllMessageByChatRoomID/{chatRoomID}")
-    public ResponseEntity<Object> getAllMessageByChatRoomID (@PathVariable String chatRoomID) {
+    @GetMapping("/getAllMessageBySenderIDAndRecipientID/{senderID}/{recipientID}")
+    public ResponseEntity<Object> getAllMessageBySenderIDAndRecipientID (@PathVariable String recipientID, @PathVariable String senderID) {
+        List<ChatMessage> allChatMessageByChatRoomID = chatRoomService.findAllMessageBySenderIDAndRecipientID(senderID, recipientID);
         return ResponseEntity
-                .ok(chatRoomService.findAllChatMessageByChatRoomID(chatRoomID));
+                .ok(allChatMessageByChatRoomID);
     }
 
 //    @GetMapping("/messages/{id}")
