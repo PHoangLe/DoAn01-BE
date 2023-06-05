@@ -23,7 +23,6 @@ import java.util.List;
 public class ChatMessageService {
     private final ChatMessageRepository repository;
     private final UserService userService;
-
     public ChatMessage save(MessageDTO dto, String chatRoomID){
         log.info("save messages");
         ChatMessage message = new ChatMessage();
@@ -38,31 +37,13 @@ public class ChatMessageService {
         message.setRecipientID(dto.getRecipientID());
         message.setTimestamp(new Date(System.currentTimeMillis()));
         message.setContent(dto.getContent());
-        message.setStatus(MessageStatus.RECEIVED);
+        message.setStatus(MessageStatus.DELIVERED);
 
         repository.save(message);
         return message;
     }
 
-//    public long countNewMessage(String senderId, String recipientId){
-//        return repository.countBySenderAndRecipientAndStatus(senderId, recipientId, MessageStatus.RECEIVED);
-//    }
-    public ChatMessage findById(String id){
-        return repository
-                .findById(id)
-                .map(chatMessage -> {
-                    chatMessage.setStatus(MessageStatus.DELIVERED);
-                    return repository.save(chatMessage);
-                })
-                .orElseThrow();
+    public long countNewMessage(String senderId, String recipientId){
+        return repository.countBySenderIDAndRecipientIDAndStatus(senderId, recipientId, MessageStatus.DELIVERED);
     }
-//
-//    private void updateStatuses(String senderId, String recipientId, MessageStatus status) {
-//        Query query = new Query(
-//                Criteria
-//                        .where("senderId").is(senderId)
-//                        .and("recipientId").is(recipientId));
-//        Update update = Update.update("status", status);
-//        mongoOperations.updateMulti(query, update, ChatMessage.class);
-//    }
 }
