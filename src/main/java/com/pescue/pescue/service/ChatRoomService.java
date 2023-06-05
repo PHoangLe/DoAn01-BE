@@ -54,22 +54,22 @@ public class ChatRoomService {
     }
 
     public List<ChatMessage> findAllChatMessageByChatRoomID(String chatRoomID, String senderID, String recipientID) {
-        updateStatuses(senderID, recipientID, MessageStatus.RECEIVED);
+        updateStatuses(recipientID, senderID, MessageStatus.RECEIVED);
         return chatMessageRepository.findAllByChatRoomID(chatRoomID);
     }
 
     public void updateStatuses(String senderID, String recipientID, MessageStatus status) {
         Query query = new Query(
                 Criteria
-                        .where("senderID").is(recipientID)
-                        .and("recipientID").is(senderID));
+                        .where("senderID").is(senderID)
+                        .and("recipientID").is(recipientID));
         Update update = Update.update("status", status);
         mongoOperations.updateMulti(query, update, ChatMessage.class);
         log.trace("Updated senderID: " + recipientID + " RecipientID: " + senderID);
     }
 
     public List<ChatMessage> findAllMessageBySenderIDAndRecipientID(String senderID, String recipientID) {
-        updateStatuses(senderID, recipientID, MessageStatus.RECEIVED);
+        updateStatuses(recipientID, senderID, MessageStatus.RECEIVED);
         return chatMessageRepository.findAllBySenderIDAndRecipientID(senderID, recipientID);
     }
 }
