@@ -53,7 +53,8 @@ public class ChatRoomService {
         return chatRoomRepository.findAllByUser1OrUser2(userID, userID);
     }
 
-    public List<ChatMessage> findAllChatMessageByChatRoomID(String chatRoomID) {
+    public List<ChatMessage> findAllChatMessageByChatRoomID(String chatRoomID, String senderID, String recipientID) {
+        updateStatuses(senderID, recipientID, MessageStatus.RECEIVED);
         return chatMessageRepository.findAllByChatRoomID(chatRoomID);
     }
 
