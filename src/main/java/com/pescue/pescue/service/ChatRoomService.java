@@ -58,13 +58,14 @@ public class ChatRoomService {
         return chatMessageRepository.findAllByChatRoomID(chatRoomID);
     }
 
-    public void updateStatuses(String senderId, String recipientId, MessageStatus status) {
+    public void updateStatuses(String senderID, String recipientID, MessageStatus status) {
         Query query = new Query(
                 Criteria
-                        .where("senderId").is(senderId)
-                        .and("recipientId").is(recipientId));
+                        .where("senderID").is(recipientID)
+                        .and("recipientID").is(senderID));
         Update update = Update.update("status", status);
         mongoOperations.updateMulti(query, update, ChatMessage.class);
+        log.trace("Updated senderID: " + recipientID + " RecipientID: " + senderID);
     }
 
     public List<ChatMessage> findAllMessageBySenderIDAndRecipientID(String senderID, String recipientID) {
