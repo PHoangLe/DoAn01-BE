@@ -7,6 +7,7 @@ import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.AnimalService;
 import com.pescue.pescue.service.ShelterService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +18,15 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1/animal")
 public class AnimalController {
 
-    @Autowired
-    AnimalService animalService;
-    @Autowired
-    ShelterService shelterService;
+
+    private final AnimalService animalService;
+    private final ShelterService shelterService;
 
     @GetMapping("/getAllAnimals")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllAnimals(){
         return ResponseEntity.ok(animalService.findAllAnimals());
 
