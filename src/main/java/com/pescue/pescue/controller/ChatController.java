@@ -7,6 +7,7 @@ import com.pescue.pescue.service.ChatMessageService;
 import com.pescue.pescue.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -26,8 +27,9 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
+
     @MessageMapping("/private-message")
-    public ChatMessage processMessage(@Payload MessageDTO messageDTO){
+    public ChatMessage processMessage(@Payload MessageDTO messageDTO) {
         log.trace(messageDTO.getContent());
         Optional<String> chatID = chatRoomService
                 .getChatId(messageDTO.getSenderID(), messageDTO.getRecipientID(), true);
@@ -40,7 +42,7 @@ public class ChatController {
         if (chatMessage == null)
             return null;
 
-        messagingTemplate.convertAndSendToUser(chatMessage.getRecipientID(),"/private", chatMessage); // /user/userID/private
+        messagingTemplate.convertAndSendToUser(chatMessage.getRecipientID(), "/private", chatMessage); // /user/userID/private
         log.trace("Sent message from: " + chatMessage.getSenderID() + " to: " + chatMessage.getRecipientID());
         return chatMessage;
     }
@@ -52,25 +54,31 @@ public class ChatController {
 //    }
 
     @GetMapping("/messages/{senderId}/{recipientId}/count")
-    public ResponseEntity<Long> countNewMessages(@PathVariable String recipientId, @PathVariable String senderId){
+    public ResponseEntity<Long> countNewMessages(@PathVariable String recipientId, @PathVariable String senderId) {
         return ResponseEntity.ok(chatMessageService.countNewMessage(senderId, recipientId));
     }
 
     @GetMapping("/getAllChatRoomByUserID/{userID}")
-    public ResponseEntity<Object> getAllChatRoomByUserID (@PathVariable String userID) {
+    public ResponseEntity<Object> getAllChatRoomByUserID(@PathVariable String userID) {
         return ResponseEntity
                 .ok(chatRoomService.findAllChatRoomByUserID(userID));
     }
 
     @GetMapping("/getAllMessageBySenderIDAndRecipientID/{chatRoomID}/{senderID}/{recipientID}")
-    public ResponseEntity<Object> getAllMessageBySenderIDAndRecipientID (@PathVariable String recipientID, @PathVariable String senderID, @PathVariable String chatRoomID) {
+    public ResponseEntity<Object> getAllMessageBySenderIDAndRecipientID(@PathVariable String recipientID, @PathVariable String senderID, @PathVariable String chatRoomID) {
         List<ChatMessage> allChatMessageByChatRoomID = chatRoomService.findAllChatMessageByChatRoomID(chatRoomID, senderID, recipientID);
         return ResponseEntity
                 .ok(allChatMessageByChatRoomID);
     }
 
-//    @GetMapping("/messages/{id}")
-//    public ResponseEntity<?> findMessage(@PathVariable String id){
-//        return ResponseEntity.ok(chatMessageService.findById(id));
-//    }
+    @PutMapping("/seenMessage/{senderID}/{recipientID}")
+    public ResponseEntity<Object> seenMessage(@PathVariable String recipientID, @PathVariable String senderID) {
+        try {
+            chatMessageService.seenUnreadMessages(recipientID, senderID);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        return ResponseEntity.ok("");
+    }
 }
