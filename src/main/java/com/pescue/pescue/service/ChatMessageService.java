@@ -36,12 +36,10 @@ public class ChatMessageService {
 
         repository.save(message);
 
-        readUnreadMessages(message.getRecipientID(), message.getSenderID());
-
         return message;
     }
 
-    private void readUnreadMessages(String senderID, String recipientID) {
+    public void seenUnreadMessages(String senderID, String recipientID) {
         chatRoomService.updateStatuses(senderID, recipientID, MessageStatus.RECEIVED);
     }
 
