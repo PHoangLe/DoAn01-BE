@@ -81,7 +81,7 @@ public class AdoptionController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO("Chưa tồn tại yêu cầu nhận nuôi"));
     }
 
-    @PostMapping("/confirmAdoptionRequest/{adoptionApplicationID}")
+    @GetMapping("/confirmAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmAdoptionRequest(@PathVariable String adoptionApplicationID){
@@ -101,7 +101,7 @@ public class AdoptionController {
                 .build());
     }
 
-    @PostMapping("/declineAdoptionRequest/{adoptionApplicationID}")
+    @GetMapping("/declineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> declineAdoptionRequest(@PathVariable String adoptionApplicationID){
@@ -172,7 +172,7 @@ public class AdoptionController {
 
         return ResponseEntity.ok(onlineAdoptionApplicationsByUserID);
     }
-    @PostMapping("/confirmOnlineAdoptionRequest/{adoptionApplicationID}")
+    @GetMapping("/confirmOnlineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmOnlineAdoptionRequest(@PathVariable String adoptionApplicationID){
@@ -192,7 +192,7 @@ public class AdoptionController {
             .build());
     }
 
-    @PostMapping("/declineOnlineAdoptionRequest/{adoptionApplicationID}")
+    @GetMapping("/declineOnlineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> declineOnlineAdoptionRequest(@PathVariable String adoptionApplicationID){
