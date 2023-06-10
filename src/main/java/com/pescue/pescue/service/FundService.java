@@ -10,6 +10,7 @@ import com.pescue.pescue.repository.FundTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class FundService {
     private final FundRepository fundRepository;
@@ -31,5 +33,13 @@ public class FundService {
 
     public List<Fund> getAllFund(){
         return fundRepository.findAll();
+    }
+
+    public void updateFund(Fund fund) {
+        fundRepository.save(fund);
+    }
+
+    public void deleteFund(String fundID) {
+        fundRepository.deleteById(fundID);
     }
 }

@@ -20,12 +20,12 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("api/v1/fund")
+@RequestMapping("api/v1/funds")
 @CrossOrigin
 public class FundController {
     private final FundService fundService;
     private final FundTransactionService transactionService;
-    @PostMapping("/createFund")
+    @PostMapping("")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> createFund(FundDTO dto){
@@ -37,7 +37,19 @@ public class FundController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
         }
     }
-    @GetMapping("/getAllFund/")
+    @DeleteMapping("/{fundID}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> deleteFund(@PathVariable String fundID){
+        try {
+            fundService.deleteFund(fundID);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã xóa quỹ thành công"));
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+    }
+    @GetMapping("")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllFund(){
@@ -49,7 +61,7 @@ public class FundController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
         }
     }
-    @GetMapping("/getFundByFundID/{fundID}")
+    @GetMapping("/{fundID}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getFundByFundID(@PathVariable String fundID){
@@ -66,7 +78,7 @@ public class FundController {
         }
     }
 
-    @GetMapping("/getTransactionByFundID/{fundID}")
+    @GetMapping("/Transactions/{fundID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getTransactionByFundID(@PathVariable String fundID){

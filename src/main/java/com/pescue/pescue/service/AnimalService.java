@@ -4,19 +4,22 @@ import com.pescue.pescue.dto.AnimalDTO;
 import com.pescue.pescue.model.Animal;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.AnimalRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class AnimalService {
-    @Autowired
-    AnimalRepository animalRepository;
+    private final AnimalRepository animalRepository;
 
     Logger logger = LoggerFactory.getLogger(AnimalService.class);
 

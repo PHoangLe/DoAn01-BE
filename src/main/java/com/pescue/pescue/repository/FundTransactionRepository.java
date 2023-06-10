@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FundTransactionRepository extends MongoRepository<FundTransaction, String> {
-    List<FundTransaction> findAllBySourceOrDestination(@Param("source") String source, @Param("destination") String destination);
+    List<FundTransaction> findAllByFund(@Param("fundID") String fundID);
 }
