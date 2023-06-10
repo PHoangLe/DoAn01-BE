@@ -1,5 +1,6 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.dto.FundDTO;
 import com.pescue.pescue.exception.FundNotFoundException;
 import com.pescue.pescue.exception.UpdateFundException;
 import com.pescue.pescue.model.Fund;
@@ -22,8 +23,8 @@ import java.util.List;
 @Slf4j
 public class FundService {
     private final FundRepository fundRepository;
-    public void createFund(String fundName, String fundCover, String fundDescription){
-        fundRepository.insert(new Fund(fundName,fundCover, fundDescription));
+    public void createFund(FundDTO dto){
+        fundRepository.insert(new Fund(dto));
     }
 
     public Fund getFundByFundID(String fundID) throws FundNotFoundException{

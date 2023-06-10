@@ -30,8 +30,20 @@ public class FundController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> createFund(FundDTO dto){
         try {
-            fundService.createFund(dto.getFundName(), dto.getFundCover(), dto.getFundDescription());
-            return ResponseEntity.ok(new StringResponseDTO("Đã tạo quỹ cứu trợ thành công"));
+            fundService.createFund(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new StringResponseDTO("Đã tạo quỹ cứu trợ thành công"));
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+    }
+    @PutMapping("/{fundID}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> updateFund(@PathVariable String fundID, FundDTO dto){
+        try {
+            fundService.updateFund(new Fund(fundID, dto));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã cập nhật quỹ thành công"));
         }
         catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
@@ -85,6 +97,9 @@ public class FundController {
         try {
             List<FundTransaction> transactions = transactionService.getTransactionByFundID(fundID);
             return ResponseEntity.ok(transactions);
+        }
+        catch (FundNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){
             log.error(e.getMessage());
