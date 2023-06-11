@@ -1,5 +1,6 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.dto.FundDTO;
 import com.pescue.pescue.exception.FundNotFoundException;
 import com.pescue.pescue.exception.UpdateFundException;
 import com.pescue.pescue.model.Fund;
@@ -10,6 +11,7 @@ import com.pescue.pescue.repository.FundTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -17,11 +19,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class FundService {
     private final FundRepository fundRepository;
-    public void createFund(String fundName, String fundCover, String fundDescription){
-        fundRepository.insert(new Fund(fundName,fundCover, fundDescription));
+    public void createFund(FundDTO dto){
+        fundRepository.insert(new Fund(dto));
     }
 
     public Fund getFundByFundID(String fundID) throws FundNotFoundException{
@@ -31,5 +34,13 @@ public class FundService {
 
     public List<Fund> getAllFund(){
         return fundRepository.findAll();
+    }
+
+    public void updateFund(Fund fund) {
+        fundRepository.save(fund);
+    }
+
+    public void deleteFund(String fundID) {
+        fundRepository.deleteById(fundID);
     }
 }

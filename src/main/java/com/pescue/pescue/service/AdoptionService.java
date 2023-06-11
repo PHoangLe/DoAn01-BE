@@ -8,18 +8,19 @@ import com.pescue.pescue.repository.OnlineAdoptionApplicationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class AdoptionService {
+    private final static String GENERAL_FUND_ID = "646aed7fc03b151c35ce8d1b";
     private final AdoptionApplicationRepository adoptionApplicationRepository;
     private final OnlineAdoptionApplicationRepository onlineAdoptionApplicationRepository;
     private final AnimalService animalService;
@@ -175,6 +176,7 @@ public class AdoptionService {
         log.trace("Finding adoption application with ID: " + applicationID);
         return onlineAdoptionApplicationRepository.findByApplicationID(applicationID).orElse(null);
     }
+    @Transactional
     public void confirmOnlineAdoptionRequest(String applicationID) throws UpdateFundException, ApplicationStatusException {
         OnlineAdoptionApplication application = findOnlineApplicationByApplicationID(applicationID);
 
@@ -196,7 +198,7 @@ public class AdoptionService {
         Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
         User user = userService.findUserByID(application.getUser().getUserID());
 
-        fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, user.getUserID(), "646aed7fc03b151c35ce8d1b", new BigDecimal(120_000));
+        fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, GENERAL_FUND_ID, user, new BigDecimal(120_000));
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
         application = setExpiry(application);
@@ -219,6 +221,7 @@ public class AdoptionService {
         updateOnlineAdoptionApplication(application);
         sendResultEmail(application.getUser().getUserEmail(), true);
     }
+    @Transactional
     public void declineOnlineAdoptionRequest(String applicationID) {
         OnlineAdoptionApplication application = findOnlineApplicationByApplicationID(applicationID);
 
@@ -261,22 +264,6 @@ public class AdoptionService {
         onlineAdoptionApplicationRepository.save(application);
         log.trace("Updated status Online Application: " + application.getApplicationID());
     }
-    public void checkExpiryOnlineAdoption() {
-        log.trace("Daily check for online adoptions started");
-        List<OnlineAdoptionApplication> onlineAdoptionApplications = getAllOnlineApplicationByApplicationStatus(ApplicationStatus.COMPLETED);
-
-        List<OnlineAdoptionApplication> collect = onlineAdoptionApplications.stream()
-                .filter((application) -> application.getExpiry().before(new Date(System.currentTimeMillis())))
-                .toList();
-
-        collect.forEach(application -> {
-            application.setApplicationStatus(ApplicationStatus.EXPIRED);
-            updateOnlineAdoptionApplication(application);
-            animalService.removeOnlineAdopters(application.getAnimal(), application.getUser());
-        });
-        log.trace("Daily check for online adoptions ended");
-    }
-
     public List<OnlineAdoptionApplication> getOnlineAdoptionsByUserID(String userID) {
         List<OnlineAdoptionApplication> allByUser = onlineAdoptionApplicationRepository.findAllByUser(userID);
         return allByUser.stream()

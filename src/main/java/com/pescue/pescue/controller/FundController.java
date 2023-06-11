@@ -20,24 +20,51 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("api/v1/fund")
+@RequestMapping("api/v1/funds")
 @CrossOrigin
 public class FundController {
     private final FundService fundService;
     private final FundTransactionService transactionService;
-    @PostMapping("/createFund")
+    @PostMapping("")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> createFund(FundDTO dto){
         try {
-            fundService.createFund(dto.getFundName(), dto.getFundCover(), dto.getFundDescription());
-            return ResponseEntity.ok(new StringResponseDTO("Đã tạo quỹ cứu trợ thành công"));
+            fundService.createFund(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new StringResponseDTO("Đã tạo quỹ cứu trợ thành công"));
         }
         catch (Exception e){
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
         }
     }
-    @GetMapping("/getAllFund/")
+    @PutMapping("/{fundID}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> updateFund(@PathVariable String fundID, FundDTO dto){
+        try {
+            fundService.updateFund(new Fund(fundID, dto));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã cập nhật quỹ thành công"));
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+    }
+    @DeleteMapping("/{fundID}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> deleteFund(@PathVariable String fundID){
+        try {
+            fundService.deleteFund(fundID);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã xóa quỹ thành công"));
+        }
+        catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
+        }
+    }
+    @GetMapping("")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllFund(){
@@ -49,7 +76,7 @@ public class FundController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
         }
     }
-    @GetMapping("/getFundByFundID/{fundID}")
+    @GetMapping("/{fundID}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getFundByFundID(@PathVariable String fundID){
@@ -66,13 +93,16 @@ public class FundController {
         }
     }
 
-    @GetMapping("/getTransactionByFundID/{fundID}")
+    @GetMapping("/Transactions/{fundID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getTransactionByFundID(@PathVariable String fundID){
         try {
             List<FundTransaction> transactions = transactionService.getTransactionByFundID(fundID);
             return ResponseEntity.ok(transactions);
+        }
+        catch (FundNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
         catch (Exception e){
             log.error(e.getMessage());

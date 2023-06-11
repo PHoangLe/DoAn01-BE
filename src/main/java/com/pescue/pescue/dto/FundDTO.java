@@ -2,6 +2,8 @@ package com.pescue.pescue.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @Getter
@@ -12,4 +14,5 @@ public class FundDTO {
     private String fundName;
     private String fundCover;
     private String fundDescription;
+    private BigDecimal valuePerDonationPackage;
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@Transactional
 public class OTPService {
     private static final long OTP_EXPIRATION_TIME = 1000 * 60 * 5; //5 phút
     @Autowired
