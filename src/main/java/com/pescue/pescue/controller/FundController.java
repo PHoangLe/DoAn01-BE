@@ -34,6 +34,7 @@ public class FundController {
             return ResponseEntity.status(HttpStatus.CREATED).body(new StringResponseDTO("Đã tạo quỹ cứu trợ thành công"));
         }
         catch (Exception e){
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
         }
     }
@@ -46,6 +47,7 @@ public class FundController {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã cập nhật quỹ thành công"));
         }
         catch (Exception e){
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
         }
     }
@@ -58,6 +60,7 @@ public class FundController {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã xóa quỹ thành công"));
         }
         catch (Exception e){
+            log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponseDTO("Đã có lỗi xảy ra với hệ thống vui lòng thử lại sau"));
         }
     }
