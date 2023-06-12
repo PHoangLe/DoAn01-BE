@@ -3,28 +3,32 @@ package com.pescue.pescue.service;
 import com.pescue.pescue.dto.AnimalDTO;
 import com.pescue.pescue.exception.ExistedException;
 import com.pescue.pescue.exception.ShelterNotFoundException;
-import com.pescue.pescue.model.Animal;
-import com.pescue.pescue.model.Shelter;
-import com.pescue.pescue.model.User;
+import com.pescue.pescue.model.*;
 import com.pescue.pescue.repository.AnimalRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class AnimalService {
     private final AnimalRepository animalRepository;
     private final ShelterService shelterService;
-    Logger logger = LoggerFactory.getLogger(AnimalService.class);
-
+    private final MongoOperations mongoOperations;
     public List<Animal> findAllAnimals(){
         return animalRepository.findAllByIsAdopted(false);
     }
@@ -46,26 +50,37 @@ public class AnimalService {
 
         Animal tempAnimal = findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
 
-        if (tempAnimal != null && tempAnimal.getAnimalID()!= animal.getAnimalID())
+        if (tempAnimal != null && !Objects.equals(tempAnimal.getAnimalID(), animal.getAnimalID()))
             throw new ExistedException("Đã tồn tại bé cùng tên trong trại");
 
         animalRepository.save(animal);
-        logger.trace("Animal information have been saved in the database: " + animal);
+        log.trace("Animal information have been saved in the database: " + animal);
     }
 
     public void deleteAnimal(String animalID){
+        deleteRelatedApplication(animalID);
         animalRepository.deleteById(animalID);
-        logger.trace("Animal information have been deleted in the database: " + animalID);
+        log.trace("Animal information have been deleted in the database: " + animalID);
+    }
+
+    private void deleteRelatedApplication(String animalID) {
+        Query query = new Query(
+                Criteria
+                        .where("animalID").is(animalID));
+        mongoOperations.remove(query, AdoptionApplication.class);
+        mongoOperations.remove(query, OnlineAdoptionApplication.class);
+//        mongoOperations.(query, update, AdoptionApplication.class);
+        log.trace("Removed applications related to animal: " + animalID);
     }
 
     public Animal findAnimalByAnimalID(String animalID){
         Optional<Animal> animal = animalRepository.findAnimalByAnimalID(animalID);
 
         if (animal.isPresent()) {
-            logger.trace("Found animal with animalID: " + animalID);
+            log.trace("Found animal with animalID: " + animalID);
             return animal.get();
         }
-        logger.trace("Can't find animal with animalID: " + animalID);
+        log.trace("Can't find animal with animalID: " + animalID);
         return null;
     }
 
@@ -73,10 +88,10 @@ public class AnimalService {
         Optional<Animal> animal = animalRepository.findAnimalByAnimalNameAndShelterID(animalID, shelterID);
 
         if (animal.isPresent()) {
-            logger.trace("Found animal with animalName and shelterID: " + animalID + ", " + shelterID);
+            log.trace("Found animal with animalName and shelterID: " + animalID + ", " + shelterID);
             return animal.get();
         }
-        logger.trace("Can't find animal with animalName and shelterID: " + animalID + ", " + shelterID);
+        log.trace("Can't find animal with animalName and shelterID: " + animalID + ", " + shelterID);
         return null;
     }
 
@@ -84,10 +99,10 @@ public class AnimalService {
         List<Animal> animals = animalRepository.findAnimalsByShelterID(shelterID);
 
         if (!animals.isEmpty()) {
-            logger.trace("Found animals with shelterID: " + shelterID);
+            log.trace("Found animals with shelterID: " + shelterID);
             return animals;
         }
-        logger.trace("Can't find any animal with shelterID: " + shelterID);
+        log.trace("Can't find any animal with shelterID: " + shelterID);
         return null;
     }
 
@@ -101,7 +116,7 @@ public class AnimalService {
             animal.setOnlineAdopters(onlineAdopters);
 
             updateAnimal(animal);
-            logger.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
+            log.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
         }
     }
     public void removeOnlineAdopters(Animal animal, User user) throws ExistedException {
@@ -113,6 +128,6 @@ public class AnimalService {
 
         animal.setOnlineAdopters(collect);
         updateAnimal(animal);
-        logger.trace("Updated online adopters for Animal: " + animal.getAnimalID());
+        log.trace("Updated online adopters for Animal: " + animal.getAnimalID());
     }
 }
