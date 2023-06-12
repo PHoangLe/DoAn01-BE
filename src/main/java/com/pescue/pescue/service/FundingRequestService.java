@@ -10,12 +10,14 @@ import com.pescue.pescue.repository.FundingRequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class FundingRequestService {
     private final FundingRequestRepository fundingRequestRepository;
@@ -23,6 +25,25 @@ public class FundingRequestService {
     private final UserService userService;
     private final ShelterService shelterService;
     private final FundTransactionService fundTransactionService;
+    private final EmailService emailService;
+    private void sendNotifyEmail(FundingRequest request, boolean isApprove) {
+        String emailBody;
+        if (isApprove){
+            emailBody = "Đăng ký nhận quỹ cứu trợ của bạn đã được chấp thuận. Bạn hãy kiểm tra tài khoản của mình. Nếu có thắc mắc xin hãy liên hệ lại với chúng tôi qua email này!\n" +
+                    "Cảm ơn bạn đã đồng hành với Pescue\n" +
+                    "Ban quản trị";
+        }
+        else {
+            emailBody = """
+                    Chúng tôi rất tiếc khi phải thông báo rằng yêu cầu nhận quỹ cứu trợ của bạn đã bị từ chối.
+                    Để biết thêm thông tin chi tiết xin vui lòng liên lạc lại với chúng tôi
+                    Hoặc bạn có thể gửi lại yêu cầu với lý do đầy đủ hơn.""";
+        }
+
+        emailService.sendMail(request.getUser().getUserEmail(),
+                emailBody,
+                "Kết quả đăng ký nhận quỹ cứu trợ");
+    }
     public FundingRequest createFundingRequest(FundingRequestDTO dto){
         Fund fund = fundService.getFundByFundID(dto.getFundID());
         Shelter shelter = shelterService.getShelterByShelterID(dto.getShelterID());
@@ -52,6 +73,8 @@ public class FundingRequestService {
         fundTransactionService.createTransaction(TransactionType.FUND_TO_USER, fund.getFundID(), request.getUser(), value);
         request.setRequestStatus(FundingRequestStatus.COMPLETED);
         fundingRequestRepository.save(request);
+
+        sendNotifyEmail(request, true);
     }
     public void rejectFundingRequest(String requestID) throws FundingStatusUpdateException {
         FundingRequest request = getFundingRequestByID(requestID);
@@ -61,5 +84,7 @@ public class FundingRequestService {
 
         request.setRequestStatus(FundingRequestStatus.REJECTED);
         fundingRequestRepository.save(request);
+
+        sendNotifyEmail(request, false);
     }
 }
