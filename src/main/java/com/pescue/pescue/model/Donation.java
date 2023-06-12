@@ -1,12 +1,10 @@
 package com.pescue.pescue.model;
 
-import com.pescue.pescue.dto.DonationDTO;
+import com.pescue.pescue.model.constant.DonationStatus;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.concurrent.atomic.DoubleAccumulator;
 
 @Document("Donation")
 @Builder

@@ -1,5 +1,6 @@
 package com.pescue.pescue.model;
 
+import com.pescue.pescue.model.constant.TransactionType;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;

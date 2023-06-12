@@ -1,6 +1,6 @@
 package com.pescue.pescue.repository;
 
-import com.pescue.pescue.model.ApplicationStatus;
+import com.pescue.pescue.model.constant.ApplicationStatus;
 import com.pescue.pescue.model.OnlineAdoptionApplication;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;

@@ -1,20 +1,17 @@
 package com.pescue.pescue.model;
 
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pescue.pescue.dto.GoogleUserAuthenticationRequestDTO;
 import com.pescue.pescue.dto.UserRegisterDTO;
-import com.pescue.pescue.exception.DateOfBirthFormatException;
+import com.pescue.pescue.model.constant.Gender;
+import com.pescue.pescue.model.constant.Role;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Document("User")

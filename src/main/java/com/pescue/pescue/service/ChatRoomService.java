@@ -2,7 +2,7 @@ package com.pescue.pescue.service;
 
 import com.pescue.pescue.model.ChatMessage;
 import com.pescue.pescue.model.ChatRoom;
-import com.pescue.pescue.model.MessageStatus;
+import com.pescue.pescue.model.constant.MessageStatus;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.ChatMessageRepository;
 import com.pescue.pescue.repository.ChatRoomRepository;
@@ -26,8 +26,8 @@ public class ChatRoomService {
     private final UserService userService;
     private final MongoOperations mongoOperations;
     public Optional<String> getChatId(String senderId, String recipientId, boolean createIfNotExist){
-        User sender = userService.findUserByID(senderId);
-        User recipient = userService.findUserByID(recipientId);
+        User sender = userService.getUserByID(senderId);
+        User recipient = userService.getUserByID(recipientId);
 
         return chatRoomRepository
                 .findByUser1AndUser2(senderId, recipientId)

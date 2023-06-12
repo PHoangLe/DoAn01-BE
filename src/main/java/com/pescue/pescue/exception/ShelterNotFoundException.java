@@ -1,8 +1,8 @@
 package com.pescue.pescue.exception;
 
-import org.webjars.NotFoundException;
+import java.util.NoSuchElementException;
 
-public class ShelterNotFoundException extends NotFoundException {
+public class ShelterNotFoundException extends NoSuchElementException {
     public ShelterNotFoundException(String message) {
         super(message);
     }

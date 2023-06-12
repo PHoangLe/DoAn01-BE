@@ -2,11 +2,11 @@ package com.pescue.pescue.exception;
 
 import java.util.NoSuchElementException;
 
-public class RequestFundingNotFoundException extends NoSuchElementException {
-    public RequestFundingNotFoundException(String message) {
+public class FundingRequestNotFoundException extends NoSuchElementException {
+    public FundingRequestNotFoundException(String message) {
         super(message);
     }
-    public RequestFundingNotFoundException() {
+    public FundingRequestNotFoundException() {
         super("Không tìm thấy yêu cần phát quỹ bạn cần tìm");
     }
 }

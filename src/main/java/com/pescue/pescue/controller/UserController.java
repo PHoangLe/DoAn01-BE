@@ -49,11 +49,11 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getUserByUserID(@PathVariable String userID) {
-        if (userService.findUserByID(userID) == null)
+        if (userService.getUserByID(userID) == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
                     .message("Không tồn tại người dùng cần tìm")
                     .build());
-        return ResponseEntity.ok(userService.findUserByID(userID));
+        return ResponseEntity.ok(userService.getUserByID(userID));
     }
 
    @PutMapping("/updateProfile")

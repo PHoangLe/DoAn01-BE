@@ -1,6 +1,6 @@
 package com.pescue.pescue.dto;
 
-import com.pescue.pescue.model.FundType;
+import com.pescue.pescue.model.constant.FundType;
 import lombok.*;
 
 import java.math.BigDecimal;

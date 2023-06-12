@@ -8,14 +8,10 @@ import com.pescue.pescue.service.AnimalService;
 import com.pescue.pescue.service.ShelterService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,7 +69,7 @@ public class AnimalController {
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> updateAnimal(@RequestBody Animal animal){
-        Shelter tempShelter = shelterService.findShelterByShelterID(animal.getShelterID());
+        Shelter tempShelter = shelterService.getShelterByShelterID(animal.getShelterID());
 
         if(tempShelter == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()

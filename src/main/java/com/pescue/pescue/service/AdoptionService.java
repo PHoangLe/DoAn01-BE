@@ -3,6 +3,8 @@ package com.pescue.pescue.service;
 import com.pescue.pescue.dto.AdoptionApplicationRequestDTO;
 import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.*;
+import com.pescue.pescue.model.constant.ApplicationStatus;
+import com.pescue.pescue.model.constant.TransactionType;
 import com.pescue.pescue.repository.AdoptionApplicationRepository;
 import com.pescue.pescue.repository.OnlineAdoptionApplicationRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +60,7 @@ public class AdoptionService {
             throw new ApplicationExistedException();
         }
 
-        User user = userService.findUserByID(dto.getUserID());
+        User user = userService.getUserByID(dto.getUserID());
         if (user == null) {
             log.trace("User not found ID: " + dto.getUserID());
             throw new UserNotFoundException();
@@ -70,7 +72,7 @@ public class AdoptionService {
             throw new AnimalNotFoundException();
         }
 
-        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
+        Shelter shelter = shelterService.getShelterByShelterID(dto.getShelterID());
         if (shelter == null) {
             log.trace("Shelter not found ID: " + dto.getShelterID());
             throw new ShelterNotFoundException();
@@ -100,7 +102,7 @@ public class AdoptionService {
         animal.setAdopted(true);
         animalService.updateAnimal(animal);
 
-        User user = userService.findUserByID(application.getUser().getUserID());
+        User user = userService.getUserByID(application.getUser().getUserID());
         sendResultEmail(user.getUserEmail(), true);
 
         log.trace("Approved application with ID: " + applicationID);
@@ -116,13 +118,13 @@ public class AdoptionService {
         application.setApplicationStatus(ApplicationStatus.REJECTED);
         adoptionApplicationRepository.save(application);
 
-        User user = userService.findUserByID(application.getUser().getUserID());
+        User user = userService.getUserByID(application.getUser().getUserID());
         sendResultEmail(user.getUserEmail(), false);
 
         log.trace("Declined application with ID: " + applicationID);
     }
     public List<AdoptionApplication> findApplicationByShelterID(String shelterID) {
-        Shelter shelterByShelterID = shelterService.findShelterByShelterID(shelterID);
+        Shelter shelterByShelterID = shelterService.getShelterByShelterID(shelterID);
 
         if (shelterByShelterID == null){
             log.trace("Shelter not found ID: " + shelterID);
@@ -150,7 +152,7 @@ public class AdoptionService {
                 return;
             }
         }
-        User user = userService.findUserByID(dto.getUserID());
+        User user = userService.getUserByID(dto.getUserID());
         if (user == null) {
             log.trace("User not found ID: " + dto.getUserID());
             throw new UserNotFoundException();
@@ -160,7 +162,7 @@ public class AdoptionService {
             log.trace("Animal not found ID: " + dto.getAnimalID());
             throw new AnimalNotFoundException();
         }
-        Shelter shelter = shelterService.findShelterByShelterID(dto.getShelterID());
+        Shelter shelter = shelterService.getShelterByShelterID(dto.getShelterID());
         if (shelter == null) {
             log.trace("Shelter not found ID: " + dto.getShelterID());
             throw new ShelterNotFoundException();
@@ -196,7 +198,7 @@ public class AdoptionService {
         }
 
         Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
-        User user = userService.findUserByID(application.getUser().getUserID());
+        User user = userService.getUserByID(application.getUser().getUserID());
 
         fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, GENERAL_FUND_ID, user, new BigDecimal(120_000));
 
@@ -238,7 +240,7 @@ public class AdoptionService {
         application.setApplicationStatus(ApplicationStatus.REJECTED);
         onlineAdoptionApplicationRepository.save(application);
 
-        User user = userService.findUserByID(application.getUser().getUserID());
+        User user = userService.getUserByID(application.getUser().getUserID());
         sendResultEmail(user.getUserEmail(), false);
 
         log.trace("Declined online application with ID: " + applicationID);
