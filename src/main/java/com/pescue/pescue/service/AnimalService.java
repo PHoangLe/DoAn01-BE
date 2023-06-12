@@ -46,7 +46,7 @@ public class AnimalService {
 
         Animal tempAnimal = findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
 
-        if (tempAnimal != null)
+        if (tempAnimal != null && tempAnimal.getAnimalID()!= animal.getAnimalID())
             throw new ExistedException("Đã tồn tại bé cùng tên trong trại");
 
         animalRepository.save(animal);
