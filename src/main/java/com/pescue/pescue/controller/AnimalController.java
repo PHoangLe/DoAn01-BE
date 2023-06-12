@@ -2,10 +2,9 @@ package com.pescue.pescue.controller;
 
 import com.pescue.pescue.dto.AnimalDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
+import com.pescue.pescue.exception.ExistedException;
 import com.pescue.pescue.model.Animal;
-import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.AnimalService;
-import com.pescue.pescue.service.ShelterService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("api/v1/animal")
 public class AnimalController {
-
-
     private final AnimalService animalService;
-    private final ShelterService shelterService;
 
     @GetMapping("/getAllAnimals")
     public ResponseEntity<Object> getAllAnimals(){
@@ -46,20 +42,8 @@ public class AnimalController {
     @PostMapping("/addAnimal")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> addAnimal(@RequestBody AnimalDTO animal){
-        Animal tempAnimal = animalService.findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
-
-        if(tempAnimal != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Đã tồn tại bé có cùng tên trong trại")
-                    .build());
-        }
-
-        if (!animalService.addAnimal(animal))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Có lỗi xảy ra khi thêm thông tin cho bé")
-                    .build());
-
+    public ResponseEntity<Object> addAnimal(@RequestBody AnimalDTO animal) throws ExistedException {
+        animalService.addAnimal(animal);
         return ResponseEntity.ok(StringResponseDTO.builder()
                 .message("Thông tin của bé đã được thêm thành công")
                 .build());
@@ -68,27 +52,8 @@ public class AnimalController {
     @PutMapping("/updateAnimal")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> updateAnimal(@RequestBody Animal animal){
-        Shelter tempShelter = shelterService.getShelterByShelterID(animal.getShelterID());
-
-        if(tempShelter == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Không tồn tại trại cứu trợ")
-                    .build());
-
-        Animal tempAnimal = animalService.findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
-
-        if(tempAnimal != null && !(tempAnimal.getAnimalID().equals(animal.getAnimalID()))) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Đã tồn tại bé có cùng tên trong trại")
-                    .build());
-        }
-
-        if (!animalService.updateAnimal(animal))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Có lỗi xảy ra khi cập nhật thông tin thú cưng")
-                    .build());
-
+    public ResponseEntity<Object> updateAnimal(@RequestBody Animal animal) throws ExistedException {
+        animalService.updateAnimal(animal);
         return ResponseEntity.ok(StringResponseDTO.builder()
                 .message("Thông tin của bé đã được chỉnh sửa thành công")
                 .build());
@@ -98,18 +63,7 @@ public class AnimalController {
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> deleteAnimal(@PathVariable String animalID){
-        Animal animal = animalService.findAnimalByAnimalID(animalID);
-
-        if (animal == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Bé không tồn tại")
-                    .build());
-
-        if (!animalService.deleteAnimal(animal))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Có lỗi xảy ra khi xóa thông tin của bé")
-                    .build());
-
+        animalService.deleteAnimal(animalID);
         return ResponseEntity.ok(StringResponseDTO.builder()
                 .message("Thông tin của bé đã được xóa thành công")
                 .build());

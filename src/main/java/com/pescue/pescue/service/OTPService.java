@@ -3,12 +3,14 @@ package com.pescue.pescue.service;
 import com.pescue.pescue.dto.OTP_DTO;
 import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.dto.ValidateOTPConfirmEmailDTO;
+import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.OTPConfirmEmail;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.OTPConfirmEmailRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,20 +22,15 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class OTPService {
     private static final long OTP_EXPIRATION_TIME = 1000 * 60 * 5; //5 phút
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private OTPConfirmEmailRepository otpConfirmEmailRepository;
-    @Autowired
-    private EmailService emailService;
-
-    private final String otpFormat = "000000";
-
-    Logger logger = LoggerFactory.getLogger(OTPService.class);
-
+    private static final String OTP_FORMAT = "000000";
+    private final UserService userService;
+    private final OTPConfirmEmailRepository otpConfirmEmailRepository;
+    private final EmailService emailService;
     public boolean isNumeric(String otp) {
         try {
             Double.parseDouble(otp);
@@ -43,16 +40,13 @@ public class OTPService {
         }
     }
 
-    public ResponseEntity<Object> sendOTPConfirmEmail(OTP_DTO request) {
+    public void sendOTPConfirmEmail(OTP_DTO request) {
         // Tìm email trong bảng user
         String emailAddress = request.getEmailAddress();
         User user = userService.findUserByUserEmail(emailAddress);
 
         if (user == null) {
-            logger.error("Can't find user with emailAddress: " + emailAddress);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Người dùng không tồn tại")
-                    .build());
+            throw new UserNotFoundException();
         }
 
         // Tạo OTP
@@ -62,16 +56,8 @@ public class OTPService {
         String emailBody = "Mã OTP của bạn là: " + otp;
 
         // Gửi mail
-        boolean emailStatus = emailService.sendMail(emailAddress, emailBody, "Xác nhận tài khoản");
-
-        if (!emailStatus) {
-            logger.error("There is an error occur when sending OTP to: " + emailAddress);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Có lỗi xảy ra khi gửi mail")
-                    .build());
-        }
-
-        logger.trace("OTP has been sent to: " + emailAddress);
+        emailService.sendMail(emailAddress, emailBody, "Xác nhận tài khoản");
+        log.trace("OTP has been sent to: " + emailAddress);
 
         // Lưu lịch sử gửi mail vào db
         OTPConfirmEmail otpConfirmEmail = new OTPConfirmEmail(emailAddress,
@@ -79,79 +65,40 @@ public class OTPService {
                 new Date(System.currentTimeMillis() + OTP_EXPIRATION_TIME),
                 otp);
 
-        if (!addOTPConfirmEmail(otpConfirmEmail)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Đã gửi mail thành công nhưng có lỗi khi lưu OTP vào cơ sở dữ liệu")
-                    .build());
-        }
-
-        return ResponseEntity.ok(StringResponseDTO.builder()
-                .message("Đã gửi mail thành công")
-                .build());
+        addOTPConfirmEmail(otpConfirmEmail);
     }
 
-    public boolean addOTPConfirmEmail(OTPConfirmEmail confirmEmail){
-        try {
-            otpConfirmEmailRepository.insert(confirmEmail);
-        }
-        catch (Exception e){
-            logger.error("There is an error occur when inserting OTPConfirmEmail to database: " + confirmEmail);
-            return false;
-        }
-        logger.trace("OTP of " + confirmEmail.getReceiverEmail() +  " has been stored to database");
-        return true;
+    public void addOTPConfirmEmail(OTPConfirmEmail confirmEmail){
+        otpConfirmEmailRepository.insert(confirmEmail);
+        log.trace("OTP of " + confirmEmail.getReceiverEmail() +  " has been stored to database");
     }
 
-    public ResponseEntity<Object> validateOTPConfirmEmail(ValidateOTPConfirmEmailDTO request) {
+    public void validateOTPConfirmEmail(ValidateOTPConfirmEmailDTO request) throws InvalidException {
 
         List<OTPConfirmEmail> otpConfirmEmail = otpConfirmEmailRepository.findOTPConfirmEmailsByReceiverEmailOrderByDate(request.getEmailAddress());
 
         OTPConfirmEmail recentOtpConfirmEmail = otpConfirmEmail.get(otpConfirmEmail.size() - 1);
 
         if(request.getOtp().length() != 6 || !isNumeric(request.getOtp())) {
-            logger.error("Invalid OTP " + request);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Mã OTP không hợp lệ")
-                    .build());
+            throw new InvalidOtpException();
         }
 
         if (otpConfirmEmail.isEmpty()) {
-            logger.error("Invalid Email Address " + request);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Email không hợp lệ")
-                    .build());
+            throw new InvalidEmailException();
         }
 
         if (recentOtpConfirmEmail.getExpiredDate().before(new Date(System.currentTimeMillis()))) {
-            logger.error("Expired OTP " + request);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Mã OTP đã hết hạn")
-                    .build());
+            throw new ExpiredOtpException();
         }
 
-        if (request.getOtp().equals(recentOtpConfirmEmail.getOTP())) {
-            boolean isUnlock = userService.unlockUser(recentOtpConfirmEmail.getReceiverEmail());
-            if (!isUnlock) {
-                logger.error("Invalid User " + request);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                        .message("Người dùng không tồn tại")
-                        .build());
-            }
-
-            logger.trace("Valid OTP " + request);
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Mã OTP hợp lệ")
-                    .build());
+        if (!request.getOtp().equals(recentOtpConfirmEmail.getOTP())) {
+            throw new InvalidOtpException();
         }
 
-        logger.error("Invalid OTP " + request);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                .message("Mã OTP không trùng khớp")
-                .build());
-
+        userService.unlockUser(recentOtpConfirmEmail.getReceiverEmail());
     }
 
     private String generateOTP() {
-        return new DecimalFormat(otpFormat).format(new Random().nextInt(999999));
+        return new DecimalFormat(OTP_FORMAT).format(new Random().nextInt(999999));
     }
 }

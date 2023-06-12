@@ -53,11 +53,10 @@ public class AdoptionService {
         emailService.sendMail(receiverEmail, emailBody, subject);
     }
     //Offline Adoption
-    public void createAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ApplicationExistedException {
+    public void createAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ExistedException {
         AdoptionApplication existedApplication = findApplicationByUserIDAndAnimalID(dto.getUserID(), dto.getAnimalID());
         if(existedApplication != null && existedApplication.getApplicationStatus() != ApplicationStatus.REJECTED){
-            log.trace("Application already existed: User " + existedApplication.getUser().getUserID() + " Animal " + existedApplication.getAnimal().getAnimalID());
-            throw new ApplicationExistedException();
+            throw new ExistedException("Đã tồn tại yêu cầu nhận nuôi");
         }
 
         User user = userService.getUserByID(dto.getUserID());
@@ -85,16 +84,11 @@ public class AdoptionService {
     }
     public AdoptionApplication findApplicationByApplicationID(String applicationID){
         log.trace("Finding adoption application with ID: " + applicationID);
-        return adoptionApplicationRepository.findByApplicationID(applicationID).orElse(null);
+        return adoptionApplicationRepository.findByApplicationID(applicationID).orElseThrow(ApplicationNotFoundException::new);
     }
 
-    public void confirmAdoptionRequest(String applicationID) {
+    public void confirmAdoptionRequest(String applicationID) throws ExistedException {
         AdoptionApplication application = findApplicationByApplicationID(applicationID);
-
-        if (application == null){
-            log.trace("Can't find application with ID: " + applicationID);
-            throw new ApplicationNotFoundException();
-        }
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
         adoptionApplicationRepository.save(application);
@@ -109,11 +103,6 @@ public class AdoptionService {
     }
     public void declineAdoptionRequest(String applicationID) {
         AdoptionApplication application = findApplicationByApplicationID(applicationID);
-
-        if (application == null){
-            log.trace("Can't find application with ID: " + applicationID);
-            throw new ApplicationNotFoundException();
-        }
 
         application.setApplicationStatus(ApplicationStatus.REJECTED);
         adoptionApplicationRepository.save(application);
@@ -139,12 +128,12 @@ public class AdoptionService {
 
 
     //Online Adoption
-    public void createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ApplicationExistedException {
+    public void createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ExistedException {
         OnlineAdoptionApplication existedApplication = findOnlineApplicationByUserIDAndAnimalID(dto.getUserID(), dto.getAnimalID());
         if(existedApplication != null){
             if (existedApplication.getApplicationStatus() == ApplicationStatus.PENDING) {
                 log.trace("Application already existed: User " + existedApplication.getUser().getUserID() + " Animal " + existedApplication.getAnimal().getAnimalID());
-                throw new ApplicationExistedException();
+                throw new ExistedException("Bạn đã gửi yêu cầu nhận nuôi rồi vui lòng đợi chúng tôi xác nhận");
             }
             if (existedApplication.getApplicationStatus() == ApplicationStatus.COMPLETED){
                 existedApplication.setApplicationStatus(ApplicationStatus.EXTENDING);
@@ -154,17 +143,14 @@ public class AdoptionService {
         }
         User user = userService.getUserByID(dto.getUserID());
         if (user == null) {
-            log.trace("User not found ID: " + dto.getUserID());
             throw new UserNotFoundException();
         }
         Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
         if (animal == null) {
-            log.trace("Animal not found ID: " + dto.getAnimalID());
             throw new AnimalNotFoundException();
         }
         Shelter shelter = shelterService.getShelterByShelterID(dto.getShelterID());
         if (shelter == null) {
-            log.trace("Shelter not found ID: " + dto.getShelterID());
             throw new ShelterNotFoundException();
         }
 
@@ -175,21 +161,18 @@ public class AdoptionService {
 
     }
     public OnlineAdoptionApplication findOnlineApplicationByApplicationID(String applicationID){
-        log.trace("Finding adoption application with ID: " + applicationID);
         return onlineAdoptionApplicationRepository.findByApplicationID(applicationID).orElse(null);
     }
     @Transactional
-    public void confirmOnlineAdoptionRequest(String applicationID) throws UpdateFundException, ApplicationStatusException {
+    public void confirmOnlineAdoptionRequest(String applicationID) throws UpdateFundException, ApplicationStatusUpdateException, ExistedException {
         OnlineAdoptionApplication application = findOnlineApplicationByApplicationID(applicationID);
 
         if (application == null) {
-            log.trace("Can't find application with ID: " + applicationID);
             throw new ApplicationNotFoundException();
         }
 
         if (application.getApplicationStatus() == ApplicationStatus.COMPLETED){
-            log.trace("Application is already completed");
-            throw new ApplicationStatusException("Yêu cầu đã được chấp thuận rồi");
+            throw new ApplicationStatusUpdateException("Yêu cầu đã được chấp thuận rồi");
         }
 
         if (application.getApplicationStatus() == ApplicationStatus.EXTENDING){

@@ -8,6 +8,7 @@ import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import java.text.ParseException;
 
 import java.util.Date;
 import java.util.NoSuchElementException;
@@ -16,8 +17,8 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(DonationStatusUpdateException.class)
-    public ResponseEntity<ErrorMessage> donationStatusUpdateExceptionHandler(Exception ex, WebRequest request) {
+    @ExceptionHandler(StatusUpdateException.class)
+    public ResponseEntity<ErrorMessage> statusUpdateExceptionHandler(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),
@@ -58,6 +59,36 @@ public class ControllerExceptionHandler {
     }
     @ExceptionHandler(MailException.class)
     public ResponseEntity<ErrorMessage> mailExceptionHandler(Exception ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error(String.valueOf(message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+    @ExceptionHandler(ExistedException.class)
+    public ResponseEntity<ErrorMessage> existedExceptionHandler(Exception ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error(String.valueOf(message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+    @ExceptionHandler(ParseException.class)
+    public ResponseEntity<ErrorMessage> parseExceptionHandler(Exception ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                "Thông tin gửi lên không đúng định dạng vui lòng kiểm tra lại",
+                request.getDescription(false));
+        log.error(String.valueOf(message));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
+    }
+    @ExceptionHandler(InvalidException.class)
+    public ResponseEntity<ErrorMessage> invalidPasswordExceptionHandler(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.BAD_REQUEST.value(),
                 new Date(),

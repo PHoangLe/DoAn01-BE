@@ -3,6 +3,7 @@ package com.pescue.pescue.controller;
 import com.pescue.pescue.dto.ChangePasswordDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.dto.UserProfileDTO;
+import com.pescue.pescue.exception.InvalidPasswordException;
 import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.service.UserService;
@@ -49,61 +50,27 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getUserByUserID(@PathVariable String userID) {
-        if (userService.getUserByID(userID) == null)
+        User user = userService.getUserByID(userID);
+        if (user == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
                     .message("Không tồn tại người dùng cần tìm")
                     .build());
-        return ResponseEntity.ok(userService.getUserByID(userID));
+        return ResponseEntity.ok(user);
     }
 
    @PutMapping("/updateProfile")
    @PreAuthorize("hasAuthority('ROLE_USER')")
    @SecurityRequirement(name = "Bearer Authentication")
-   public ResponseEntity<Object> updateProfile(@RequestBody UserProfileDTO userProfileDTO){
-        User user;
-        try{
-            user = userService.updateUserProfile(userProfileDTO);
-        }
-        catch (UserNotFoundException unfe){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
-                    .message(unfe.getMessage())
-                    .build());
-        }
-        catch (ParseException pe){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
-                    .message("Ngày sinh không đúng định dạng vui lòng kiểm tra lại")
-                    .build());
-        }
-        catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                    .message("Đã có lỗi xảy ra khi cập nhật thông tin của bạn. Vui lòng thử lại sau")
-                    .build());
-        }
+   public ResponseEntity<Object> updateProfile(@RequestBody UserProfileDTO userProfileDTO) throws Exception {
+        User user = userService.updateUserProfile(userProfileDTO);
        return ResponseEntity.ok(user);
    }
 
     @PutMapping("/changePassword")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordDTO dto){
-        User user = userService.findUserByUserEmail(dto.getUserEmail());
-
-        if (user == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
-                    .message("Người dùng không tồn tại")
-                    .build());
-
-        if(user.getUserPassword() != null && !BCrypt.checkpw(dto.getUserOldPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Mật khẩu hiện tại không trùng khớp")
-                    .build());
-        }
-
-        if (!userService.changePassword(dto, user))
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StringResponseDTO.builder()
-                    .message("Có lỗi đã xảy ra khi đổi mật khẩu")
-                    .build());
+    public ResponseEntity<Object> changePassword(@RequestBody ChangePasswordDTO dto) throws InvalidPasswordException {
+        userService.changePassword(dto);
 
         return ResponseEntity.ok(StringResponseDTO.builder()
                 .message("Đổi mật khẩu thành công")
