@@ -1,14 +1,13 @@
 package com.pescue.pescue.service;
 
-import com.pescue.pescue.dto.StringResponseDTO;
-import com.pescue.pescue.model.constant.Role;
+import com.pescue.pescue.exception.ExistedException;
+import com.pescue.pescue.exception.ShelterNotFoundException;
+import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.repository.ShelterRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,21 +23,11 @@ public class ShelterService {
     Logger logger = LoggerFactory.getLogger(ShelterService.class);
 
     public Shelter findShelterByUserID(String userID){
-        if (shelterRepository.findShelterByUserID(userID).isPresent()) {
-            logger.trace("Found shelter with userID: " + userID);
-            return shelterRepository.findShelterByUserID(userID).get();
-        }
-        logger.trace("Can't find any shelter with userID: " + userID);
-        return null;
+        return shelterRepository.findShelterByUserID(userID).orElse(null);
     }
 
     public Shelter getShelterByShelterID(String shelterID){
-        if (shelterRepository.findShelterByShelterID(shelterID).isPresent()) {
-            logger.trace("Found shelter with shelterID: " + shelterID);
-            return shelterRepository.findShelterByShelterID(shelterID).get();
-        }
-        logger.trace("Can't find any shelter with shelterID: " + shelterID);
-        return null;
+        return shelterRepository.findShelterByShelterID(shelterID).orElse(null);
     }
 
     public boolean updateShelter(Shelter shelter){
@@ -53,72 +42,40 @@ public class ShelterService {
         return true;
     }
 
-    public ResponseEntity<Object> registerShelter(Shelter shelter){
+    public void registerShelter(Shelter shelter) throws ExistedException {
         if (userService.getUserByID(shelter.getUserID()) == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Tài khoản đăng ký làm trại cứu trợ không tồn tại")
-                    .build());
+            throw new UserNotFoundException();
 
-        if(!addShelter(shelter)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Đã có lỗi khi thêm thông tin trại cứu trợ vào cơ sở dữ liệu")
-                    .build());
-        }
+        Shelter tempShelter = findShelterByUserID(shelter.getUserID());
 
+        if (tempShelter != null)
+            throw new ExistedException("Tài khoản này đã là tài khoản Shelter hoặc đang trong quá trình xác thực bởi ban quan lý.");
+
+        shelterRepository.insert(shelter);
         logger.trace("Shelter information have been inserted in the database: " + shelter);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(StringResponseDTO.builder()
-                .message("Bạn đã gửi yêu cầu làm trại cứu hộ thành công. Vui lòng đợi 3-5 ngày để nhận được kết quả đăng ký")
-                .build());
-    }
-
-    public boolean addShelter(Shelter shelter){
-        try {
-            shelterRepository.insert(shelter);
-        }
-        catch (Exception e){
-            logger.error("There is an error occur while inserting shelter information to database: " + shelter);
-            return false;
-        }
-        return true;
     }
 
     public List<Shelter> findAllShelter(){
         return shelterRepository.findShelterByIsApproved(true);
 
-    }public List<Shelter> findShelterToApprove(){
+    }
+    public List<Shelter> findShelterToApprove(){
         return shelterRepository.findShelterByIsApproved(false);
     }
-
-    public ResponseEntity<Object> approveShelter(String shelterID) {
+    public void approveShelter(String shelterID) {
         Shelter shelter = getShelterByShelterID(shelterID);
 
         if (shelter == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Không tồn tại trại cứu trợ")
-                    .build());
+            throw new ShelterNotFoundException();
 
         shelter.setApproved(true);
 
-        if(updateShelter(shelter) && sendNotifyEmail(shelter, true)) {
-            if (!userService.addRoleForUser(shelter.getUserID(), Role.ROLE_SHELTER_MANAGER)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                        .message("Có lỗi xảy ra khi thêm quyền cho người dùng")
-                        .build());
-            }
+        updateShelter(shelter);
+        sendNotifyEmail(shelter, true);
 
-            logger.trace("Added ROLE_SHELTER_MANAGER for user with Id: " + shelter.getUserID());
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã xác thực yêu cầu làm trại cứu trợ thành công")
-                    .build());
-        }
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                .message("Đã có lỗi xảy ra vui lòng thử lại sau")
-                .build());
+        logger.trace("Added ROLE_SHELTER_MANAGER for user with Id: " + shelter.getUserID());
     }
-
-    private boolean sendNotifyEmail(Shelter shelter, boolean isApprove) {
+    private void sendNotifyEmail(Shelter shelter, boolean isApprove) {
         String emailBody;
         if (isApprove){
             emailBody = "Đăng ký làm trại cứu trợ của bạn đã được chấp thuận. Tài khoản của bạn đã trở thành tài khoản của trại cứu trợ. Chào mừng bạn đến với Pescue!";
@@ -130,50 +87,34 @@ public class ShelterService {
                     Bạn có thể gửi lại yêu cầu với đầy đủ thông tin hơn.""";
         }
 
-        return emailService.sendMail(shelter.getRepresentativeEmailAddress(),
+        emailService.sendMail(
+                shelter.getRepresentativeEmailAddress(),
                 emailBody,
                 "Kết quả đăng ký làm trại cứu hộ");
     }
 
     public Shelter findShelterByShelterName(String shelterName) {
-        if (shelterRepository.findShelterByShelterName(shelterName).isPresent()) {
-            logger.trace("Found shelter with shelterName: " + shelterName);
-            return shelterRepository.findShelterByShelterName(shelterName).get();
-        }
-        logger.trace("Can't find any shelter with shelterName: " + shelterName);
-        return null;
+        return shelterRepository.findShelterByShelterName(shelterName).orElse(null);
     }
 
-    public boolean deleteShelter(Shelter shelter){
+    public void deleteShelter(Shelter shelter){
         try {
             shelterRepository.delete(shelter);
-            return true;
         }
         catch (Exception e){
             logger.error(e.getMessage());
-            return false;
         }
     }
 
-    public ResponseEntity<Object> disapproveShelter(String shelterID) {
+    public void disapproveShelter(String shelterID) {
         Shelter shelter = getShelterByShelterID(shelterID);
 
         if (shelter == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                    .message("Không tồn tại trại cứu trợ")
-                    .build());
+            throw new ShelterNotFoundException();
 
         shelterRepository.delete(shelter);
 
-        if(deleteShelter(shelter) && sendNotifyEmail(shelter, false)) {
-            logger.trace("Deleted shelter: " + shelterID);
-            return ResponseEntity.ok(StringResponseDTO.builder()
-                    .message("Đã từ chối yêu cầu làm trại cứu trợ thành công")
-                    .build());
-        }
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
-                .message("Đã có lỗi xảy ra vui lòng thử lại sau")
-                .build());
+        deleteShelter(shelter);
+        sendNotifyEmail(shelter, false);
     }
 }

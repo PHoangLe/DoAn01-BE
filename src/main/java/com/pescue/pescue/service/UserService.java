@@ -2,6 +2,7 @@ package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.ChangePasswordDTO;
 import com.pescue.pescue.dto.UserProfileDTO;
+import com.pescue.pescue.exception.InvalidPasswordException;
 import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.constant.Role;
 import com.pescue.pescue.model.User;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,21 +35,12 @@ public class UserService {
 
     public List<User> getAllUser(){return userRepository.findAll();}
 
-    public boolean updateUser(User user){
-        try {
-            userRepository.save(user);
-            logger.trace("Updated user with Id: " + user.getUserID());
-            return true;
-        }
-        catch (Exception e){
-            return false;
-        }
+    public void updateUser(User user){
+        userRepository.save(user);
     }
 
     public User findUserByUserEmail(String emailAddress){
-        if(userRepository.findUserByUserEmail(emailAddress).isPresent())
-            return userRepository.findUserByUserEmail(emailAddress).get();
-        return null;
+        return userRepository.findUserByUserEmail(emailAddress).orElse(null);
     }
 
     public User getUserByID(String userID){
@@ -55,15 +48,11 @@ public class UserService {
         return userRepository.findUserByUserID(userID).orElse(null);
     }
 
-    public boolean unlockUser(String emailAddress){
-        Optional<User> user = userRepository.findUserByUserEmail(emailAddress);
+    public void unlockUser(String emailAddress){
+        User user = userRepository.findUserByUserEmail(emailAddress).orElseThrow(UserNotFoundException::new);
 
-        if (user.isEmpty())
-            return false;
-
-        user.get().setLocked(false);
-        userRepository.save(user.get());
-        return true;
+        user.setLocked(false);
+        userRepository.save(user);
     }
 
     public boolean addUser(User user) {
@@ -78,30 +67,28 @@ public class UserService {
         return true;
     }
 
-    public boolean addRoleForUser(String userID, Role role){
+    public void addRoleForUser(String userID, Role role){
         User user = getUserByID(userID);
         List<Role> currentRole = user.getUserRoles();
         currentRole.add(role);
         user.setUserRoles(currentRole);
 
-        if(!updateUser(user)) {
-            logger.error("There is an error occur while inserting role " + role + " for user: " + userID);
-            return false;
-        }
-        logger.trace("Succeed to add role " + role + " to user: " + userID);
-        return true;
+        updateUser(user);
     }
 
-    public boolean changePassword(ChangePasswordDTO dto, User user) {
-        user.setUserPassword(passwordEncoder.encode(dto.getUserNewPassword()));
-        try {
-            userRepository.save(user);
-            logger.trace("Changed password of User: " + dto.getUserEmail());
-        } catch (Exception e) {
-            return false;
-        }
+    public void changePassword(ChangePasswordDTO dto) throws InvalidPasswordException {
+        User user = findUserByUserEmail(dto.getUserEmail());
 
-        return true;
+        if (user == null)
+            throw new UserNotFoundException();
+
+        if (user.getUserPassword() != null && !BCrypt.checkpw(dto.getUserOldPassword(), user.getPassword()))
+            throw new InvalidPasswordException();
+
+        user.setUserPassword(passwordEncoder.encode(dto.getUserNewPassword()));
+
+        userRepository.save(user);
+        logger.trace("Changed password of User: " + dto.getUserEmail());
     }
 
     public User updateUserProfile(UserProfileDTO userProfileDTO) throws Exception {
@@ -119,10 +106,8 @@ public class UserService {
         user.setUserGender(userProfileDTO.getUserGender());
         user.setUserAvatar(userProfileDTO.getUserAvatar());
 
-        if(!updateUser(user)) {
-            throw new Exception();
-        }
-
+        updateUser(user);
+        logger.trace("Updated user with Id: " + user.getUserID());
         return user;
     }
 

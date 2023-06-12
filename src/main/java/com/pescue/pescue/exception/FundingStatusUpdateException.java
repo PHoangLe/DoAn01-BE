@@ -1,6 +1,6 @@
 package com.pescue.pescue.exception;
 
-public class FundingStatusUpdateException extends Exception{
+public class FundingStatusUpdateException extends StatusUpdateException{
     public FundingStatusUpdateException(String message) {
         super(message);
     }
