@@ -3,16 +3,13 @@ package com.pescue.pescue.service;
 import com.pescue.pescue.dto.ChangePasswordDTO;
 import com.pescue.pescue.dto.UserProfileDTO;
 import com.pescue.pescue.exception.UserNotFoundException;
-import com.pescue.pescue.model.Gender;
-import com.pescue.pescue.model.Role;
+import com.pescue.pescue.model.constant.Role;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +50,7 @@ public class UserService {
         return null;
     }
 
-    public User findUserByID(String userID){
+    public User getUserByID(String userID){
         log.trace("Finding user with ID: " + userID);
         return userRepository.findUserByUserID(userID).orElse(null);
     }
@@ -82,7 +79,7 @@ public class UserService {
     }
 
     public boolean addRoleForUser(String userID, Role role){
-        User user = findUserByID(userID);
+        User user = getUserByID(userID);
         List<Role> currentRole = user.getUserRoles();
         currentRole.add(role);
         user.setUserRoles(currentRole);
@@ -108,7 +105,7 @@ public class UserService {
     }
 
     public User updateUserProfile(UserProfileDTO userProfileDTO) throws Exception {
-        User user = findUserByID(userProfileDTO.getUserID());
+        User user = getUserByID(userProfileDTO.getUserID());
 
         if (user == null) {
             log.error("Can't find any user with Id: " + userProfileDTO.getUserID());

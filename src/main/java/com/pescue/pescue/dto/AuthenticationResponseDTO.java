@@ -1,7 +1,7 @@
 package com.pescue.pescue.dto;
 
-import com.pescue.pescue.model.Gender;
-import com.pescue.pescue.model.Role;
+import com.pescue.pescue.model.constant.Gender;
+import com.pescue.pescue.model.constant.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

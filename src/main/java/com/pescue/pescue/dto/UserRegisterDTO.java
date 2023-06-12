@@ -1,12 +1,10 @@
 package com.pescue.pescue.dto;
 
-import com.pescue.pescue.model.Gender;
+import com.pescue.pescue.model.constant.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Data
 @Builder

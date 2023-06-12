@@ -1,9 +1,8 @@
 package com.pescue.pescue.model;
 
-import com.pescue.pescue.dto.MessageDTO;
+import com.pescue.pescue.model.constant.MessageStatus;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;

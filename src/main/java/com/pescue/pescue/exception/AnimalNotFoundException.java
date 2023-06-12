@@ -1,8 +1,8 @@
 package com.pescue.pescue.exception;
 
-import org.webjars.NotFoundException;
+import java.util.NoSuchElementException;
 
-public class AnimalNotFoundException extends NotFoundException {
+public class AnimalNotFoundException extends NoSuchElementException {
     public AnimalNotFoundException(String message) {
         super(message);
     }

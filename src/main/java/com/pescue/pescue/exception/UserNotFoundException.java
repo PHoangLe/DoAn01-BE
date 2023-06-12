@@ -1,8 +1,9 @@
 package com.pescue.pescue.exception;
 
-import org.webjars.NotFoundException;
 
-public class UserNotFoundException extends NotFoundException {
+import java.util.NoSuchElementException;
+
+public class UserNotFoundException extends NoSuchElementException {
     public UserNotFoundException(String message) {
         super(message);
     }

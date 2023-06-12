@@ -1,14 +1,11 @@
 package com.pescue.pescue.controller;
 
-import com.pescue.pescue.dto.ApproveShelterDTO;
 import com.pescue.pescue.dto.ShelterDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.ShelterService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -78,11 +75,11 @@ public class ShelterController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getShelterByShelterID(@PathVariable String shelterID){
-        if (shelterService.findShelterByShelterID(shelterID) == null)
+        if (shelterService.getShelterByShelterID(shelterID) == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                     .message("Không tồn tại trại cứu trợ cần tìm")
                     .build());
-        return ResponseEntity.ok(shelterService.findShelterByShelterID(shelterID));
+        return ResponseEntity.ok(shelterService.getShelterByShelterID(shelterID));
     }
 
     @GetMapping("/getShelterByShelterName/{shelterName}")

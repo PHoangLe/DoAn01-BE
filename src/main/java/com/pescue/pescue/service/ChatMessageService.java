@@ -2,7 +2,7 @@ package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.MessageDTO;
 import com.pescue.pescue.model.ChatMessage;
-import com.pescue.pescue.model.MessageStatus;
+import com.pescue.pescue.model.constant.MessageStatus;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ public class ChatMessageService {
     public ChatMessage save(MessageDTO dto, String chatRoomID){
         log.info("save messages");
         ChatMessage message = new ChatMessage();
-        User sender = userService.findUserByID(dto.getSenderID());
-        User recipient = userService.findUserByID(dto.getRecipientID());
+        User sender = userService.getUserByID(dto.getSenderID());
+        User recipient = userService.getUserByID(dto.getRecipientID());
 
         if (sender == null || recipient == null)
             return null;

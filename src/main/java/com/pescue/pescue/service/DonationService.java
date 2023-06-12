@@ -1,11 +1,10 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.DonationDTO;
-import com.pescue.pescue.exception.DonationCompletedException;
-import com.pescue.pescue.exception.DonationDeclinedException;
-import com.pescue.pescue.exception.DonationNotFoundException;
-import com.pescue.pescue.exception.UpdateFundException;
+import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.*;
+import com.pescue.pescue.model.constant.DonationStatus;
+import com.pescue.pescue.model.constant.TransactionType;
 import com.pescue.pescue.repository.DonationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ public class DonationService {
     private final FundTransactionService fundTransactionService;
     public Donation createDonation(DonationDTO dto){
         Fund fund = fundService.getFundByFundID(dto.getFundID());
-        User user = userService.findUserByID(dto.getUserID());
+        User user = userService.getUserByID(dto.getUserID());
 
         Donation donation = new Donation(user, fund, dto.getNumsOfPackage());
         return donationRepository.insert(donation);
@@ -35,11 +34,11 @@ public class DonationService {
     public Donation getDonationByID(String donationID){
         return donationRepository.findById(donationID).orElseThrow(DonationNotFoundException::new);
     }
-    public void confirmDonation(String donationID) throws UpdateFundException, DonationCompletedException {
+    public void confirmDonation(String donationID) throws UpdateFundException, DonationStatusUpdateException {
         Donation donation = getDonationByID(donationID);
 
-        if (donation.getDonationStatus() == DonationStatus.COMPLETED)
-            throw new DonationCompletedException();
+        if (donation.getDonationStatus() != DonationStatus.PENDING)
+            throw new DonationStatusUpdateException();
 
         Fund fund = donation.getFund();
 
@@ -49,11 +48,11 @@ public class DonationService {
         donation.setDonationStatus(DonationStatus.COMPLETED);
         donationRepository.save(donation);
     }
-    public void rejectDonation(String donationID) throws DonationDeclinedException {
+    public void rejectDonation(String donationID) throws DonationStatusUpdateException {
         Donation donation = getDonationByID(donationID);
 
-        if (donation.getDonationStatus() == DonationStatus.REJECTED)
-            throw new DonationDeclinedException();
+        if (donation.getDonationStatus() != DonationStatus.PENDING)
+            throw new DonationStatusUpdateException();
 
         donation.setDonationStatus(DonationStatus.REJECTED);
         donationRepository.save(donation);

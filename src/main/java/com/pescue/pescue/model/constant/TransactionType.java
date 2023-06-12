@@ -1,4 +1,4 @@
-package com.pescue.pescue.model;
+package com.pescue.pescue.model.constant;
 
 public enum TransactionType {
     FUND_TO_USER,

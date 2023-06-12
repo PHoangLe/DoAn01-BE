@@ -1,14 +1,12 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.StringResponseDTO;
-import com.pescue.pescue.model.Role;
+import com.pescue.pescue.model.constant.Role;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.repository.ShelterRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,7 @@ public class ShelterService {
         return null;
     }
 
-    public Shelter findShelterByShelterID(String shelterID){
+    public Shelter getShelterByShelterID(String shelterID){
         if (shelterRepository.findShelterByShelterID(shelterID).isPresent()) {
             logger.trace("Found shelter with shelterID: " + shelterID);
             return shelterRepository.findShelterByShelterID(shelterID).get();
@@ -56,7 +54,7 @@ public class ShelterService {
     }
 
     public ResponseEntity<Object> registerShelter(Shelter shelter){
-        if (userService.findUserByID(shelter.getUserID()) == null)
+        if (userService.getUserByID(shelter.getUserID()) == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
                     .message("Tài khoản đăng ký làm trại cứu trợ không tồn tại")
                     .build());
@@ -93,7 +91,7 @@ public class ShelterService {
     }
 
     public ResponseEntity<Object> approveShelter(String shelterID) {
-        Shelter shelter = findShelterByShelterID(shelterID);
+        Shelter shelter = getShelterByShelterID(shelterID);
 
         if (shelter == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
@@ -158,7 +156,7 @@ public class ShelterService {
     }
 
     public ResponseEntity<Object> disapproveShelter(String shelterID) {
-        Shelter shelter = findShelterByShelterID(shelterID);
+        Shelter shelter = getShelterByShelterID(shelterID);
 
         if (shelter == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StringResponseDTO.builder()
