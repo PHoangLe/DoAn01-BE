@@ -1,5 +1,6 @@
 package com.pescue.pescue.dto;
 
+import com.pescue.pescue.model.FundType;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,4 +16,5 @@ public class FundDTO {
     private String fundCover;
     private String fundDescription;
     private BigDecimal valuePerDonationPackage;
+    private FundType fundType;
 }

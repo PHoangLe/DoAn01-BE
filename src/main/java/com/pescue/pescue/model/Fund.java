@@ -22,12 +22,14 @@ public class Fund {
     private String fundDescription;
     private BigDecimal fundBalance;
     private BigDecimal valuePerDonationPackage;
+    private FundType fundType;
     public Fund(FundDTO dto) {
         this.fundName = dto.getFundName();
         this.fundCover = dto.getFundCover();
         this.fundDescription = dto.getFundDescription();
         this.valuePerDonationPackage = dto.getValuePerDonationPackage();
         this.fundBalance = new BigDecimal(0);
+        this.fundType = dto.getFundType();
     }
 
     public Fund(String fundID, FundDTO dto) {
@@ -37,5 +39,6 @@ public class Fund {
         this.fundDescription = dto.getFundDescription();
         this.valuePerDonationPackage = dto.getValuePerDonationPackage();
         this.fundBalance = new BigDecimal(0);
+        this.fundType = dto.getFundType();
     }
 }
