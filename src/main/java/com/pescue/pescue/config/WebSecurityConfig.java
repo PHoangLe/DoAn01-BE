@@ -40,6 +40,7 @@ public class WebSecurityConfig{
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**", "/api/v1/otp/**", "/api/v1/chat/**", "/ws/**", "/api/v1/animal/getAllAnimals").permitAll()
                 .requestMatchers("/swagger-ui/", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/api/v1/statistic/landing-page").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

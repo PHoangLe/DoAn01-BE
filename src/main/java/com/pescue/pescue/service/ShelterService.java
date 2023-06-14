@@ -68,7 +68,7 @@ public class ShelterService {
         if (shelter == null)
             throw new ShelterNotFoundException();
 
-        shelter.setApproved(true);
+        shelter.setIsApproved(true);
 
         updateShelter(shelter);
         sendNotifyEmail(shelter, true);
@@ -116,5 +116,11 @@ public class ShelterService {
 
         deleteShelter(shelter);
         sendNotifyEmail(shelter, false);
+    }
+
+    public long countExistingShelter() {
+        List<Shelter> shelters = findAllShelter();
+
+        return shelters.stream().filter(Shelter::getIsApproved).count();
     }
 }
