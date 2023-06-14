@@ -130,4 +130,16 @@ public class AnimalService {
         updateAnimal(animal);
         log.trace("Updated online adopters for Animal: " + animal.getAnimalID());
     }
+
+    public long[] countAdoptedAndNotAdopted() {
+        List<Animal> animals = findAllAnimals();
+
+        long adoptedAnimal = animals.stream()
+                .filter(Animal::isAdopted).count();
+
+        long notAdoptedAnimal = animals.stream()
+                .filter((animal) -> !animal.isAdopted()).count();
+
+        return new long[]{adoptedAnimal, notAdoptedAnimal};
+    }
 }
