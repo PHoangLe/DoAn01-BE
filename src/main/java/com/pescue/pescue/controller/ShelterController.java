@@ -31,8 +31,6 @@ public class ShelterController {
     }
 
     @GetMapping("/getAllShelter")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllShelter(){
         return ResponseEntity.ok(shelterService.findAllShelter());
 
