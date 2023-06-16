@@ -6,6 +6,7 @@ import com.pescue.pescue.dto.ValidateOTPConfirmEmailDTO;
 import com.pescue.pescue.exception.InvalidException;
 import com.pescue.pescue.exception.InvalidOtpException;
 import com.pescue.pescue.service.OTPService;
+import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("api/v1/otp")
 @CrossOrigin
+@Api
 public class OTPController {
     private final OTPService otpService;
 

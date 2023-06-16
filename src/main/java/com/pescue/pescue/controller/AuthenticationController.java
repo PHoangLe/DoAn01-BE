@@ -4,6 +4,7 @@ import com.pescue.pescue.service.AuthenticationService;
 import com.pescue.pescue.dto.GoogleUserAuthenticationRequestDTO;
 import com.pescue.pescue.dto.AuthenticationDTO;
 import com.pescue.pescue.dto.UserRegisterDTO;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @CrossOrigin
+@Api
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
