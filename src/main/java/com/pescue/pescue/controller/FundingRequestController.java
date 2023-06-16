@@ -5,6 +5,7 @@ import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.FundingRequest;
 import com.pescue.pescue.service.FundingRequestService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin
 @Slf4j
+@Api
 public class FundingRequestController {
     private final FundingRequestService fundingRequestService;
     @PostMapping("")

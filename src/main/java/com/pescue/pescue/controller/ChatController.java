@@ -5,6 +5,7 @@ import com.pescue.pescue.model.ChatMessage;
 import com.pescue.pescue.model.ChatNotification;
 import com.pescue.pescue.service.ChatMessageService;
 import com.pescue.pescue.service.ChatRoomService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @CrossOrigin
 @Slf4j
+@Api
 public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;

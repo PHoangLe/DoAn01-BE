@@ -5,6 +5,7 @@ import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.exception.ExistedException;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.service.ShelterService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("api/v1/shelter")
 @CrossOrigin
+@Api
 public class ShelterController {
 
     private final ShelterService shelterService;

@@ -6,6 +6,7 @@ import com.pescue.pescue.exception.*;
 import com.pescue.pescue.model.AdoptionApplication;
 import com.pescue.pescue.model.OnlineAdoptionApplication;
 import com.pescue.pescue.service.AdoptionService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("api/v1/adopt")
 @RequiredArgsConstructor
 @Slf4j
+@Api
 public class AdoptionController {
     private final AdoptionService service;
     // Offline Adoption

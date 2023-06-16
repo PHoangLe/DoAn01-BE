@@ -7,6 +7,7 @@ import com.pescue.pescue.model.Fund;
 import com.pescue.pescue.model.FundTransaction;
 import com.pescue.pescue.service.FundService;
 import com.pescue.pescue.service.FundTransactionService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("api/v1/funds")
 @CrossOrigin
+@Api
 public class FundController {
     private final FundService fundService;
     private final FundTransactionService transactionService;

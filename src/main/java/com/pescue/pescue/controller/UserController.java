@@ -7,6 +7,7 @@ import com.pescue.pescue.exception.InvalidPasswordException;
 import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.User;
 import com.pescue.pescue.service.UserService;
+import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.text.ParseException;
 @RequestMapping("api/v1/user")
 @CrossOrigin
 @Slf4j
+@Api
 public class UserController {
 
     private final UserService userService;
