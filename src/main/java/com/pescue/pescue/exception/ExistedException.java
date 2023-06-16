@@ -1,6 +1,6 @@
 package com.pescue.pescue.exception;
 
-public class ExistedException extends Exception{
+public class ExistedException extends RuntimeException{
     public ExistedException(String message) {
         super(message);
     }
