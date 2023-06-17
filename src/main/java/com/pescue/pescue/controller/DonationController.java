@@ -27,7 +27,7 @@ public class DonationController {
     @PostMapping("")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> createDonation(DonationDTO dto){
+    public ResponseEntity<Object> createDonation(@RequestBody DonationDTO dto){
         Donation donation = donationService.createDonation(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(donation);
     }
