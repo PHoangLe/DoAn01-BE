@@ -1,6 +1,7 @@
 package com.pescue.pescue.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.pescue.pescue.model.Fund;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.model.User;
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Document("FundingRequest")
 @Builder
@@ -31,6 +33,7 @@ public class FundingRequest {
     private String reason;
     private BigDecimal value;
     private FundingRequestStatus requestStatus;
+    private Date date;
 
     public FundingRequest(Fund fund, User user, Shelter shelter, String reason, BigDecimal value){
         this.fund = fund;
@@ -39,5 +42,6 @@ public class FundingRequest {
         this.reason = reason;
         this.value = value;
         this.requestStatus = FundingRequestStatus.PENDING;
+        this.date = new Date(System.currentTimeMillis());
     }
 }
