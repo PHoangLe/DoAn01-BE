@@ -50,7 +50,7 @@ public class DonationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO(e.getMessage()));
         }
     }
-    @PutMapping("/confirm/{donationID}")
+    @GetMapping("/confirm/{donationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmDonation(@PathVariable String donationID) throws DonationStatusUpdateException {
@@ -62,7 +62,7 @@ public class DonationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new StringResponseDTO(e.getMessage()));
         }
     }
-    @PutMapping("/reject/{donationID}")
+    @GetMapping("/reject/{donationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> rejectDonation(@PathVariable String donationID) throws DonationStatusUpdateException {
