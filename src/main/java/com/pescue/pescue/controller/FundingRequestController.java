@@ -45,18 +45,18 @@ public class FundingRequestController {
         FundingRequest request = fundingRequestService.getFundingRequestByID(requestID);
         return ResponseEntity.status(HttpStatus.OK).body(request);
     }
-    @PutMapping("/confirm/{requestID}")
+    @GetMapping("/confirm/{requestID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmFundingRequest(@PathVariable String requestID) throws FundingStatusUpdateException, FundEmptyBalanceException, UpdateFundException {
         fundingRequestService.confirmFundingRequest(requestID);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã chấp thuận yêu cầu phát quỹ"));
     }
-    @PutMapping("/reject/{requestID}")
+    @GetMapping("/reject/{requestID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> rejectFundingRequest(@PathVariable String requestID) throws FundingStatusUpdateException {
         fundingRequestService.rejectFundingRequest(requestID);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã từ chối yêu cầu nhận quỹ"));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã từ chối yêu cầu phát quỹ"));
     }
 }
