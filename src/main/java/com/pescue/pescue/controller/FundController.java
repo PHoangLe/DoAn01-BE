@@ -43,7 +43,7 @@ public class FundController {
     @PutMapping("/{fundID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> updateFund(@PathVariable String fundID, FundDTO dto){
+    public ResponseEntity<Object> updateFund(@PathVariable String fundID,@RequestBody FundDTO dto){
         try {
             fundService.updateFund(new Fund(fundID, dto));
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã cập nhật quỹ thành công"));
