@@ -1,6 +1,7 @@
 package com.pescue.pescue.service;
 
 import com.pescue.pescue.dto.AnimalDTO;
+import com.pescue.pescue.exception.AnimalNotFoundException;
 import com.pescue.pescue.exception.ExistedException;
 import com.pescue.pescue.exception.ShelterNotFoundException;
 import com.pescue.pescue.model.*;
@@ -30,15 +31,10 @@ public class AnimalService {
     private final ShelterService shelterService;
     private final MongoOperations mongoOperations;
     public List<Animal> findAllAnimals(){
-        return animalRepository.findAllByIsAdopted(false);
+        return animalRepository.findAllByIsAdoptedAndIsDeleted(false, false);
     }
 
     public void addAnimal(AnimalDTO dto) throws ExistedException {
-        Animal animal = findAnimalByAnimalNameAndShelterID(dto.getAnimalName(), dto.getShelterID());
-
-        if (animal != null)
-            throw new ExistedException("Đã tồn tại bé cùng tên trong trại");
-
         animalRepository.insert(new Animal(dto));
     }
 
@@ -48,19 +44,18 @@ public class AnimalService {
         if (shelter == null)
             throw new ShelterNotFoundException();
 
-        Animal tempAnimal = findAnimalByAnimalNameAndShelterID(animal.getAnimalName(), animal.getShelterID());
-
-        if (tempAnimal != null && !Objects.equals(tempAnimal.getAnimalID(), animal.getAnimalID()))
-            throw new ExistedException("Đã tồn tại bé cùng tên trong trại");
-
         animalRepository.save(animal);
         log.trace("Animal information have been saved in the database: " + animal);
     }
 
     public void deleteAnimal(String animalID){
-        deleteRelatedApplication(animalID);
-        animalRepository.deleteById(animalID);
-        log.trace("Animal information have been deleted in the database: " + animalID);
+        Animal animal = findAnimalByAnimalID(animalID);
+
+        if (animal == null)
+            throw new AnimalNotFoundException();
+
+        animal.setDeleted(true);
+        updateAnimal(animal);
     }
 
     private void deleteRelatedApplication(String animalID) {
@@ -69,41 +64,19 @@ public class AnimalService {
                         .where("animalID").is(animalID));
         mongoOperations.remove(query, AdoptionApplication.class);
         mongoOperations.remove(query, OnlineAdoptionApplication.class);
-//        mongoOperations.(query, update, AdoptionApplication.class);
         log.trace("Removed applications related to animal: " + animalID);
     }
 
     public Animal findAnimalByAnimalID(String animalID){
-        Optional<Animal> animal = animalRepository.findAnimalByAnimalID(animalID);
-
-        if (animal.isPresent()) {
-            log.trace("Found animal with animalID: " + animalID);
-            return animal.get();
-        }
-        log.trace("Can't find animal with animalID: " + animalID);
-        return null;
+        return animalRepository.findAnimalByAnimalID(animalID).orElse(null);
     }
 
     public Animal findAnimalByAnimalNameAndShelterID(String animalID, String shelterID){
-        Optional<Animal> animal = animalRepository.findAnimalByAnimalNameAndShelterID(animalID, shelterID);
-
-        if (animal.isPresent()) {
-            log.trace("Found animal with animalName and shelterID: " + animalID + ", " + shelterID);
-            return animal.get();
-        }
-        log.trace("Can't find animal with animalName and shelterID: " + animalID + ", " + shelterID);
-        return null;
+        return animalRepository.findAnimalByAnimalNameAndShelterID(animalID, shelterID).orElse(null);
     }
 
     public List<Animal> findAnimalsByShelterID(String shelterID){
-        List<Animal> animals = animalRepository.findAnimalsByShelterID(shelterID);
-
-        if (!animals.isEmpty()) {
-            log.trace("Found animals with shelterID: " + shelterID);
-            return animals;
-        }
-        log.trace("Can't find any animal with shelterID: " + shelterID);
-        return null;
+        return animalRepository.findAnimalsByShelterID(shelterID);
     }
 
     public void addOnlineAdopters(Animal animal, User adopter) throws ExistedException {
