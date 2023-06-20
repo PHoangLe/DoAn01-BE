@@ -30,7 +30,7 @@ public class FundController {
     @PostMapping("")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> createFund(FundDTO dto){
+    public ResponseEntity<Object> createFund(@RequestBody FundDTO dto){
         try {
             fundService.createFund(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new StringResponseDTO("Đã tạo quỹ cứu trợ thành công"));
