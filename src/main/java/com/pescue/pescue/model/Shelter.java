@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Document("Shelter")
@@ -29,6 +30,7 @@ public class Shelter {
     private String shelterLogo;
     private List<String> relatedDocuments;
     private Boolean isApproved = false;
+    private BigDecimal totalFundReceived = BigDecimal.ZERO;
 
     public Shelter(String userID, String shelterName,  String representativeFacebookLink, String representativeEmailAddress, String unitNoAndStreet, String ward, String district, String city, String shelterPhoneNo, String shelterLogo, List<String> relatedDocuments) {
         this.userID = userID;
@@ -57,37 +59,4 @@ public class Shelter {
         this.shelterLogo = DTO.getShelterLogo();
         this.relatedDocuments = DTO.getRelatedDocuments();
     }
-
-    public String getShelterID() {
-        return shelterID;
-    }
-
-    public void setShelterID(String shelterID) {
-        this.shelterID = shelterID;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public String getRepresentativeFacebookLink() {
-        return representativeFacebookLink;
-    }
-
-    public void setRepresentativeFacebookLink(String representativeFacebookLink) {
-        this.representativeFacebookLink = representativeFacebookLink;
-    }
-
-    public String getRepresentativeEmailAddress() {
-        return representativeEmailAddress;
-    }
-
-    public void setRepresentativeEmailAddress(String representativeEmailAddress) {
-        this.representativeEmailAddress = representativeEmailAddress;
-    }
-
 }

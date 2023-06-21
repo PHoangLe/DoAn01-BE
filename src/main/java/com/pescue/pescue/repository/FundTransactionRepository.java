@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface FundTransactionRepository extends MongoRepository<FundTransaction, String> {
     List<FundTransaction> findAllByFund(@Param("fundID") String fundID);
+    List<FundTransaction> findAllByUser(@Param("userID") String userID);
 }

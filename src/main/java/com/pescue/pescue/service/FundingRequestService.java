@@ -58,6 +58,9 @@ public class FundingRequestService {
     public List<FundingRequest> getAllFundingRequest(){
         return fundingRequestRepository.findAll();
     }
+    public void updateFundingRequest(FundingRequest request){
+        fundingRequestRepository.save(request);
+    }
     public void confirmFundingRequest(String requestID) throws UpdateFundException, FundingStatusUpdateException, FundEmptyBalanceException {
         FundingRequest request = getFundingRequestByID(requestID);
 
@@ -70,11 +73,24 @@ public class FundingRequestService {
         if (fund.getFundBalance().compareTo(value) < 0)
             throw new FundEmptyBalanceException();
 
-        fundTransactionService.createTransaction(TransactionType.FUND_TO_USER, fund.getFundID(), request.getUser(), value);
-        request.setRequestStatus(FundingRequestStatus.COMPLETED);
-        fundingRequestRepository.save(request);
+
+        updateShelterTotalFundingReceive(request.getShelter(), value);
+        createTransactionFromFundToShelter(fund, request, value);
+        updateFundingRequest(request);
 
         sendNotifyEmail(request, true);
+    }
+
+    private void updateShelterTotalFundingReceive(Shelter shelter, BigDecimal value) {
+        BigDecimal totalFundingReceived = shelter.getTotalFundReceived() != null ? shelter.getTotalFundReceived() : BigDecimal.ZERO;
+
+        shelter.setTotalFundReceived(totalFundingReceived.add(value));
+        shelterService.updateShelter(shelter);
+    }
+
+    public void createTransactionFromFundToShelter(Fund fund, FundingRequest request, BigDecimal value){
+        fundTransactionService.createTransaction(TransactionType.FUND_TO_USER, fund.getFundID(), request.getUser(), value);
+        request.setRequestStatus(FundingRequestStatus.COMPLETED);
     }
     public void rejectFundingRequest(String requestID) throws FundingStatusUpdateException {
         FundingRequest request = getFundingRequestByID(requestID);
