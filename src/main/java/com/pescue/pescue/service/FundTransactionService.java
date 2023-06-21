@@ -43,6 +43,10 @@ public class FundTransactionService {
         return transactionRepository.findAllByFund(fundID);
     }
 
+    public List<FundTransaction> getTransactionByUserID(String userID){
+        return transactionRepository.findAllByUser(userID);
+    }
+
     private void updateFundBalance(Fund fund, BigDecimal value, TransactionType type) throws UpdateFundException {
         BigDecimal currentBalance = fund.getFundBalance();
         currentBalance = type == TransactionType.USER_TO_FUND ? currentBalance.add(value) : currentBalance.subtract(value);

@@ -23,6 +23,7 @@ public class Fund {
     private BigDecimal fundBalance;
     private BigDecimal valuePerDonationPackage;
     private FundType fundType;
+    private boolean isDelete = false;
     public Fund(FundDTO dto) {
         this.fundName = dto.getFundName();
         this.fundCover = dto.getFundCover();

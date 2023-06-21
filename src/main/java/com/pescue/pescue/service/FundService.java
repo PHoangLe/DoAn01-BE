@@ -27,14 +27,21 @@ public class FundService {
     }
 
     public List<Fund> getAllFund(){
+        return fundRepository.findAll()
+                .stream()
+                .filter((fund) -> !fund.isDelete())
+                .toList();
+    }
+    public List<Fund> getAllFundToCRUD(){
         return fundRepository.findAll();
     }
-
     public void updateFund(Fund fund) {
         fundRepository.save(fund);
     }
 
     public void deleteFund(String fundID) {
-        fundRepository.deleteById(fundID);
+        Fund fund = getFundByFundID(fundID);
+        fund.setDelete(true);
+        updateFund(fund);
     }
 }
