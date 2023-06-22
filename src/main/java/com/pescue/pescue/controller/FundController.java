@@ -74,7 +74,7 @@ public class FundController {
         return ResponseEntity.ok(transactionService.getTransactionByFundID(fundID));
     }
     @GetMapping("/transactions/user/{userID}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getTransactionByUserID(@PathVariable String userID){
         return ResponseEntity.ok(transactionService.getTransactionByUserID(userID));
