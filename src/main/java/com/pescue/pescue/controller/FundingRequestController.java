@@ -27,7 +27,7 @@ public class FundingRequestController {
     @PostMapping("")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Object> createFundingRequest(FundingRequestDTO dto){
+    public ResponseEntity<Object> createFundingRequest(@RequestBody FundingRequestDTO dto){
         FundingRequest request = fundingRequestService.createFundingRequest(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(request);
     }
@@ -36,6 +36,13 @@ public class FundingRequestController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllFundingRequest(){
         List<FundingRequest> requests = fundingRequestService.getAllFundingRequest();
+        return ResponseEntity.status(HttpStatus.OK).body(requests);
+    }
+    @GetMapping("/user/{userID}")
+    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getAllFundingRequestByUserID(@PathVariable String userID){
+        List<FundingRequest> requests = fundingRequestService.getAllFundingRequestByUserID(userID);
         return ResponseEntity.status(HttpStatus.OK).body(requests);
     }
     @GetMapping("/{requestID}")

@@ -58,6 +58,9 @@ public class FundingRequestService {
     public List<FundingRequest> getAllFundingRequest(){
         return fundingRequestRepository.findAll();
     }
+    public List<FundingRequest> getAllFundingRequestByUserID(String userID) {
+        return fundingRequestRepository.findAllByUser(userID);
+    }
     public void updateFundingRequest(FundingRequest request){
         fundingRequestRepository.save(request);
     }
