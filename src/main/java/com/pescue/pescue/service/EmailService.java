@@ -1,10 +1,8 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.exception.SendMailFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,7 +18,7 @@ public class EmailService {
     @Value("${MAIL_USERNAME}")
     private String sender;
 
-    public boolean sendMail(String receiverEmail, String emailBody, String subject) {
+    public void sendMail(String receiverEmail, String emailBody, String subject) {
         try{
             SimpleMailMessage mailMessage = new SimpleMailMessage();
 
@@ -33,11 +31,9 @@ public class EmailService {
 
             log.trace("Mail has been sent to: " + receiverEmail);
 
-            return true;
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
-            return false;
+            throw new SendMailFailedException();
         }
     }
 }
