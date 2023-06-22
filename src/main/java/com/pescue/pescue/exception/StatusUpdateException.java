@@ -5,6 +5,6 @@ public class StatusUpdateException extends RuntimeException{
         super(message);
     }
     public StatusUpdateException(){
-        super("Không tìm thấy trại cứu trợ bạn cần tìm");
+        super("Cập nhật trạng thái không hợp lệ");
     }
 }
