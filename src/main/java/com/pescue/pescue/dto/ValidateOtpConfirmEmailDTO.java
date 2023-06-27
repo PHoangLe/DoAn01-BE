@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValidateOTPConfirmEmailDTO {
+public class ValidateOtpConfirmEmailDTO {
     private String emailAddress;
     private String otp;
 }

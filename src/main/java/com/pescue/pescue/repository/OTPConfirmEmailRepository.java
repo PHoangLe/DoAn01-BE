@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OTPConfirmEmailRepository extends MongoRepository<OTPConfirmEmail, String> {
-
     List<OTPConfirmEmail> findOTPConfirmEmailsByReceiverEmailOrderByDate (String receiverEmail);
 }
