@@ -4,7 +4,6 @@ import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ValidateOtpForgotPasswordDTO extends ValidateOtpConfirmEmailDTO {
