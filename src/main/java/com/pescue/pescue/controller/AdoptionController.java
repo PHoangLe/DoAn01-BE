@@ -61,7 +61,7 @@ public class AdoptionController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StringResponseDTO("Chưa tồn tại yêu cầu nhận nuôi"));
     }
 
-    @GetMapping("/confirmAdoptionRequest/{adoptionApplicationID}")
+    @PutMapping("/confirmAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmAdoptionRequest(@PathVariable String adoptionApplicationID) throws ExistedException {
@@ -71,7 +71,7 @@ public class AdoptionController {
                 .build());
     }
 
-    @GetMapping("/declineAdoptionRequest/{adoptionApplicationID}")
+    @PutMapping("/declineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> declineAdoptionRequest(@PathVariable String adoptionApplicationID){
@@ -106,7 +106,7 @@ public class AdoptionController {
         List<OnlineAdoptionApplication> onlineAdoptionApplicationsByUserID = service.getOnlineAdoptionsByUserID(userID);
         return ResponseEntity.ok(onlineAdoptionApplicationsByUserID);
     }
-    @GetMapping("/confirmOnlineAdoptionRequest/{adoptionApplicationID}")
+    @PutMapping("/confirmOnlineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> confirmOnlineAdoptionRequest(@PathVariable String adoptionApplicationID) throws ApplicationStatusUpdateException, UpdateFundException, ExistedException {
@@ -116,7 +116,7 @@ public class AdoptionController {
             .build());
     }
 
-    @GetMapping("/declineOnlineAdoptionRequest/{adoptionApplicationID}")
+    @PutMapping("/declineOnlineAdoptionRequest/{adoptionApplicationID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> declineOnlineAdoptionRequest(@PathVariable String adoptionApplicationID){

@@ -115,4 +115,13 @@ public class UserService {
     private Date stringToDate(String dob) throws ParseException {
         return new SimpleDateFormat("dd/MM/yyyy").parse(dob);
     }
+
+    public void resetPassword(String userEmail, String newPassword) {
+        User user = findUserByUserEmail(userEmail);
+
+        user.setUserPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+        logger.trace("Reset password of User: " + userEmail);
+    }
 }

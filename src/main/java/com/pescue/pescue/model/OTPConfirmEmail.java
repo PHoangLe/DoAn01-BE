@@ -1,8 +1,6 @@
 package com.pescue.pescue.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,6 +8,8 @@ import java.util.Date;
 
 @Document("OTPConfirmEmail")
 @Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class OTPConfirmEmail {
@@ -25,46 +25,6 @@ public class OTPConfirmEmail {
         this.receiverEmail = receiverEmail;
         this.date = date;
         this.expiredDate = expiredDate;
-        this.OTP = OTP;
-    }
-
-    public String getId() {
-        return Id;
-    }
-
-    public void setId(String id) {
-        Id = id;
-    }
-
-    public String getReceiverEmail() {
-        return receiverEmail;
-    }
-
-    public void setReceiverEmail(String receiverEmail) {
-        this.receiverEmail = receiverEmail;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Date getExpiredDate() {
-        return expiredDate;
-    }
-
-    public void setExpiredDate(Date expiredDate) {
-        this.expiredDate = expiredDate;
-    }
-
-    public String getOTP() {
-        return OTP;
-    }
-
-    public void setOTP(String OTP) {
         this.OTP = OTP;
     }
 
