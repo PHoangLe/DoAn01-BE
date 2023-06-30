@@ -129,7 +129,7 @@ public class AdoptionController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getOnlineAdoptionApplicationByUserIDAndAnimalID(@PathVariable String userID, @PathVariable String animalID) {
-        OnlineAdoptionApplication application = service.findOnlineApplicationByUserIDAndAnimalID(userID, animalID);
+        OnlineAdoptionApplication application = service.getOnlineApplicationByUserIDAndAnimalID(userID, animalID);
 
         if (application != null) {
             return ResponseEntity.ok(application);

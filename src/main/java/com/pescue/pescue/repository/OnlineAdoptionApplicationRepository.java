@@ -12,5 +12,6 @@ public interface OnlineAdoptionApplicationRepository extends MongoRepository<Onl
     Optional<OnlineAdoptionApplication> findByApplicationID(@Param("applicationID") String applicationID);
     Optional<OnlineAdoptionApplication> findByUserAndAnimal(@Param("userID") String userID, @Param("animalID") String animalID);
     List<OnlineAdoptionApplication> findAllByUser(@Param("userID") String userID);
+    List<OnlineAdoptionApplication> findAllByAnimal(@Param("animalID") String animalID);
     List<OnlineAdoptionApplication> findAllByApplicationStatus(@Param("applicationStatus")ApplicationStatus applicationStatus);
 }
