@@ -18,11 +18,12 @@ import java.util.List;
 public class FundService {
     private final FundRepository fundRepository;
     public void createFund(FundDTO dto){
-        fundRepository.insert(new Fund(dto));
+        Fund fund = new Fund(dto);
+        fundRepository.insert(fund);
+        log.trace("New Fund: " + fund);
     }
 
     public Fund getFundByFundID(String fundID) throws FundNotFoundException{
-        log.trace("Finding fund with ID: " + fundID);
         return fundRepository.findByFundID(fundID).orElseThrow(FundNotFoundException::new);
     }
 
@@ -43,5 +44,6 @@ public class FundService {
         Fund fund = getFundByFundID(fundID);
         fund.setDelete(true);
         updateFund(fund);
+        log.trace("Fund Has Been Set To Deleted: " + fund);
     }
 }

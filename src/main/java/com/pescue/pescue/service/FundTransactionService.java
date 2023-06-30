@@ -27,16 +27,17 @@ public class FundTransactionService {
 
         updateFundBalance(fund, value, type);
 
-        transactionRepository.insert(new FundTransaction(type, fund, user, new Date(System.currentTimeMillis()), value));
-        log.trace("Created transaction: Fund-" + fund.getFundID() + " User-" + user.getUserID() + " Value-" + value +  " Type-" + type);
+        FundTransaction transaction = new FundTransaction(type, fund, user, new Date(System.currentTimeMillis()), value);
+        transactionRepository.insert(transaction);
+        log.trace("New transaction: " + transaction);
     }
 
     public void createTransaction(TransactionType type, Fund fund, User user, BigDecimal value, Date date) throws UpdateFundException {
         updateFundBalance(fund, value, type);
 
-        transactionRepository.insert(new FundTransaction(type, fund, user, date, value));
-        log.trace("Created transaction: Fund-" + fund.getFundID() + " User-" + user.getUserID() + " Value-" + value +  " Type-" + type);
-
+        FundTransaction transaction = new FundTransaction(type, fund, user, date, value);
+        transactionRepository.insert(transaction);
+        log.trace("New transaction: " + transaction);
     }
 
     public List<FundTransaction> getTransactionByFundID(String fundID){

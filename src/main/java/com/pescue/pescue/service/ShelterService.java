@@ -6,6 +6,7 @@ import com.pescue.pescue.exception.UserNotFoundException;
 import com.pescue.pescue.model.Shelter;
 import com.pescue.pescue.repository.ShelterRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class ShelterService {
     private final ShelterRepository shelterRepository;
     private final UserService userService;
     private final EmailService emailService;
-    Logger logger = LoggerFactory.getLogger(ShelterService.class);
 
     public Shelter findShelterByUserID(String userID){
         return shelterRepository.findShelterByUserID(userID).orElse(null);
@@ -30,16 +31,8 @@ public class ShelterService {
         return shelterRepository.findShelterByShelterID(shelterID).orElse(null);
     }
 
-    public boolean updateShelter(Shelter shelter){
-        try {
-            shelterRepository.save(shelter);
-        }
-        catch (Exception e){
-            logger.error("There is an error occur while saving shelter information: " + shelter);
-            return false;
-        }
-        logger.trace("Shelter information have been saved in the database: " + shelter);
-        return true;
+    public void updateShelter(Shelter shelter){
+        shelterRepository.save(shelter);
     }
 
     public void registerShelter(Shelter shelter) throws ExistedException {
@@ -52,7 +45,7 @@ public class ShelterService {
             throw new ExistedException("Tài khoản này đã là tài khoản Shelter hoặc đang trong quá trình xác thực bởi ban quan lý.");
 
         shelterRepository.insert(shelter);
-        logger.trace("Shelter information have been inserted in the database: " + shelter);
+        log.trace("Shelter information have been inserted in the database: " + shelter);
     }
 
     public List<Shelter> findAllShelter(){
@@ -73,7 +66,7 @@ public class ShelterService {
         updateShelter(shelter);
         sendNotifyEmail(shelter, true);
 
-        logger.trace("Added ROLE_SHELTER_MANAGER for user with Id: " + shelter.getUserID());
+        log.trace("User with Id has became shelter manager: " + shelter.getUserID());
     }
     private void sendNotifyEmail(Shelter shelter, boolean isApprove) {
         String emailBody;
@@ -98,12 +91,8 @@ public class ShelterService {
     }
 
     public void deleteShelter(Shelter shelter){
-        try {
-            shelterRepository.delete(shelter);
-        }
-        catch (Exception e){
-            logger.error(e.getMessage());
-        }
+        shelterRepository.delete(shelter);
+        log.trace("Shelter Deleted: " + shelter.getShelterID());
     }
 
     public void disapproveShelter(String shelterID) {

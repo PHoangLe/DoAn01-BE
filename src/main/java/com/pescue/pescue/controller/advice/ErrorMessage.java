@@ -1,4 +1,4 @@
-package com.pescue.pescue.dto;
+package com.pescue.pescue.controller.advice;
 
 import lombok.*;
 

@@ -45,7 +45,7 @@ public class AnimalService {
             throw new ShelterNotFoundException();
 
         animalRepository.save(animal);
-        log.trace("Animal information have been saved in the database: " + animal);
+        log.trace("New Animal: " + animal);
     }
 
     public void deleteAnimal(String animalID){
@@ -89,7 +89,7 @@ public class AnimalService {
             animal.setOnlineAdopters(onlineAdopters);
 
             updateAnimal(animal);
-            log.trace("Add adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
+            log.trace("New adopters for animal: " + animal.getAnimalID() + " User: " + adopter.getUserID());
         }
     }
     public void removeOnlineAdopters(Animal animal, User user) throws ExistedException {
