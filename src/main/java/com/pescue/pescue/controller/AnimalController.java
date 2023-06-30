@@ -4,6 +4,7 @@ import com.pescue.pescue.dto.AnimalDTO;
 import com.pescue.pescue.dto.StringResponseDTO;
 import com.pescue.pescue.exception.ExistedException;
 import com.pescue.pescue.model.Animal;
+import com.pescue.pescue.model.User;
 import com.pescue.pescue.service.AnimalService;
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,22 +27,30 @@ public class AnimalController {
     public ResponseEntity<Object> getAllAnimals(){
         return ResponseEntity.ok(animalService.findAllAnimals());
 
-    }@GetMapping("/getAnimalByAnimalID/{animalID}")
+    }
+    @GetMapping("/getAnimalByAnimalID/{animalID}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllAnimalByAnimalID(@PathVariable String animalID){
-        if(animalService.findAnimalByAnimalID(animalID) == null)
+        if(animalService.getAnimalByAnimalID(animalID) == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StringResponseDTO.builder()
                     .message("Không có bé bạn cần tìm")
                     .build());
-        return ResponseEntity.ok(animalService.findAnimalByAnimalID(animalID));
+        return ResponseEntity.ok(animalService.getAnimalByAnimalID(animalID));
+    }
+    @GetMapping("/getOnlineAdoptersByAnimalID/{animalID}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> getOnlineAdoptersByAnimalID(@PathVariable String animalID){
+        List<User> onlineAdopters = animalService.getAnimalOnlineAdopters(animalID);
+        return ResponseEntity.ok(onlineAdopters);
     }
 
     @GetMapping("/getAnimalsByShelterID/{shelterID}")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAnimalsByShelterID(@PathVariable String shelterID){
-        return ResponseEntity.ok(animalService.findAnimalsByShelterID(shelterID));
+        return ResponseEntity.ok(animalService.getAnimalsByShelterID(shelterID));
     }
     @PostMapping("/addAnimal")
     @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")

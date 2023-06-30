@@ -34,8 +34,6 @@ public class Animal {
     private boolean friendly;
     private boolean isAdopted = false;
     private boolean isDeleted = false;
-    @DBRef
-    private List<User> onlineAdopters;
     private List<String> othersImg;
 
     public Animal(AnimalDTO animalDTO){
@@ -53,7 +51,6 @@ public class Animal {
         this.deWormed = animalDTO.isDeWormed();
         this.sterilized = animalDTO.isSterilized();
         this.friendly = animalDTO.isFriendly();
-        this.onlineAdopters = new ArrayList<>();
         this.othersImg = animalDTO.getOthersImg();
         this.isAdopted = false;
         this.isDeleted = false;

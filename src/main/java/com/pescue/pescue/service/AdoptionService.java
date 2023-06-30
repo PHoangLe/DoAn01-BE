@@ -65,7 +65,7 @@ public class AdoptionService {
             throw new UserNotFoundException();
         }
 
-        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
+        Animal animal = animalService.getAnimalByAnimalID(dto.getAnimalID());
         if (animal == null) {
             log.trace("Animal not found ID: " + dto.getAnimalID());
             throw new AnimalNotFoundException();
@@ -92,7 +92,7 @@ public class AdoptionService {
 
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
         adoptionApplicationRepository.save(application);
-        Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
+        Animal animal = animalService.getAnimalByAnimalID(application.getAnimal().getAnimalID());
         animal.setAdopted(true);
         animalService.updateAnimal(animal);
 
@@ -129,7 +129,7 @@ public class AdoptionService {
 
     //Online Adoption
     public void createOnlineAdoptionRequest(AdoptionApplicationRequestDTO dto) throws ExistedException {
-        OnlineAdoptionApplication existedApplication = findOnlineApplicationByUserIDAndAnimalID(dto.getUserID(), dto.getAnimalID());
+        OnlineAdoptionApplication existedApplication = getOnlineApplicationByUserIDAndAnimalID(dto.getUserID(), dto.getAnimalID());
         if(existedApplication != null){
             if (existedApplication.getApplicationStatus() == ApplicationStatus.PENDING) {
                 log.trace("Application already existed: User " + existedApplication.getUser().getUserID() + " Animal " + existedApplication.getAnimal().getAnimalID());
@@ -145,7 +145,7 @@ public class AdoptionService {
         if (user == null) {
             throw new UserNotFoundException();
         }
-        Animal animal = animalService.findAnimalByAnimalID(dto.getAnimalID());
+        Animal animal = animalService.getAnimalByAnimalID(dto.getAnimalID());
         if (animal == null) {
             throw new AnimalNotFoundException();
         }
@@ -180,7 +180,6 @@ public class AdoptionService {
             return;
         }
 
-        Animal animal = animalService.findAnimalByAnimalID(application.getAnimal().getAnimalID());
         User user = userService.getUserByID(application.getUser().getUserID());
 
         fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, GENERAL_FUND_ID, user, new BigDecimal(120_000));
@@ -188,7 +187,6 @@ public class AdoptionService {
         application.setApplicationStatus(ApplicationStatus.COMPLETED);
         application = setExpiry(application);
         onlineAdoptionApplicationRepository.save(application);
-        animalService.addOnlineAdopters(animal, user);
 
         sendResultEmail(user.getUserEmail(), true);
 
@@ -232,7 +230,7 @@ public class AdoptionService {
         return onlineAdoptionApplicationRepository.findAll();
     }
 
-    public OnlineAdoptionApplication findOnlineApplicationByUserIDAndAnimalID(String userID, String animalID) {
+    public OnlineAdoptionApplication getOnlineApplicationByUserIDAndAnimalID(String userID, String animalID) {
         return onlineAdoptionApplicationRepository.findByUserAndAnimal(userID, animalID).orElse(null);
     }
     public List<OnlineAdoptionApplication> getAllOnlineApplicationByApplicationStatus(ApplicationStatus status){
