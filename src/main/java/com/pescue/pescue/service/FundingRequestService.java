@@ -50,6 +50,7 @@ public class FundingRequestService {
         User user = userService.getUserByID(shelter.getUserID());
 
         FundingRequest fundingRequest = new FundingRequest(fund, user, shelter, dto.getReason(), dto.getValue());
+        log.trace("New Funding Request: " + fundingRequest);
         return fundingRequestRepository.insert(fundingRequest);
     }
     public FundingRequest getFundingRequestByID(String requestID){
@@ -82,6 +83,7 @@ public class FundingRequestService {
         updateFundingRequest(request);
 
         sendNotifyEmail(request, true);
+        log.trace("New Funding Completed: " + request);
     }
 
     private void updateShelterTotalFundingReceive(Shelter shelter, BigDecimal value) {
@@ -105,5 +107,6 @@ public class FundingRequestService {
         fundingRequestRepository.save(request);
 
         sendNotifyEmail(request, false);
+        log.trace("New Funding Rejected: " + request);
     }
 }

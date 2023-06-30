@@ -7,6 +7,7 @@ import com.pescue.pescue.model.constant.DonationStatus;
 import com.pescue.pescue.model.constant.TransactionType;
 import com.pescue.pescue.repository.DonationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Slf4j
 @RequiredArgsConstructor
 public class DonationService {
     private final DonationRepository donationRepository;
@@ -26,6 +28,7 @@ public class DonationService {
         User user = userService.getUserByID(dto.getUserID());
 
         Donation donation = new Donation(user, fund, dto.getNumsOfPackage());
+        log.trace("New Donation: " + donation);
         return donationRepository.insert(donation);
     }
     public List<Donation> getAllDonation(){
@@ -46,6 +49,7 @@ public class DonationService {
 
         fundTransactionService.createTransaction(TransactionType.USER_TO_FUND, fund.getFundID(), donation.getUser(), value);
         donation.setDonationStatus(DonationStatus.COMPLETED);
+        log.trace("Donation Completed: " + donation);
         donationRepository.save(donation);
     }
     public void rejectDonation(String donationID) throws DonationStatusUpdateException {
@@ -55,6 +59,7 @@ public class DonationService {
             throw new DonationStatusUpdateException();
 
         donation.setDonationStatus(DonationStatus.REJECTED);
+        log.trace("Donation Rejected: " + donation);
         donationRepository.save(donation);
     }
 }

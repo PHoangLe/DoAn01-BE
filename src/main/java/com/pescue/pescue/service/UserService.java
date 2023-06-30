@@ -44,7 +44,6 @@ public class UserService {
     }
 
     public User getUserByID(String userID){
-        log.trace("Finding user with ID: " + userID);
         return userRepository.findUserByUserID(userID).orElse(null);
     }
 

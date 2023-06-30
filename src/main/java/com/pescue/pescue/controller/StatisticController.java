@@ -15,6 +15,6 @@ public class StatisticController {
     private final StatisticService statisticService;
     @PutMapping("/landing-page")
     public ResponseEntity<Object> landingPage(){
-        return ResponseEntity.ok(statisticService.getLandingPageStatistc());
+        return ResponseEntity.ok(statisticService.getLandingPageStatistic());
     }
 }

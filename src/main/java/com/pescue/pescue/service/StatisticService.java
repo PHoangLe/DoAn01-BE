@@ -12,7 +12,7 @@ public class StatisticService {
     private final AnimalService animalService;
     private final ShelterService shelterService;
 
-    public LandingPageStatisticDTO getLandingPageStatistc(){
+    public LandingPageStatisticDTO getLandingPageStatistic(){
         long[] animalCount = animalService.countAdoptedAndNotAdopted();
 
         long adoptedAnimalCount = animalCount[0];
