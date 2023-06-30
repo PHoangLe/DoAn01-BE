@@ -63,7 +63,7 @@ public class UserController {
    @PutMapping("/updateProfile")
    @PreAuthorize("hasAuthority('ROLE_USER')")
    @SecurityRequirement(name = "Bearer Authentication")
-   public ResponseEntity<Object> updateProfile(@RequestBody UserProfileDTO userProfileDTO) throws Exception {
+   public ResponseEntity<Object> updateProfile(@RequestBody UserProfileDTO userProfileDTO) {
         User user = userService.updateUserProfile(userProfileDTO);
        return ResponseEntity.ok(user);
    }

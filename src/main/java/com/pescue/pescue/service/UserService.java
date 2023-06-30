@@ -90,7 +90,7 @@ public class UserService {
         logger.trace("Changed password of User: " + dto.getUserEmail());
     }
 
-    public User updateUserProfile(UserProfileDTO userProfileDTO) throws Exception {
+    public User updateUserProfile(UserProfileDTO userProfileDTO){
         User user = getUserByID(userProfileDTO.getUserID());
 
         if (user == null) {
@@ -101,18 +101,13 @@ public class UserService {
         user.setUserFirstName(userProfileDTO.getUserFirstName());
         user.setUserLastName(userProfileDTO.getUserLastName());
         user.setPhoneNo(userProfileDTO.getPhoneNo());
-        user.setDob(stringToDate(userProfileDTO.getDob()));
+        user.setDob(new Date(userProfileDTO.getDob()));
         user.setUserGender(userProfileDTO.getUserGender());
         user.setUserAvatar(userProfileDTO.getUserAvatar());
 
         updateUser(user);
         logger.trace("Updated user with Id: " + user.getUserID());
         return user;
-    }
-
-
-    private Date stringToDate(String dob) throws ParseException {
-        return new SimpleDateFormat("dd/MM/yyyy").parse(dob);
     }
 
     public void resetPassword(String userEmail, String newPassword) {

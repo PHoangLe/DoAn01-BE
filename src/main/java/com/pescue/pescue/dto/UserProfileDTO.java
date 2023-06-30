@@ -15,7 +15,7 @@ public class UserProfileDTO {
     private String userFirstName;
     private String userLastName;
     private String phoneNo;
-    private String dob;
+    private Integer dob;
     private Gender userGender;
     private String userAvatar;
 }
