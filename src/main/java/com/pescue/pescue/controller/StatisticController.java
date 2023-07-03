@@ -2,8 +2,11 @@ package com.pescue.pescue.controller;
 
 import com.pescue.pescue.service.StatisticService;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,5 +19,11 @@ public class StatisticController {
     @GetMapping("/landing-page")
     public ResponseEntity<Object> landingPage(){
         return ResponseEntity.ok(statisticService.getLandingPageStatistic());
+    }
+    @GetMapping("/admin-dashboard")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> adminDashboard(){
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(statisticService.getAdminDashboardStatistic());
     }
 }

@@ -27,7 +27,7 @@ public class AnimalService {
     private final ShelterService shelterService;
     private final MongoOperations mongoOperations;
     private final OnlineAdoptionApplicationRepository onlineAdoptionApplicationRepository;
-    public List<Animal> findAllAnimals(){
+    public List<Animal> getAllAnimals(){
         return animalRepository.findAllByIsAdoptedAndIsDeleted(false, false);
     }
 
