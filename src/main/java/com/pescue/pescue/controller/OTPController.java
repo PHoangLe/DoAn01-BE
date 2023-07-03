@@ -38,7 +38,7 @@ public class OTPController {
     //Forgot Password
     @PostMapping("/sendOTPForgotPassword")
     public ResponseEntity<Object> sendOTPForgotPassword(@RequestBody OTP_DTO request){
-        otpService.sendOTPForgotPassowrd(request);
+        otpService.sendOTPForgotPassword(request);
         return ResponseEntity.ok(StringResponseDTO.builder()
                 .message("Đã gửi mail thành công")
                 .build());

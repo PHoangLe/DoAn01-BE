@@ -91,6 +91,10 @@ public class OTPService {
             throw new InvalidOtpException();
         }
 
+        if (!request.getOtp().equals(recentOtpConfirmEmail.getOTP())) {
+            throw new InvalidOtpException();
+        }
+
         if (otpConfirmEmail.isEmpty()) {
             throw new InvalidEmailException();
         }
@@ -99,15 +103,11 @@ public class OTPService {
             throw new ExpiredOtpException();
         }
 
-        if (!request.getOtp().equals(recentOtpConfirmEmail.getOTP())) {
-            throw new InvalidOtpException();
-        }
-
         userService.unlockUser(recentOtpConfirmEmail.getReceiverEmail());
     }
 
     //ForgotPassword
-    public void sendOTPForgotPassowrd(OTP_DTO request) {
+    public void sendOTPForgotPassword(OTP_DTO request) {
         // Tìm email trong bảng user
         String emailAddress = request.getEmailAddress();
         User user = userService.findUserByUserEmail(emailAddress);
@@ -139,12 +139,10 @@ public class OTPService {
         log.trace("OTP forgot Password of " + forgotPassword.getReceiverEmail() +  " has been stored to database");
     }
     public void validateOTPForgotPassword(ValidateOtpForgotPasswordDTO request) throws InvalidException {
-
         List<OTPForgotPassword> otpForgotPasswords = otpForgotPasswordRepository.findOTPForgotPasswordsByReceiverEmailOrderByDate(request.getEmailAddress());
-
         OTPForgotPassword recentOtpForgotPassword = otpForgotPasswords.get(otpForgotPasswords.size() - 1);
 
-        if(isOtpValid(recentOtpForgotPassword.getOTP())) {
+        if(!isOtpValid(recentOtpForgotPassword.getOTP())) {
             throw new InvalidOtpException();
         }
 
@@ -152,12 +150,12 @@ public class OTPService {
             throw new InvalidEmailException();
         }
 
-        if (recentOtpForgotPassword.getExpiredDate().before(new Date(System.currentTimeMillis()))) {
-            throw new ExpiredOtpException();
-        }
-
         if (!request.getOtp().equals(recentOtpForgotPassword.getOTP())) {
             throw new InvalidOtpException();
+        }
+
+        if (recentOtpForgotPassword.getExpiredDate().before(new Date(System.currentTimeMillis()))) {
+            throw new ExpiredOtpException();
         }
 
         userService.resetPassword(recentOtpForgotPassword.getReceiverEmail(), request.getNewPassword());
