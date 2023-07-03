@@ -2,7 +2,6 @@ package com.pescue.pescue.controller;
 
 import com.pescue.pescue.dto.MessageDTO;
 import com.pescue.pescue.model.ChatMessage;
-import com.pescue.pescue.model.ChatNotification;
 import com.pescue.pescue.service.ChatMessageService;
 import com.pescue.pescue.service.ChatRoomService;
 import io.swagger.annotations.Api;

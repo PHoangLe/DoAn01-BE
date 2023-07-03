@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @Api
 public class StatisticController {
     private final StatisticService statisticService;
-    @PutMapping("/landing-page")
+    @GetMapping("/landing-page")
     public ResponseEntity<Object> landingPage(){
         return ResponseEntity.ok(statisticService.getLandingPageStatistic());
     }

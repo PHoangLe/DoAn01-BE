@@ -28,8 +28,8 @@ public class RescuePostService {
         String emailBody = "";
         switch (status){
             case ABORTED -> {
-                emailBody = "Chúng tôi rất tiếc khi việc cứu trợ bé bạn đã đăng không thể thực hiện đuọc\n" +
-                        "Xin lỗi vè việc không vui này, chúng tôi vẫn mong bạn vẫn đồng hành cùng với Pescue để có thể cứu được nhiều bé thú cưng vẫn đang gặp hoàn cảnh khó khăn,\n" +
+                emailBody = "Chúng tôi rất tiếc khi việc cứu trợ bé bạn đã đăng được tiếp nhận bởi trại cứu trợ " + request.getRescuer().getShelterName() + " không thể được thực hiện\n" +
+                        "Chúng tôi đã đưa trạng thái bài đăng của bạn về trạng thái đang đợi trại cứu trợ,\n" +
                         "Ban quản trị";
             }
             case COMPLETED -> {
@@ -45,7 +45,7 @@ public class RescuePostService {
         }
         emailService.sendMail(request.getPoster().getUserEmail(),
                 emailBody,
-                "Trạng thái bài đăng cứu trợ");
+                "Cập nhật trạng thái bài đăng cứu trợ");
     }
     public RescuePost createPost(RescuePostDTO dto){
         User poster = userService.getUserByID(dto.getUserID());
@@ -134,7 +134,7 @@ public class RescuePostService {
         if (rescuePost.getStatus() != RescuePostStatus.PROCESSING)
             throw new RescuePostStatusUpdateException();
 
-        rescuePost.setStatus(RescuePostStatus.ABORTED);
+        rescuePost.setStatus(RescuePostStatus.WAITING);
         sendNotifyEmail(rescuePost, RescuePostStatus.ABORTED);
 
         return updatePost(rescuePost);

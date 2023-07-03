@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -16,7 +17,16 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 @Slf4j
 public class ControllerExceptionHandler {
-
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorMessage> accessDeniedExceptionHandler(Exception ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.FORBIDDEN.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        log.error(String.valueOf(message));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
+    }
     @ExceptionHandler(StatusUpdateException.class)
     public ResponseEntity<ErrorMessage> statusUpdateExceptionHandler(Exception ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
