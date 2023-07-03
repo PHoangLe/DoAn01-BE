@@ -42,7 +42,6 @@ public class StatisticService {
         List<AdoptionApplication> adoptionApplications = adoptionService.getAllApplication();
         List<Fund> funds = fundService.getAllFund();
         List<User> users = userService.getAllUser();
-        List<Animal> animals = animalService.getAllAnimals();
 
         Map<Integer, IntSummaryStatistics> totalFundReceivedByMonth = fundTransactions.stream()
                 .filter(transaction -> transaction.getTransactionType() == TransactionType.USER_TO_FUND)
