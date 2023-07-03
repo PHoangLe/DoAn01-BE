@@ -49,8 +49,6 @@ public class FundController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã xóa quỹ thành công"));
     }
     @GetMapping("")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getAllFund(){
         return ResponseEntity.ok(fundService.getAllFund());
     }
@@ -61,8 +59,6 @@ public class FundController {
         return ResponseEntity.ok(fundService.getAllFundToCRUD());
     }
     @GetMapping("/{fundID}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> getFundByFundID(@PathVariable String fundID){
         return ResponseEntity.ok(fundService.getFundByFundID(fundID));
     }

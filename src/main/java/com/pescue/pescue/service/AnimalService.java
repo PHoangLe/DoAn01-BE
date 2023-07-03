@@ -86,13 +86,12 @@ public class AnimalService {
         return animalRepository.findAnimalsByShelterID(shelterID);
     }
     public long[] countAdoptedAndNotAdopted() {
-        List<Animal> animals = findAllAnimals();
+        List<Animal> animals = animalRepository.findAll();
 
         long adoptedAnimal = animals.stream()
                 .filter(Animal::isAdopted).count();
 
-        long notAdoptedAnimal = animals.stream()
-                .filter((animal) -> !animal.isAdopted()).count();
+        long notAdoptedAnimal = animals.size() - adoptedAnimal;
 
         return new long[]{adoptedAnimal, notAdoptedAnimal};
     }
