@@ -25,7 +25,7 @@ public class AnimalController {
 
     @GetMapping("/getAllAnimals")
     public ResponseEntity<Object> getAllAnimals(){
-        return ResponseEntity.ok(animalService.findAllAnimals());
+        return ResponseEntity.ok(animalService.getAllAnimals());
 
     }
     @GetMapping("/getAnimalByAnimalID/{animalID}")

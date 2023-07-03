@@ -125,6 +125,9 @@ public class AdoptionService {
     public AdoptionApplication findApplicationByUserIDAndAnimalID(String userID, String animalID) {
         return adoptionApplicationRepository.findByUserAndAnimal(userID, animalID).orElse(null);
     }
+    public List<AdoptionApplication> getAllApplication() {
+        return adoptionApplicationRepository.findAll();
+    }
 
 
     //Online Adoption

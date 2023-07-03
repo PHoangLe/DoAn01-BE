@@ -62,4 +62,7 @@ public class FundTransactionService {
             throw new UpdateFundException();
         }
     }
+    public List<FundTransaction> getAllTransaction() {
+        return transactionRepository.findAll();
+    }
 }

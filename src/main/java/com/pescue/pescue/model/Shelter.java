@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Document("Shelter")
@@ -29,6 +30,7 @@ public class Shelter {
     private String shelterPhoneNo;
     private String shelterLogo;
     private List<String> relatedDocuments;
+    private Date date = new Date();
     private Boolean isApproved = false;
     private BigDecimal totalFundReceived = BigDecimal.ZERO;
 
