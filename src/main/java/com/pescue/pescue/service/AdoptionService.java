@@ -112,7 +112,7 @@ public class AdoptionService {
 
         log.trace("Declined application with ID: " + applicationID);
     }
-    public List<AdoptionApplication> findApplicationByShelterID(String shelterID) {
+    public List<AdoptionApplication> getApplicationByShelterID(String shelterID) {
         Shelter shelterByShelterID = shelterService.getShelterByShelterID(shelterID);
 
         if (shelterByShelterID == null){
