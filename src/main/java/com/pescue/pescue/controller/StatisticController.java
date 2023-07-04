@@ -26,4 +26,11 @@ public class StatisticController {
     public ResponseEntity<Object> adminDashboard(){
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(statisticService.getAdminDashboardStatistic());
     }
+
+    @GetMapping("/shelter-dashboard/{shelterID}")
+    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> shelterDashboard(@PathVariable String shelterID){
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(statisticService.getShelterDashboardStatistic(shelterID));
+    }
 }
