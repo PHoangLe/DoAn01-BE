@@ -31,18 +31,33 @@ public class AdoptionService {
     private final EmailService emailService;
     private final FundTransactionService fundTransactionService;
 
-    private void sendResultEmail(String receiverEmail, boolean isConfirm) throws SendMailFailedException {
+    private void sendResultEmail(String receiverEmail, boolean isConfirm, AdoptionApplication application, boolean isOnline) throws SendMailFailedException {
         String emailBody;
         String subject = "Nhận nuôi";
+        Shelter shelter = application.getShelter();
 
-        if (isConfirm){
+        if (isConfirm && !isOnline){
+            emailBody = "Chúc mừng bạn,\n" +
+                    "Yêu cầu nhận nuôi của bạn đã được xử lý xong.\n" +
+                    "Chúng tôi đại diện trại cứu trợ và bé được bạn nhận nuôi gửi đến bạn một lời cảm ơn chân thành.\n" +
+                    "Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng tôi qua email này.\n" +
+                    "Mời bạn đến trại cứu trợ tại địa chỉ để nhận bé: " + shelter.getUnitNoAndStreet() + ", "  + shelter.getWard() + ", " + shelter.getDistrict() + ", " + shelter.getCity() + ".\n" +
+                    "Pescue.";
+        }else if (isConfirm){
+            emailBody = """
+                    Chào bạn,
+                    Yêu cầu nhận nuôi của bạn đã được xử lý xong.
+                    Nhưng chúng tôi lấy làm tiếc về việc nhận nuôi của bạn đã không thành công.
+                    Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng tôi qua email này.
+                    Pescue.""";
+        }else if (isOnline){
             emailBody = """
                     Chúc mừng bạn,
                     Yêu cầu nhận nuôi của bạn đã được xử lý xong.
                     Chúng tôi đại diện trại cứu trợ và bé được bạn nhận nuôi gửi đến bạn một lời cảm ơn chân thành.
                     Nếu có bất cứ thắc mắc nào hãy liên hệ lại với chúng tôi qua email này.
                     Pescue.""";
-        }else {
+        }else{
             emailBody = """
                     Chào bạn,
                     Yêu cầu nhận nuôi của bạn đã được xử lý xong.
@@ -97,7 +112,7 @@ public class AdoptionService {
         animalService.updateAnimal(animal);
 
         User user = userService.getUserByID(application.getUser().getUserID());
-        sendResultEmail(user.getUserEmail(), true);
+        sendResultEmail(user.getUserEmail(), true, application, false);
 
         log.trace("Approved application with ID: " + applicationID);
     }
@@ -108,7 +123,7 @@ public class AdoptionService {
         adoptionApplicationRepository.save(application);
 
         User user = userService.getUserByID(application.getUser().getUserID());
-        sendResultEmail(user.getUserEmail(), false);
+        sendResultEmail(user.getUserEmail(), false, application, false);
 
         log.trace("Declined application with ID: " + applicationID);
     }
@@ -191,7 +206,7 @@ public class AdoptionService {
         application = setExpiry(application);
         onlineAdoptionApplicationRepository.save(application);
 
-        sendResultEmail(user.getUserEmail(), true);
+        sendResultEmail(user.getUserEmail(), true, application, true);
 
         log.trace("Approved online application with ID: " + applicationID);
 
@@ -205,7 +220,7 @@ public class AdoptionService {
         application.setExpiry(cal.getTime());
 
         updateOnlineAdoptionApplication(application);
-        sendResultEmail(application.getUser().getUserEmail(), true);
+        sendResultEmail(application.getUser().getUserEmail(), true, application, true);
     }
     @Transactional
     public void declineOnlineAdoptionRequest(String applicationID) {
@@ -225,7 +240,7 @@ public class AdoptionService {
         onlineAdoptionApplicationRepository.save(application);
 
         User user = userService.getUserByID(application.getUser().getUserID());
-        sendResultEmail(user.getUserEmail(), false);
+        sendResultEmail(user.getUserEmail(), false, application, true);
 
         log.trace("Declined online application with ID: " + applicationID);
     }
