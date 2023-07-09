@@ -61,4 +61,18 @@ public class Shelter {
         this.shelterLogo = DTO.getShelterLogo();
         this.relatedDocuments = DTO.getRelatedDocuments();
     }
+
+    public void setDTO(ShelterDTO DTO) {
+        this.userID = DTO.getUserID();
+        this.shelterName = DTO.getShelterName();
+        this.representativeFacebookLink = DTO.getRepresentativeFacebookLink();
+        this.representativeEmailAddress = DTO.getRepresentativeEmailAddress();
+        this.unitNoAndStreet = DTO.getUnitNoAndStreet();
+        this.ward = DTO.getWard();
+        this.district = DTO.getDistrict();
+        this.city = DTO.getCity();
+        this.shelterPhoneNo = DTO.getShelterPhoneNo();
+        this.shelterLogo = DTO.getShelterLogo();
+//        this.relatedDocuments = DTO.getRelatedDocuments();
+    }
 }

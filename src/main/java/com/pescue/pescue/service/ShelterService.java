@@ -1,5 +1,6 @@
 package com.pescue.pescue.service;
 
+import com.pescue.pescue.dto.ShelterDTO;
 import com.pescue.pescue.exception.ExistedException;
 import com.pescue.pescue.exception.ShelterNotFoundException;
 import com.pescue.pescue.exception.UserNotFoundException;
@@ -31,8 +32,14 @@ public class ShelterService {
         return shelterRepository.findShelterByShelterID(shelterID).orElse(null);
     }
 
-    public void updateShelter(Shelter shelter){
-        shelterRepository.save(shelter);
+    public Shelter updateShelter(Shelter shelter){
+        return shelterRepository.save(shelter);
+    }
+
+    public Shelter updateShelter(ShelterDTO dto, String shelterID){
+        Shelter shelter = getShelterByShelterID(shelterID);
+        shelter.setDTO(dto);
+        return updateShelter(shelter);
     }
 
     public void registerShelter(Shelter shelter) throws ExistedException {

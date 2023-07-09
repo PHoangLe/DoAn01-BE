@@ -32,6 +32,14 @@ public class ShelterController {
                 .build());
     }
 
+    @PutMapping("/updateShelter/{shelterID}")
+    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> modifyShelter(@RequestBody ShelterDTO shelter, @PathVariable String shelterID) throws ExistedException {
+        Shelter updatedShelter = shelterService.updateShelter(shelter, shelterID);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedShelter);
+    }
+
     @GetMapping("/getAllShelter")
     public ResponseEntity<Object> getAllShelter(){
         return ResponseEntity.ok(shelterService.findAllShelter());
