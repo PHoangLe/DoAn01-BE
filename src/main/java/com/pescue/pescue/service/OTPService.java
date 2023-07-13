@@ -87,7 +87,7 @@ public class OTPService {
 
         OTPConfirmEmail recentOtpConfirmEmail = otpConfirmEmail.get(otpConfirmEmail.size() - 1);
 
-        if(isOtpValid(recentOtpConfirmEmail.getOTP())) {
+        if(!isOtpValid(recentOtpConfirmEmail.getOTP())) {
             throw new InvalidOtpException();
         }
 
