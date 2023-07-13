@@ -22,7 +22,7 @@ public class AuthenticationService {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-
+    private final PasswordEncoder passwordEncoder;
     public ResponseEntity<Object> userRegister(UserRegisterDTO request){
         User user = userService.findUserByUserEmail(request.getUserEmail());
         if (user != null){
@@ -40,7 +40,7 @@ public class AuthenticationService {
             }
         }
         user = new User(request);
-
+        user.setUserPassword(passwordEncoder.encode(request.getUserPassword()));
         try{
             userService.addUser(user);
         }
