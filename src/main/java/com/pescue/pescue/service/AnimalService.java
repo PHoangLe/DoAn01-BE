@@ -95,4 +95,14 @@ public class AnimalService {
 
         return new long[]{adoptedAnimal, notAdoptedAnimal};
     }
+
+    public void restoreAnimal(String animalID) {
+        Animal animal = getAnimalByAnimalID(animalID);
+
+        if (animal == null)
+            throw new AnimalNotFoundException();
+
+        animal.setDeleted(false);
+        updateAnimal(animal);
+    }
 }

@@ -48,7 +48,7 @@ public class FundController {
         fundService.deleteFund(fundID);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã ẩn quỹ thành công"));
     }
-    @PutMapping("/{fundID}")
+    @PutMapping("/restoreFund/{fundID}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> restoreFund(@PathVariable String fundID){
