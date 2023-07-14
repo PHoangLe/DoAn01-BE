@@ -46,4 +46,11 @@ public class FundService {
         updateFund(fund);
         log.trace("Fund Has Been Set To Deleted: " + fund);
     }
+
+    public void restoreFund(String fundID) {
+        Fund fund = getFundByFundID(fundID);
+        fund.setDelete(false);
+        updateFund(fund);
+        log.trace("Fund Has Been Restored : " + fund);
+    }
 }
