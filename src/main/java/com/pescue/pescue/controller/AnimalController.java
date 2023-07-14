@@ -81,4 +81,14 @@ public class AnimalController {
                 .message("Thông tin của bé đã được xóa thành công")
                 .build());
     }
+
+    @PutMapping("/restoreAnimal/{animalID}")
+    @PreAuthorize("hasAuthority('ROLE_SHELTER_MANAGER')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> restoreAnimal(@PathVariable String animalID){
+        animalService.restoreAnimal(animalID);
+        return ResponseEntity.ok(StringResponseDTO.builder()
+                .message("Thông tin của bé đã được hồi phục thành công")
+                .build());
+    }
 }
