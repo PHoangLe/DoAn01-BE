@@ -46,7 +46,14 @@ public class FundController {
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Object> deleteFund(@PathVariable String fundID){
         fundService.deleteFund(fundID);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã xóa quỹ thành công"));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã ẩn quỹ thành công"));
+    }
+    @PutMapping("/{fundID}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Object> restoreFund(@PathVariable String fundID){
+        fundService.restoreFund(fundID);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new StringResponseDTO("Đã hồi phục quỹ thành công"));
     }
     @GetMapping("")
     public ResponseEntity<Object> getAllFund(){
